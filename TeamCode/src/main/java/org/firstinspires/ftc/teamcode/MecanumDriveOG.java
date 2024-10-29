@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_turn;
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_x;
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
-
-import android.os.SystemClock;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.AccelConstraint;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.Actions;
+import com.acmerobotics.roadrunner.*;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
@@ -22,20 +14,13 @@ import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
-import com.acmerobotics.roadrunner.ProfileParams;
-import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
@@ -60,12 +45,13 @@ import org.firstinspires.ftc.teamcode.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.messages.PoseMessage;
 
+import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class MecanumDrive {
+public final class MecanumDriveOG {
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -144,10 +130,10 @@ public final class MecanumDrive {
         private boolean initialized;
 
         public DriveLocalizer() {
-            leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
-            leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
-            rightBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightBack));
-            rightFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.rightFront));
+            leftFront = new OverflowEncoder(new RawEncoder(MecanumDriveOG.this.leftFront));
+            leftBack = new OverflowEncoder(new RawEncoder(MecanumDriveOG.this.leftBack));
+            rightBack = new OverflowEncoder(new RawEncoder(MecanumDriveOG.this.rightBack));
+            rightFront = new OverflowEncoder(new RawEncoder(MecanumDriveOG.this.rightFront));
 
             imu = lazyImu.get();
 
@@ -219,7 +205,7 @@ public final class MecanumDrive {
         }
     }
 
-    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public MecanumDriveOG(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -253,66 +239,6 @@ public final class MecanumDrive {
         localizer = new DriveLocalizer();
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
-    }
-
-    public void hardStopMotors() {
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
-    }
-
-    private long lastUpdateTime = 0;
-
-    public void stopAllMovementDirectionBased() {
-        movement_x = 0;
-        movement_y = 0;
-        movement_turn = 0;
-
-        applyMovementDirectionBased();
-    }
-
-    public void applyMovementDirectionBased() {
-        long currTime = SystemClock.uptimeMillis();
-        if (currTime - lastUpdateTime < 16) {
-            return;
-        }
-        lastUpdateTime = currTime;
-
-        double fl_power_raw = movement_y - movement_turn + movement_x * 1.5;
-        double bl_power_raw = movement_y - movement_turn - movement_x * 1.5;
-        double br_power_raw = movement_y + movement_turn + movement_x * 1.5;
-        double fr_power_raw = movement_y + movement_turn - movement_x * 1.5;
-
-        //find the maximum of the powers
-        double maxRawPower = Math.abs(fl_power_raw);
-        if (Math.abs(bl_power_raw) > maxRawPower) {
-            maxRawPower = Math.abs(bl_power_raw);
-        }
-        if (Math.abs(br_power_raw) > maxRawPower) {
-            maxRawPower = Math.abs(br_power_raw);
-        }
-        if (Math.abs(fr_power_raw) > maxRawPower) {
-            maxRawPower = Math.abs(fr_power_raw);
-        }
-
-        //if the maximum is greater than 1, scale all the powers down to preserve the shape
-        double scaleDownAmount = 1.0;
-        if (maxRawPower > 1.0) {
-            //when max power is multiplied by this ratio, it will be 1.0, and others less
-            scaleDownAmount = 1.0 / maxRawPower;
-        }
-        fl_power_raw *= scaleDownAmount;
-        bl_power_raw *= scaleDownAmount;
-        br_power_raw *= scaleDownAmount;
-        fr_power_raw *= scaleDownAmount;
-
-
-        //now we can set the powers ONLY IF THEY HAVE CHANGED TO AVOID SPAMMING USB COMMUNICATIONS
-        leftFront.setPower(fl_power_raw);
-        leftBack.setPower(bl_power_raw);
-        rightBack.setPower(br_power_raw);
-        rightFront.setPower(fr_power_raw);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
