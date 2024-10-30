@@ -17,10 +17,10 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     private double armPivotLeftMaxTicks = 2370;
     private double armPivotRightMaxTicks = 2370;
     // for lift pController input
-    private double minPowerArmPivotLeft = .1;
-    private double minPowerArmPivotRight = .1;
-    private double maxPowerArmPivotLeft = 0.98;
-    private double maxPowerArmPivotRight = 0.98;
+    public final double minPowerArmPivotLeft = .001;
+    public final double minPowerArmPivotRight = .001;
+    public final double maxPowerArmPivotLeft = 0.98;
+    public final double maxPowerArmPivotRight = 0.98;
     private double armPivotLeftActionPosition;
     private double armPivotRightActionPosition;
 
@@ -33,18 +33,21 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     public ArmPivot(HardwareMap hardwareMap) {
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
-        armPivotLeft.setDirection(DcMotor.Direction.REVERSE);
+        armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
         //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         armPivotRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
-        armPivotRight.setDirection(DcMotor.Direction.FORWARD);
+        armPivotRight.setDirection(DcMotor.Direction.REVERSE);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotRight.setPower(0);
         armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
     }
     public void InitArmPivotPIDController(){
@@ -54,10 +57,12 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         pControllerArmPivotLeft.setOutputRange(minPowerArmPivotLeft, maxPowerArmPivotLeft);
         pControllerArmPivotLeft.setThresholdValue(5);
 
+
         pControllerArmPivotRight.setInputRange(0, armPivotRightMaxTicks);
         pControllerArmPivotRight.setSetPoint(0);
         pControllerArmPivotRight.setOutputRange(minPowerArmPivotRight, maxPowerArmPivotRight);
         pControllerArmPivotRight.setThresholdValue(5);
+        //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // this is for lift left, change Kp to calibrate
     }
 

@@ -43,7 +43,7 @@ import java.util.HashMap;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 //@TeleOp(name = "NewTeleop", group = "Mechbot")
-public class NewTeleop extends AutoMaster {
+public class   NewTeleop extends AutoMaster {
 
     boolean justDidAReapproach = false;
 
@@ -283,6 +283,7 @@ public class NewTeleop extends AutoMaster {
         }
 
         drive.applyMovementDirectionBased(); //this applys movement useing the mecanumDrive class
+
 
 
         if (gamepad2.right_trigger > 0.1) {
