@@ -18,7 +18,9 @@ import java.util.ArrayList;
 
 public abstract class AutoMaster extends OpMode {
     MecanumDrive drive = null;
-    PixelLift pixelLift = null;
+    //PixelLift pixelLift = null;
+
+    ArmPivot armPivot = null;
     public DcMotorEx robotLift = null;
 
     FourBars fourBars = null;
@@ -70,8 +72,10 @@ public abstract class AutoMaster extends OpMode {
     ElapsedTime waitTimer2 = new ElapsedTime();
 
     //Lift P controllers
-    PController pControllerRobotLift = new PController(0.002); // this is for lift left, change Kp to calibrate
+    //PController pControllerRobotLift = new PController(0.002); // this is for lift left, change Kp to calibrate
     PController pControllerLift = new PController(0.002); // this is for lift right, change Kp to calibrate
+
+    PController pControllerArmPivot = new PController(0.002); // this is for lift right, change Kp to calibrate
 
     Servo pawright;
 

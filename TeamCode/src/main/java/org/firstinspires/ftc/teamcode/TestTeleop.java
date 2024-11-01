@@ -201,7 +201,7 @@ public class TestTeleop extends AutoMaster {
     public void mainLoop() {
         ///telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
 
-        //double liftPosition = pixelLift.pixelLift.getCurrentPosition();
+        double armPivotPosition = armPivot.pixelLift.getCurrentPosition();
 
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
