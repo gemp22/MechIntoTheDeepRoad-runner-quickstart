@@ -41,9 +41,6 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
 
 
-
-
-
         armPivotRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
         armPivotRight.setDirection(DcMotor.Direction.REVERSE);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

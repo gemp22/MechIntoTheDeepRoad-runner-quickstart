@@ -60,6 +60,7 @@ public class ArmTesting extends OpMode
     ArmPivot armPivot;
     Wrist wrist = null;
     IntakeJawServo intakeJawServo = null;
+    Intake intake = null;
     double armSetPointLeft = 0;
     double armSetPointRight = 0;
     double armPivotLeftPosition = 0;
@@ -68,6 +69,8 @@ public class ArmTesting extends OpMode
     int pivotMinTicks = 0;
     int stage = 0;
     int setPoint = 0;
+    private boolean intakeOn = false;
+    private boolean outtakeOn = false;
 
 
 
@@ -94,11 +97,15 @@ public class ArmTesting extends OpMode
         intakeJawServo.intakeJawServo.setPosition(1);
 
 
-        armPivot.armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivot.armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armPivot.armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivot.armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wrist = new Wrist(hardwareMap);
+        intakeJawServo = new IntakeJawServo(hardwareMap);
+        intake = new Intake(hardwareMap);
 
+
+        wrist.intakeTwist.setPosition(.5); // init Twist
+        wrist.intakeTilt.setPosition(.5); // init Tilt
+
+        intakeJawServo.intakeJawServo.setPosition(1);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -129,10 +136,14 @@ public class ArmTesting extends OpMode
      */
     @Override
     public void loop() {
+        armPivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();
+        armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
         if (gamepad1.dpad_up && armPivotLeftPosition < pivotMaxTicks && armPivotRightPosition < pivotMaxTicks) {   ///move lift up and sets controller position
 
-            armPivot.armPivotLeft.setPower(1);
-            armPivot.armPivotRight.setPower(1);
+            armPivot.armPivotLeft.setPower(.5);
+            armPivot.armPivotRight.setPower(.5);
+
+
             armPivot.pControllerArmPivotLeft.setSetPoint(armPivotLeftPosition);
             armPivot.pControllerArmPivotRight.setSetPoint(armPivotRightPosition);
 
@@ -142,6 +153,10 @@ public class ArmTesting extends OpMode
             armPivot.armPivotRight.setPower(-.3);
             armPivot.pControllerArmPivotLeft.setSetPoint(armPivotLeftPosition);
             armPivot.pControllerArmPivotRight.setSetPoint(armPivotRightPosition);
+
+
+
+
 
         } else {                                       //uses proportional controller to hold lift in correct spot
             if (armPivotLeftPosition < armPivot.pControllerArmPivotLeft.setPoint) {
@@ -164,42 +179,19 @@ public class ArmTesting extends OpMode
         }
 
 
-        // intake stuff
-//        if (ButtonPress.isGamepad1_right_bumper_pressed()) {  //intake toggle
-//            if (intakeOn) {
-//                intakeJawServo.intakeJawServo.setPosition(1);
-//                intake.vexIntake.setPower(0);
-//                intakeOn = false;
-//
-//            } else {
-//                intakeJawServo.intakeJawServo.setPosition(.75);
-//                intake.vexIntake.setPower(-.9);
-//                intakeOn = true;
-//
-//            }
-//        }
-//        else if (ButtonPress.isGamepad1_left_bumper_pressed()) {  //outtake toggle
-//            if (outtakeOn) {
-//                intakeJawServo.intakeJawServo.setPosition(.7);
-//                intake.vexIntake.setPower(0);
-//                outtakeOn = false;
-//
-//            } else {
-//                intakeJawServo.intakeJawServo.setPosition(.7);
-//                intake.vexIntake.setPower(.9);
-//                outtakeOn = true;
-//            }
-//        }
+
 //        armPivot.pControllerArmPivotRight.setSetPoint(armSetPointRight);
 //        armPivot.pControllerArmPivotLeft.setSetPoint(armSetPointLeft);
 //
 //        armPivot.updateLiftPosition();
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("armSetPointleft", setPoint   );
-        telemetry.addData("aspr", setPoint);
-        telemetry.addData("Left Motor", armPivot.armPivotLeft.getCurrentPosition());
-        telemetry.addData("Right Motor", armPivot.armPivotRight.getCurrentPosition());
+        telemetry.addData("armRightPos", armPivotRightPosition);
+        telemetry.addData("armLeftPos", armPivotLeftPosition);
+        telemetry.addData("Left Motor Current Pos", armPivot.armPivotLeft.getCurrentPosition());
+        telemetry.addData("Right Motor CUrrent pos", armPivot.armPivotRight.getCurrentPosition());
+        telemetry.addData("Left Motor Pcontroller Set Point", armPivot.pControllerArmPivotLeft.setPoint);
+        telemetry.addData("Right Motor Pcontoller set Point",armPivot.pControllerArmPivotRight.setPoint );
         telemetry.addData("Right Motor pwr", armPivot.armPivotRight.getPower());
         telemetry.addData("LEfr Motor pwr", armPivot.armPivotLeft.getPower());
         telemetry.addData("stage", stage);

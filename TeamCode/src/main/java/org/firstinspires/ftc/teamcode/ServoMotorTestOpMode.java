@@ -121,14 +121,15 @@ public class ServoMotorTestOpMode extends OpMode {
         if (ButtonPress.isGamepad1_right_bumper_pressed()) {
 
             if (isGrabbingSample) {
-                intakeJawServo.intakeJawServo.setPosition(.7);
+                intakeJawServo.intakeJawServo.setPosition(.8);
                 intake.vexIntake.setPower(0);
-                wrist.intakeTilt.setPosition(.45);
+                wrist.intakeTilt.setPosition(.5);
                 isGrabbingSample = false;
 
             } else {
-                intakeJawServo.intakeJawServo.setPosition(.5);
+                intakeJawServo.intakeJawServo.setPosition(.65);
                 intake.vexIntake.setPower(-.9);
+                wrist.intakeTilt.setPosition(.5);
                 isGrabbingSample = true;
             }
         } else if (ButtonPress.isGamepad1_left_bumper_pressed()) {
@@ -138,8 +139,8 @@ public class ServoMotorTestOpMode extends OpMode {
                 isOpeningIntake = false;
 
             } else {
-                intakeJawServo.intakeJawServo.setPosition(.5);
-                intake.vexIntake.setPower(.9);
+                intakeJawServo.intakeJawServo.setPosition(.2);
+                intake.vexIntake.setPower(.1);
                 isOpeningIntake = true;
             }
         }
@@ -150,7 +151,7 @@ public class ServoMotorTestOpMode extends OpMode {
                 isTiltUp = false;
 
             } else {
-                wrist.intakeTilt.setPosition(.50);
+                wrist.intakeTilt.setPosition(.65);
                 isTiltUp = true;
             }
         }
@@ -161,7 +162,7 @@ public class ServoMotorTestOpMode extends OpMode {
                 wrist.intakeTwist.setPosition(0);
                 isTwistLeft = false;
             } else {
-                wrist.intakeTwist.setPosition(1);
+                wrist.intakeTwist.setPosition(.5);
                 isTwistLeft = true;
             }
         }
