@@ -17,23 +17,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 
 public abstract class AutoMaster extends OpMode {
-    MecanumDrive drive = null;
+    //MecanumDrive drive = null;
     //PixelLift pixelLift = null;
 
     ArmPivot armPivot = null;
-    public DcMotorEx robotLift = null;
+    //public DcMotorEx robotLift = null;
 
-    FourBars fourBars = null;
+    //FourBars fourBars = null;
     Intake intake = null;
     Wrist wrist = null;
-    FourBarRotator fourBarRotator = null;
-    PixelTwister pixelTwister = null;
-    DroneAndRobotLiftRotator droneAndRobotLiftRotator = null;
-    DroneLauncher droneLauncher = null;
+//    FourBarRotator fourBarRotator = null;
+//    PixelTwister pixelTwister = null;
+//    DroneAndRobotLiftRotator droneAndRobotLiftRotator = null;
+//    DroneLauncher droneLauncher = null;
 
     IntakeJawServo intakeJawServo = null;
 
-    DigitalChannel limitSwitch = null;
+    //DigitalChannel limitSwitch = null;
 
     //public DcMotorEx lift = null;
 
@@ -41,20 +41,22 @@ public abstract class AutoMaster extends OpMode {
     boolean rrLoopOn = true;
     int liftPosition = 0;
     int liftHome = 0;
-    double liftMotorMax = 340 * 0.8;     //NeveRest 20 80% max rev/min
-    double liftTicksPerRev = 537.6; //NeveRest 20 encoder spec  ticks per rev
-    double liftVelocity = liftMotorMax * liftTicksPerRev / 60;
+//    double liftMotorMax = 340 * 0.8;     //NeveRest 20 80% max rev/min
+//    double liftTicksPerRev = 537.6; //NeveRest 20 encoder spec  ticks per rev
+//    double liftVelocity = liftMotorMax * liftTicksPerRev / 60;
     double liftMaxTicks = 2370;
     // for lift pController input
     double minPowerLift = .001;
     double maxPowerLift = 0.5;
+
+    int pivotLeftPosition = 0;
 
     ///variables for Robot lift
     int robotLiftPosition = 0;
     int robotLiftHome = 0;
     double robotLiftMotorMax = 340 * 0.85;     //NeveRest 20 80% max rev/min
     double robotLiftTicksPerRev = 537.6; //NeveRest 20 encoder spec  ticks per rev
-    double robotLiftVelocity = liftMotorMax * liftTicksPerRev / 60;
+   //double robotLiftVelocity = liftMotorMax * liftTicksPerRev / 60;
     double robotLiftMaxTicks = 15000;
     double minPowerRobotLift = .001;
     double maxPowerRobotLift = 0.98;
@@ -73,11 +75,11 @@ public abstract class AutoMaster extends OpMode {
 
     //Lift P controllers
     //PController pControllerRobotLift = new PController(0.002); // this is for lift left, change Kp to calibrate
-    PController pControllerLift = new PController(0.002); // this is for lift right, change Kp to calibrate
+    //PController pControllerLift = new PController(0.002); // this is for lift right, change Kp to calibrate
 
     PController pControllerArmPivot = new PController(0.002); // this is for lift right, change Kp to calibrate
 
-    Servo pawright;
+    //Servo pawright;
 
     // Vision for Tensor
 /*
@@ -167,7 +169,7 @@ public abstract class AutoMaster extends OpMode {
         return newPoints;
     }
 
-    Vision vision;
+//    Vision vision;
 
     @Override
     public void init() {
@@ -194,6 +196,7 @@ public abstract class AutoMaster extends OpMode {
         //droneAndRobotLiftRotator = new DroneAndRobotLiftRotator(hardwareMap);
         //droneLauncher = new DroneLauncher(hardwareMap);
         intakeJawServo = new IntakeJawServo(hardwareMap);
+        armPivot = new ArmPivot(hardwareMap);
 
         //pixelLift = new PixelLift(hardwareMap);
 
@@ -225,7 +228,7 @@ public abstract class AutoMaster extends OpMode {
 
         pixelLift.InitPixelLiftPIDController();
 */
-
+        armPivot.InitArmPivotPIDController();
         // distance sensors
         /*
         frontPixelReceiver = hardwareMap.get(DigitalChannel.class, "frontPixelReceiver");
@@ -395,9 +398,9 @@ public abstract class AutoMaster extends OpMode {
 
         telemetry.addData("Position Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
-        worldXPosition = drive.pose.position.x;
-        worldYPosition = drive.pose.position.y;
-        worldAngle_rad = drive.pose.heading.toDouble();
+        //worldXPosition = drive.pose.position.x;
+        //worldYPosition = drive.pose.position.y;
+        //worldAngle_rad = drive.pose.heading.toDouble();
 
         // DO NOT CHANGE THIS LINE
         //SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
@@ -415,13 +418,13 @@ public abstract class AutoMaster extends OpMode {
         stateStartingY = worldYPosition;
         stateStartingAngle_rad = worldAngle_rad;
         stateStartTime = SystemClock.uptimeMillis();
-        Movement.initCurve();
+        //Movement.initCurve();
         stageFinished = false;
     }
 
     private void mainAutoLoop() {
         if (inDebugState) {
-            drive.stopAllMovementDirectionBased();
+           // drive.stopAllMovementDirectionBased();
             // ControlMovement(); CHANGE THIS
 
             telemetry.addLine("in debug state");

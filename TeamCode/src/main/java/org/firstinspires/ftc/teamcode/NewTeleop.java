@@ -33,8 +33,12 @@ import static org.firstinspires.ftc.teamcode.MovementVars.movement_turn;
 import static org.firstinspires.ftc.teamcode.MovementVars.movement_x;
 import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 
+import android.os.SystemClock;
+
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +47,7 @@ import java.util.HashMap;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 //@TeleOp(name = "NewTeleop", group = "Mechbot")
+@Disabled
 public class   NewTeleop extends AutoMaster {
 
     boolean justDidAReapproach = false;
@@ -57,9 +62,9 @@ public class   NewTeleop extends AutoMaster {
     public void init() {
         super.init();      //Ask Miles what this is?
 
-        drive = new MecanumDrive(hardwareMap, new Pose2d(17.75 / 2, 23.75, Math.PI));  // this initilizes the Odo?
+        //drive = new MecanumDrive(hardwareMap, new Pose2d(17.75 / 2, 23.75, Math.PI));  // this initilizes the Odo?
 
-        fourBars.setFourBarPosition(0.0);
+       //fourBars.setFourBarPosition(0.0);
 
         wrist.intakeTwist.setPosition(0); // init Twist
         wrist.intakeTilt.setPosition(0); // init Tilt
@@ -88,7 +93,9 @@ public class   NewTeleop extends AutoMaster {
 
 
         //fourBars.setFourBarPosition(0.4);
-        pixelLift.pControllerPixelLift.setSetPoint(600);
+        //pixelLift.pControllerPixelLift.setSetPoint(600);
+        armPivot.pControllerArmPivotLeft.setSetPoint(300);
+        armPivot.pControllerArmPivotRight.setSetPoint(300);
         //startTime = System.currentTimeMillis();
     }
 
@@ -282,7 +289,7 @@ public class   NewTeleop extends AutoMaster {
             movement_turn = -gamepad1.right_stick_x;
         }
 
-        drive.applyMovementDirectionBased(); //this applys movement useing the mecanumDrive class
+        //drive.applyMovementDirectionBased(); //this applys movement useing the mecanumDrive class
 
 
 
@@ -318,7 +325,7 @@ public class   NewTeleop extends AutoMaster {
         }
 
         // lift stuff for second controller
- /*
+
         if (ButtonPress.isGamepad2_b_pressed()) {
             height += 1;
         } else if (ButtonPress.isGamepad2_a_pressed()) {
@@ -328,11 +335,12 @@ public class   NewTeleop extends AutoMaster {
         height = Range.clip(height, 1, 10);
 
         if (ButtonPress.isGamepad2_right_bumper_pressed()) {   // this is for pixel Lift placement height
-            //pixelLift.pControllerPixelLift.setSetPoint(700 + height * 300);   // how is this intitated? I only see it in Auto master?
+              armPivot.pControllerArmPivotRight.setSetPoint(700 + height * 300);
+            armPivot.pControllerArmPivotLeft.setSetPoint(700 + height * 300); // how is this intitated? I only see it in Auto master?
             //fourBars.setFourBarPosition(0);
-            intake.vexIntake.setPower(0);
-            liftPrepDeliveryAutomation = true;
-            liftPrepDeliveryAutomationStarTime = SystemClock.uptimeMillis(); // captures run time and sets to start time variable
+            //intake.vexIntake.setPower(0);
+//            liftPrepDeliveryAutomation = true;
+//            liftPrepDeliveryAutomationStarTime = SystemClock.uptimeMillis(); // captures run time and sets to start time variable
 
         } else if (ButtonPress.isGamepad2_left_bumper_pressed()) {  // this is for pixel lift home state. gets twister to safe position
             //pixelTwister.setPixelTwisterPosition(.49);
@@ -341,13 +349,13 @@ public class   NewTeleop extends AutoMaster {
             //setFourBarCenterAutomationStarTime = SystemClock.uptimeMillis();
         }
 
-        if (liftPrepDeliveryAutomation) {  // this gives time for twister to get safe, and pixel lift is in safe elevation then sets 4 bar rotator to placement position
-            if (SystemClock.uptimeMillis() - liftPrepDeliveryAutomationStarTime > 250 && liftPosition > 400) {
-                //fourBarRotator.setFourBarRotatorPosition(.45); //was .45 !!!!!!!!!!!!!!!!!!!!!!!!!! change requested by drive team on 04/04/24
-                //liftPrepDeliveryAutomation = false;
-            }
-        }
-        */
+//        if (liftPrepDeliveryAutomation) {  // this gives time for twister to get safe, and pixel lift is in safe elevation then sets 4 bar rotator to placement position
+//            if (SystemClock.uptimeMillis() - liftPrepDeliveryAutomationStarTime > 250 && liftPosition > 400) {
+//                //fourBarRotator.setFourBarRotatorPosition(.45); //was .45 !!!!!!!!!!!!!!!!!!!!!!!!!! change requested by drive team on 04/04/24
+//                //liftPrepDeliveryAutomation = false;
+//            }
+//        }
+
 
 // this is for pixel ready (home) position for grab.. can't grab if lift isnt down...
 //
@@ -432,23 +440,26 @@ public class   NewTeleop extends AutoMaster {
             setFourBarCenterAutomation = false;
         }
  */
-/*
-        if (Math.abs(gamepad2.right_stick_y) < 0.01 && !setFourBarCenterAutomation) {  //for pixel lift control
-            //if (pixelLift.pixelLiftPosition)
-            //pixelLift.updateLiftPosition();
-            // TODO: IS THIS OKAY?
-            pixelLift.updateLiftPosition(); // only update if controller is ).01
-        } else if (!setFourBarCenterAutomation) {
-            pixelLift.pControllerPixelLift.setSetPoint(liftPosition);  // holds lift at last position using p controller
-            pixelLift.pixelLift.setPower(-gamepad2.right_stick_y); // sets power of the lift equal to the stick value.
-        }
+//
+//        if (Math.abs(gamepad2.right_stick_y) < 0.01) {  //for pixel lift control
+//            if (pixelLift.pixelLiftPosition)
+//            {
+//                pixelLift.updateLiftPosition();
+//            }
+//
+//            // TODO: IS THIS OKAY?
+//            pixelLift.updateLiftPosition(); // only update if controller is ).01
+//        } else if (!setFourBarCenterAutomation) {
+//            pixelLift.pControllerPixelLift.setSetPoint(liftPosition);  // holds lift at last position using p controller
+//            pixelLift.pixelLift.setPower(-gamepad2.right_stick_y); // sets power of the lift equal to the stick value.
+//        }
+//
+//        if (ButtonPress.isGamepad1_x_pressed() && liftPosition > 300) {  // game pad 1 for dropping
+//            dropPixelAutomation = true; // toggles to the pixel drop automatin 1 and 2 at the same time
+//            dropPixelAutomation2 = true;
+//            dropPixelAutomationStarTime = SystemClock.uptimeMillis();
+//        }
 
-        if (ButtonPress.isGamepad1_x_pressed() && liftPosition > 300) {  // game pad 1 for dropping
-            dropPixelAutomation = true; // toggles to the pixel drop automatin 1 and 2 at the same time
-            dropPixelAutomation2 = true;
-            dropPixelAutomationStarTime = SystemClock.uptimeMillis();
-        }
-        */
 /*
         if (ButtonPress.isGamepad1_a_pressed()) {
             double minDistance = Double.POSITIVE_INFINITY; // start his off crazy high

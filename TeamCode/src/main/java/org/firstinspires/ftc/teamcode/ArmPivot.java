@@ -16,11 +16,13 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public int armPivotRightPosition = 0;
     private double armPivotLeftMaxTicks = 2370;
     private double armPivotRightMaxTicks = 2370;
+    private double armPivotLeftMinTicks = 0;
+    private double armPivotRightMinTicks = 0;
     // for lift pController input
-    public final double minPowerArmPivotLeft = .001;
-    public final double minPowerArmPivotRight = .001;
-    public final double maxPowerArmPivotLeft = 0.98;
-    public final double maxPowerArmPivotRight = 0.98;
+    private final double minPowerArmPivotLeft = .001;
+    private final double minPowerArmPivotRight = .001;
+    private final double maxPowerArmPivotLeft = 0.98;
+    private final double maxPowerArmPivotRight = 0.98;
     private double armPivotLeftActionPosition;
     private double armPivotRightActionPosition;
 
@@ -36,9 +38,9 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
-        //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
-        //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
+
+
 
 
 
@@ -46,7 +48,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotRight.setDirection(DcMotor.Direction.REVERSE);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotRight.setPower(0);
-        armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
@@ -62,11 +64,14 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         pControllerArmPivotRight.setSetPoint(0);
         pControllerArmPivotRight.setOutputRange(minPowerArmPivotRight, maxPowerArmPivotRight);
         pControllerArmPivotRight.setThresholdValue(5);
-        //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+
         // this is for lift left, change Kp to calibrate
     }
 
     public void updateLiftPosition() {
+        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
         armPivotLeftPosition=armPivotLeft.getCurrentPosition();
 
         if (armPivotLeftPosition < pControllerArmPivotLeft.setPoint) {
@@ -74,10 +79,10 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
             armPivotLeft.setPower(minPowerArmPivotLeft +
                     pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
         } else {
-            armPivotLeft.setPower(minPowerArmPivotLeft -
+            armPivotLeft.setPower(maxPowerArmPivotLeft -
                     pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
         }
-        armPivotRightPosition=armPivotRight.getCurrentPosition();
+
 
         if (armPivotRightPosition < pControllerArmPivotRight.setPoint) {
 

@@ -36,6 +36,7 @@ import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 //import org.firstinspires.ftc.vision.VisionPortal;
@@ -47,7 +48,7 @@ public class TestTeleop extends AutoMaster {
 
     boolean justDidAReapproach = false;
 
-    Servo pixelHolder;
+   // Servo pixelHolder;
 
     private int height = 1;
     double robotLiftMaxTicks = 10573;
@@ -84,6 +85,9 @@ public class TestTeleop extends AutoMaster {
 
         wrist.intakeTwist.setPosition(0);
         wrist.intakeTilt.setPosition(.5);
+
+        armPivot.pControllerArmPivotLeft.setSetPoint(300);
+        armPivot.pControllerArmPivotRight.setSetPoint(300);
 
 
         //startTime = System.currentTimeMillis();
@@ -133,7 +137,7 @@ public class TestTeleop extends AutoMaster {
 
     private boolean lockHeading = false;
 
-    private Pose2d targetPose = new Pose2d(0, 0, 0);
+    //private Pose2d targetPose = new Pose2d(0, 0, 0);
 
     private ArrayList<Double> distances = new ArrayList<>();
 
@@ -201,7 +205,11 @@ public class TestTeleop extends AutoMaster {
     public void mainLoop() {
         ///telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
 
-        double armPivotPosition = armPivot.pixelLift.getCurrentPosition();
+        //double armPivotPosition = armPivot.pixelLift.getCurrentPosition();
+
+        double pivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();
+        double pivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
+
 
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
@@ -217,7 +225,7 @@ public class TestTeleop extends AutoMaster {
             movement_turn = -gamepad1.right_stick_x;
         }
 
-        drive.applyMovementDirectionBased(); //this applys movement useing the mecanumDrive class
+        //drive.applyMovementDirectionBased(); //this applys movement useing the mecanumDrive class
 
 
             // intake stuff
@@ -246,6 +254,30 @@ public class TestTeleop extends AutoMaster {
                     outtakeOn = true;
                 }
             }
+
+        if (ButtonPress.isGamepad2_b_pressed()) {
+            height += 1;
+        } else if (ButtonPress.isGamepad2_a_pressed()) {
+            height -= 1;
+        }
+
+        height = Range.clip(height, 1, 10);
+
+        if (ButtonPress.isGamepad2_right_bumper_pressed()) {   // this is for pixel Lift placement height
+            armPivot.pControllerArmPivotRight.setSetPoint(700 + height * 300);
+            armPivot.pControllerArmPivotLeft.setSetPoint(700 + height * 300); // how is this intitated? I only see it in Auto master?
+        }
+        armPivot.updateLiftPosition();
+//        if (Math.abs(gamepad2.right_stick_y) < 0.01) {  //for pixel lift control
+//               // TODO: IS THIS OKAY?
+//            armPivot.updateLiftPosition(); // only update if controller is ).01
+//        }
+
+
+
+        telemetry.addData("pcontroller left:", armPivot.pControllerArmPivotLeft.setPoint);
+        telemetry.addData("pcontroller right:", armPivot.pControllerArmPivotRight.setPoint);
+
     }
 }
 
