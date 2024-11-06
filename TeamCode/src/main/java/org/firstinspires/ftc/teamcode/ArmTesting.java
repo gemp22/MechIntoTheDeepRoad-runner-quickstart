@@ -60,7 +60,7 @@ public class ArmTesting extends OpMode
     ArmPivot armPivot;
     double armSetPointLeft = 0;
     double armSetPointRight = 0;
-    double armPivotLeftPosition = 0;
+    int armPivotLeftPosition = 0;
     int armPivotRightPosition = 0;
     int pivotMaxTicks = 2370;
     int stage = 0;
@@ -112,8 +112,8 @@ public class ArmTesting extends OpMode
     @Override
     public void loop() {
 
-        armPivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();
-        armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
+        //armPivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();  I don't think we need this if using the "update arm pivot method in th ArmPivot Class
+        //armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
         //manual pivot controller
         if (gamepad1.left_bumper && armPivotLeftPosition < pivotMaxTicks) {   ///move lift up and sets controller position
 
@@ -126,14 +126,16 @@ public class ArmTesting extends OpMode
             armPivot.pControllerArmPivotLeft.setSetPoint(armPivotLeftPosition);
 
         } else {                                       //uses proportional controller to hold lift in correct spot
-            if (armPivotLeftPosition < armPivot.pControllerArmPivotLeft.setPoint) {
+                armPivot.updateLiftPosition();   // I think this is the same thing as the conditions below
 
-                armPivot.armPivotLeft.setPower(armPivot.minPowerArmPivotLeft +
-                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
-            } else {
-                armPivot.armPivotLeft.setPower(armPivot.minPowerArmPivotLeft -
-                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
-            }
+//            if (armPivotLeftPosition < armPivot.pControllerArmPivotLeft.setPoint) {
+//
+//                armPivot.armPivotLeft.setPower(armPivot.minPowerArmPivotLeft +
+//                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
+//            } else {
+//                armPivot.armPivotLeft.setPower(armPivot.minPowerArmPivotLeft -
+//                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
+//            }
         }
 //        armPivot.pControllerArmPivotRight.setSetPoint(armSetPointRight);
 //        armPivot.pControllerArmPivotLeft.setSetPoint(armSetPointLeft);
@@ -141,8 +143,8 @@ public class ArmTesting extends OpMode
 //        armPivot.updateLiftPosition();
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("armSetPointleft", armPivotLeftPosition);
-        telemetry.addData("aspr", armPivotRightPosition);
+        telemetry.addData("arm SetPoint Left", armPivotLeftPosition);
+        telemetry.addData("arm SetPoint Right", armPivotRightPosition);
         telemetry.addData("Left Motor", armPivot.armPivotLeft.getCurrentPosition());
         telemetry.addData("Right Motor", armPivot.armPivotRight.getCurrentPosition());
         telemetry.addData("Right Motor pwr", armPivot.armPivotRight.getPower());
