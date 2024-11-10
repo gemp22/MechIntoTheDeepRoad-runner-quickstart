@@ -88,7 +88,7 @@ public class   NewTeleop extends AutoMaster {
 
 
         //fourBars.setFourBarPosition(0.4);
-        pixelLift.pControllerPixelLift.setSetPoint(600);
+        //pixelLift.pControllerPixelLift.setSetPoint(600);
         //startTime = System.currentTimeMillis();
     }
 

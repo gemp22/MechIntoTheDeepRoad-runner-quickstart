@@ -28,8 +28,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     //private double pixelLiftPosition; // variable for regular use like on init.. humm may not need since its defined in the method?
     private boolean exitArmPivotLeftPControllerLoop = false;
     private boolean exitArmPivotRightPControllerLoop = false;
-    public PController pControllerArmPivotLeft = new PController(0.002);
-    public PController pControllerArmPivotRight = new PController(0.002);
+    public PController pControllerArmPivotLeft = new PController(0.005);
+    public PController pControllerArmPivotRight = new PController(0.005);
 
     public ArmPivot(HardwareMap hardwareMap) {
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
@@ -70,6 +70,17 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         // this is for lift left, change Kp to calibrate
     }
 
+    public void setArmPivotPosition() {
+        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
+        armPivotRightPosition=armPivotRight.getCurrentPosition();
+
+    }
+    public void setArmPivotPower(double armPivotPower) {
+        armPivotLeft.setPower(armPivotPower);
+        armPivotRight.setPower(armPivotPower);
+
+    }
+
     public void updateLiftPosition() {
         armPivotLeftPosition=armPivotLeft.getCurrentPosition();
         armPivotRightPosition=armPivotRight.getCurrentPosition();
@@ -82,7 +93,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
             armPivotLeft.setPower(minPowerArmPivotLeft -
                     pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
         }
-        armPivotRightPosition=armPivotRight.getCurrentPosition();
+
 
         if (armPivotRightPosition < pControllerArmPivotRight.setPoint) {
 

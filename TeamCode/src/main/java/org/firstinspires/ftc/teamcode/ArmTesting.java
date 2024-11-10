@@ -50,7 +50,7 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="armtest", group="Iterative OpMode")
+@TeleOp(name="armTesting", group="Iterative OpMode")
 public class ArmTesting extends OpMode
 {
 
@@ -60,8 +60,8 @@ public class ArmTesting extends OpMode
     ArmPivot armPivot;
     double armSetPointLeft = 0;
     double armSetPointRight = 0;
-    int armPivotLeftPosition = 0;
-    int armPivotRightPosition = 0;
+    //int armPivotLeftPosition = 0;
+    //int armPivotRightPosition = 0;
     int pivotMaxTicks = 2370;
     int stage = 0;
 
@@ -115,17 +115,27 @@ public class ArmTesting extends OpMode
         //armPivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();  I don't think we need this if using the "update arm pivot method in th ArmPivot Class
         //armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
         //manual pivot controller
-        if (gamepad1.left_bumper && armPivotLeftPosition < pivotMaxTicks) {   ///move lift up and sets controller position
+        if (gamepad1.dpad_up) {   ///move lift up and sets controller position
 
-            armPivot.armPivotLeft.setPower(.5);
-            armPivot.pControllerArmPivotLeft.setSetPoint(armPivotLeftPosition);
+            //armPivot.armPivotLeft.setPower(.98);
+            //armPivot.armPivotRight.setPower(.98);
+            armPivot.setArmPivotPower(.98);
+            armPivot.setArmPivotPosition();
+            armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
+            armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
 
-        } else if (gamepad1.left_trigger > .5 && armPivotLeftPosition > 30) {  //move lift down and sets controller position
+        }
+        else if (gamepad1.dpad_down) {  //move lift down and sets controller position
 
-            armPivot.armPivotLeft.setPower(-.5);
-            armPivot.pControllerArmPivotLeft.setSetPoint(armPivotLeftPosition);
+            //armPivot.armPivotLeft.setPower(-.98);
+            //armPivot.armPivotRight.setPower(-.98);
+            armPivot.setArmPivotPower(-.98);
+            armPivot.setArmPivotPosition();
+            armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
+            armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
 
-        } else {                                       //uses proportional controller to hold lift in correct spot
+        }
+        else {                                       //uses proportional controller to hold lift in correct spot
                 armPivot.updateLiftPosition();   // I think this is the same thing as the conditions below
 
 //            if (armPivotLeftPosition < armPivot.pControllerArmPivotLeft.setPoint) {
@@ -137,18 +147,19 @@ public class ArmTesting extends OpMode
 //                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
 //            }
         }
+
 //        armPivot.pControllerArmPivotRight.setSetPoint(armSetPointRight);
 //        armPivot.pControllerArmPivotLeft.setSetPoint(armSetPointLeft);
 //
 //        armPivot.updateLiftPosition();
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("arm SetPoint Left", armPivotLeftPosition);
-        telemetry.addData("arm SetPoint Right", armPivotRightPosition);
+        telemetry.addData("arm SetPoint Left", armPivot.armPivotLeftPosition);
+        telemetry.addData("arm SetPoint Right", armPivot.armPivotRightPosition);
         telemetry.addData("Left Motor", armPivot.armPivotLeft.getCurrentPosition());
         telemetry.addData("Right Motor", armPivot.armPivotRight.getCurrentPosition());
         telemetry.addData("Right Motor pwr", armPivot.armPivotRight.getPower());
-        telemetry.addData("LEfr Motor pwr", armPivot.armPivotLeft.getPower());
+        telemetry.addData("Left Motor pwr", armPivot.armPivotLeft.getPower());
         telemetry.addData("stage", stage);
 
     }
