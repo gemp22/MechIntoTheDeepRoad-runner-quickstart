@@ -189,54 +189,17 @@ public abstract class AutoMaster extends OpMode {
         //fourBars = new FourBars(hardwareMap);
         intake = new Intake(hardwareMap);
         wrist = new Wrist(hardwareMap);
-        //fourBarRotator = new FourBarRotator(hardwareMap);
-        //pixelTwister = new PixelTwister(hardwareMap);
-        //droneAndRobotLiftRotator = new DroneAndRobotLiftRotator(hardwareMap);
-        //droneLauncher = new DroneLauncher(hardwareMap);
+
         intakeJawServo = new IntakeJawServo(hardwareMap);
 
-        //pixelLift = new PixelLift(hardwareMap);
-
-        //robotLift = hardwareMap.get(DcMotorEx.class, "robotLift");
-        //robotLift.setDirection(DcMotor.Direction.REVERSE);
-        //robotLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //robotLift.setPower(0);
-        // TODO: REMOVE THIS ASAP
-        //robotLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
-        //robotLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robotLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //pawright = hardwareMap.get(Servo.class, "pr"); from center stage
-        //pawright.setPosition(0.285);
+        armPivot = new ArmPivot(hardwareMap);
+        armPivot.InitArmPivotPIDController();
 
         wrist.setIntakeTwistPosition(0);
         wrist.setIntakeTiltPosition(0);
-        //pixelTwister.setPixelTwisterPosition(.48);
-        //fourBarRotator.setFourBarRotatorPosition(.82);
-        //fourBars.setFourBarPosition(1);
-        //droneAndRobotLiftRotator.setDroneAndRobotLiftRotatorPosition(.65);
-        //droneLauncher.setDroneLauncherPosition(.1);
 
-        /*
-        pControllerRobotLift.setInputRange(0, robotLiftMaxTicks);
-        pControllerRobotLift.setSetPoint(0);
-        pControllerRobotLift.setOutputRange(minPowerRobotLift, maxPowerRobotLift);
-        pControllerRobotLift.setThresholdValue(5);
 
-        pixelLift.InitPixelLiftPIDController();
-*/
 
-        // distance sensors
-        /*
-        frontPixelReceiver = hardwareMap.get(DigitalChannel.class, "frontPixelReceiver");
-        frontPixelReceiver.setMode(DigitalChannel.Mode.INPUT);
-
-        backPixelReceiver = hardwareMap.get(DigitalChannel.class, "backPixelReceiver");
-        backPixelReceiver.setMode(DigitalChannel.Mode.INPUT);
-
-        rightDistance = hardwareMap.get(AnalogInput.class, "distanceTest");
-        leftDistance = hardwareMap.get(AnalogInput.class, "distanceLeft");
-        */
     }
 
     public double mmToIn(double in) {
