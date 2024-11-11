@@ -254,7 +254,7 @@ public abstract class AutoMaster extends OpMode {
             return 0;
         }
     }
-
+    //ee
     @Override
     public void init_loop() {
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
