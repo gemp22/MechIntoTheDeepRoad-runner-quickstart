@@ -144,6 +144,7 @@ public final class MecanumDrive {
         private Rotation2d lastHeading;
         private boolean initialized;
 
+
         public DriveLocalizer() {
             leftFront = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftFront));
             leftBack = new OverflowEncoder(new RawEncoder(MecanumDrive.this.leftBack));
