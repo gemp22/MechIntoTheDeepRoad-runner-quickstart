@@ -33,7 +33,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     public ArmPivot(HardwareMap hardwareMap) {
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
-        armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
+        armPivotLeft.setDirection(DcMotor.Direction.REVERSE);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
@@ -45,7 +45,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
 
         armPivotRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
-        armPivotRight.setDirection(DcMotor.Direction.REVERSE);
+        armPivotRight.setDirection(DcMotor.Direction.FORWARD);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotRight.setPower(0);
         armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
