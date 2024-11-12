@@ -303,6 +303,7 @@ public class AutoRedTEST extends AutoMaster {
             }
         }
 */
+ /*
         if (programStage == progStates.driveToBackdrop.ordinal()) {
             if (stageFinished) {
                 //pixelLift.pControllerPixelLift.setSetPoint(100);
@@ -321,8 +322,7 @@ public class AutoRedTEST extends AutoMaster {
             ArrayList<CurvePoint> points = new ArrayList<>();
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
-
-
+1
 
             points.add(new CurvePoint(128.25, 25,
                     0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
@@ -344,7 +344,8 @@ public class AutoRedTEST extends AutoMaster {
             }
 
         }
-
+        */
+/*
         if (programStage == progStates.dropPixel.ordinal()) {
             if (stageFinished) {
                 cycle = cycle + 1;
@@ -368,6 +369,10 @@ public class AutoRedTEST extends AutoMaster {
             drive.applyMovementDirectionBased();
         }
 
+        */
+
+
+/*
         if (programStage == progStates.driveToPixels.ordinal()) {
             if (stageFinished) {
                 initializeStateVariables();
@@ -395,8 +400,6 @@ public class AutoRedTEST extends AutoMaster {
                     0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
-
-
             if (Movement.followCurve(points, Math.toRadians(90), 2)) {
                 drive.stopAllMovementDirectionBased();
 
@@ -405,6 +408,7 @@ public class AutoRedTEST extends AutoMaster {
 
             drive.applyMovementDirectionBased();
         }
+        */
 
         telemetry.addData("world x", worldXPosition);
         telemetry.addData("world y", worldYPosition);
