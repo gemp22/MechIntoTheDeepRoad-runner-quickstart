@@ -64,7 +64,7 @@ public class AutoRedTEST extends AutoMaster {
         super.init();
 
 
-        drive = new MecanumDrive(hardwareMap, new Pose2d(123 + (18.125 / 2), 23.625 + (16.25 / 2), 0));
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
 
 
@@ -99,7 +99,7 @@ public class AutoRedTEST extends AutoMaster {
 
         //pixelDropLocation = Vision.getCubeLocation();
 
-        drive.pose = new Pose2d(123 + (18.125 / 2), 23.625 + (16.25 / 2), 0);
+        drive.pose = new Pose2d(0, 0, 0);
 
 
     }
@@ -131,7 +131,7 @@ public class AutoRedTEST extends AutoMaster {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(120, stateStartingY,
+            points.add(new CurvePoint(150, stateStartingY,
                     0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
@@ -143,34 +143,34 @@ public class AutoRedTEST extends AutoMaster {
             }
         }
 
-        if (programStage == progStates.placePixel.ordinal()) {
-            if (stageFinished) {
-                initializeStateVariables();
-            }
-
-            ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
-                    0, 0, 0, 0, 0, 0));
-
-            points.add(new CurvePoint(120, 120,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-
-            //points.add(new CurvePoint(purpleDrop.get(pixelDropLocation).x, purpleDrop.get(pixelDropLocation).y,
-              //      0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
-                //    Math.toRadians(60), 0.6));
-
-            //Movement.movementResult r = Movement.pointAngle(Math.toRadians(purpleDropWantedHeadings.get(pixelDropLocation)), 1, Math.toRadians(30));
-
-            drive.applyMovementDirectionBased();
-
-            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
-                drive.stopAllMovementDirectionBased();
-                wrist.intakeTilt.setPosition(0.50);
-                nextStage();
-            }
-        }
+//        if (programStage == progStates.placePixel.ordinal()) {
+//            if (stageFinished) {
+//                initializeStateVariables();
+//            }
+//
+//            ArrayList<CurvePoint> points = new ArrayList<>();
+//            points.add(new CurvePoint(stateStartingX, stateStartingY,
+//                    0, 0, 0, 0, 0, 0));
+//
+//            points.add(new CurvePoint(120, 120,
+//                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
+//                    Math.toRadians(60), 0.6));
+//
+//
+//            //points.add(new CurvePoint(purpleDrop.get(pixelDropLocation).x, purpleDrop.get(pixelDropLocation).y,
+//              //      0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
+//                //    Math.toRadians(60), 0.6));
+//
+//            //Movement.movementResult r = Movement.pointAngle(Math.toRadians(purpleDropWantedHeadings.get(pixelDropLocation)), 1, Math.toRadians(30));
+//
+//            drive.applyMovementDirectionBased();
+//
+//            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
+//                drive.stopAllMovementDirectionBased();
+//                wrist.intakeTilt.setPosition(0.50);
+//                nextStage();
+//            }
+//        }
 
 /*
         if (programStage == progStates.driveToCentralizedPosition.ordinal()) {

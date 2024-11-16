@@ -20,7 +20,7 @@ public abstract class AutoMaster extends OpMode {
     MecanumDrive drive = null;
     //PixelLift pixelLift = null;
 
-    ArmPivot armPivot = null;
+   // ArmPivot armPivot = null;
     public DcMotorEx robotLift = null;
 
     FourBars fourBars = null;
@@ -191,9 +191,9 @@ public abstract class AutoMaster extends OpMode {
         wrist = new Wrist(hardwareMap);
 
         intakeJawServo = new IntakeJawServo(hardwareMap);
-
-        armPivot = new ArmPivot(hardwareMap);
-        armPivot.InitArmPivotPIDController();
+//TODO: UNCOMMENT THESE - was testing w/o expa
+        //armPivot = new ArmPivot(hardwareMap);
+        //armPivot.InitArmPivotPIDController();
 
         wrist.setIntakeTwistPosition(0);
         wrist.setIntakeTiltPosition(0);
