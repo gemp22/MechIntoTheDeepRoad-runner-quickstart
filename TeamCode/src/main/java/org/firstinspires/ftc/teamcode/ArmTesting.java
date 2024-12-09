@@ -115,7 +115,7 @@ public class ArmTesting extends OpMode
         //armPivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();  I don't think we need this if using the "update arm pivot method in th ArmPivot Class
         //armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
         //manual pivot controller
-        if (gamepad1.dpad_up) {   ///move lift up and sets controller position
+        if (gamepad1.dpad_down) {   ///move lift up and sets controller position
 
             //armPivot.armPivotLeft.setPower(.98);
             //armPivot.armPivotRight.setPower(.98);
@@ -125,7 +125,7 @@ public class ArmTesting extends OpMode
             armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
 
         }
-        else if (gamepad1.dpad_down) {  //move lift down and sets controller position
+        else if (gamepad1.dpad_up) {  //move lift down and sets controller position
 
             //armPivot.armPivotLeft.setPower(-.98);
             //armPivot.armPivotRight.setPower(-.98);

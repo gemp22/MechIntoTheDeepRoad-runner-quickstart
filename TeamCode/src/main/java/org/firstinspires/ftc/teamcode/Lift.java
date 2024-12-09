@@ -6,86 +6,85 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class ArmPivot {  //this is a subsystem Class used in Auto. its based on example for RR actions.
-    public DcMotorEx armPivotLeft;
-    public DcMotorEx armPivotRight;
-    public int armPivotLeftPosition = 0;
-    public int armPivotRightPosition = 0;
-    private double armPivotLeftMaxTicks = 2370;
-    private double armPivotRightMaxTicks = 2370;
+public class Lift {  //this is a subsystem Class used in Auto. its based on example for RR actions.
+    public DcMotorEx liftLeft;
+    public DcMotorEx liftRight;
+    public int liftLeftPosition = 0;
+    public int liftRightPosition = 0;
+    private double liftLeftMaxTicks = 2370;
+    private double liftRightMaxTicks = 2370;
     // for lift pController input
-    public final double minPowerArmPivotLeft = .001;
-    public final double minPowerArmPivotRight = .001;
-    public final double maxPowerArmPivotLeft = 0.99;
-    public final double maxPowerArmPivotRight = 0.99;
-    private double armPivotLeftActionPosition;
-    private double armPivotRightActionPosition;
+    public final double minPowerLiftLeft = .001;
+    public final double minPowerLiftRight = .001;
+    public final double maxPowerLiftLeft = 0.99;
+    public final double maxPowerLiftRight = 0.99;
+    private double liftLeftActionPosition;
+    private double liftRightActionPosition;
 
     // variable for RR1.0 actions
     //private double pixelLiftPosition; // variable for regular use like on init.. humm may not need since its defined in the method?
-    private boolean exitArmPivotLeftPControllerLoop = false;
-    private boolean exitArmPivotRightPControllerLoop = false;
-    public PController pControllerArmPivotLeft = new PController(0.005);
-    public PController pControllerArmPivotRight = new PController(0.005);
+    private boolean exitLiftLeftPControllerLoop = false;
+    private boolean exitLiftRightPControllerLoop = false;
+    public PController pControllerLiftLeft = new PController(0.005);
+    public PController pControllerLiftRight = new PController(0.005);
 
-    public ArmPivot(HardwareMap hardwareMap) {
-        armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
-        armPivotLeft.setDirection(DcMotor.Direction.REVERSE);
-        armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armPivotLeft.setPower(0);
+    public Lift(HardwareMap hardwareMap) {
+        liftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
+        liftLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeft.setPower(0);
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
         //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
-        armPivotRight = hardwareMap.get(DcMotorEx.class, "rightPivot");
-        armPivotRight.setDirection(DcMotor.Direction.FORWARD);
-        armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armPivotRight.setPower(0);
-        armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
+        liftRight.setDirection(DcMotor.Direction.FORWARD);
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setPower(0);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
     }
     public void InitArmPivotPIDController(){
 
-        pControllerArmPivotLeft.setInputRange(0, armPivotLeftMaxTicks);
-        pControllerArmPivotLeft.setSetPoint(0);
-        pControllerArmPivotLeft.setOutputRange(minPowerArmPivotLeft, maxPowerArmPivotLeft);
-        pControllerArmPivotLeft.setThresholdValue(5);
+        pControllerLiftLeft.setInputRange(0, liftLeftMaxTicks);
+        pControllerLiftLeft.setSetPoint(0);
+        pControllerLiftLeft.setOutputRange(minPowerLiftLeft, maxPowerLiftLeft);
+        pControllerLiftLeft.setThresholdValue(5);
 
 
-        pControllerArmPivotRight.setInputRange(0, armPivotRightMaxTicks);
-        pControllerArmPivotRight.setSetPoint(0);
-        pControllerArmPivotRight.setOutputRange(minPowerArmPivotRight, maxPowerArmPivotRight);
-        pControllerArmPivotRight.setThresholdValue(5);
+        pControllerLiftRight.setInputRange(0, liftRightMaxTicks);
+        pControllerLiftRight.setSetPoint(0);
+        pControllerLiftRight.setOutputRange(minPowerLiftRight, maxPowerLiftRight);
+        pControllerLiftRight.setThresholdValue(5);
         //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // this is for lift left, change Kp to calibrate
     }
 
     public void setArmPivotPosition() {
-        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
-        armPivotRightPosition=armPivotRight.getCurrentPosition();
+        liftLeftPosition=liftLeft.getCurrentPosition();
+        liftRightPosition=liftRight.getCurrentPosition();
 
     }
     public void setArmPivotPower(double armPivotPower) {
-        armPivotLeft.setPower(armPivotPower);
-        armPivotRight.setPower(armPivotPower);
+        liftLeft.setPower(armPivotPower);
+        liftRight.setPower(armPivotPower);
 
     }
 
     public void updateLiftPosition() {
-        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
-        armPivotRightPosition=armPivotRight.getCurrentPosition();
+        liftLeftPosition=liftLeft.getCurrentPosition();
+        liftRightPosition=liftRight.getCurrentPosition();
 
-        if (armPivotLeftPosition < pControllerArmPivotLeft.setPoint) {
+        if (liftLeftPosition < pControllerLiftLeft.setPoint) {
 
             armPivotLeft.setPower(minPowerArmPivotLeft +
                     pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
