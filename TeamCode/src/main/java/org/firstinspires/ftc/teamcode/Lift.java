@@ -53,7 +53,7 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
 
 
     }
-    public void InitArmPivotPIDController(){
+    public void initLiftPIDController(){
 
         pControllerLiftLeft.setInputRange(0, liftLeftMaxTicks);
         pControllerLiftLeft.setSetPoint(0);
@@ -69,14 +69,14 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         // this is for lift left, change Kp to calibrate
     }
 
-    public void setArmPivotPosition() {
+    public void setLiftPosition() {
         liftLeftPosition=liftLeft.getCurrentPosition();
         liftRightPosition=liftRight.getCurrentPosition();
 
     }
-    public void setArmPivotPower(double armPivotPower) {
-        liftLeft.setPower(armPivotPower);
-        liftRight.setPower(armPivotPower);
+    public void setLiftPower(double liftPower) {
+        liftLeft.setPower(liftPower);
+        liftRight.setPower(liftPower);
 
     }
 
@@ -86,116 +86,116 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
 
         if (liftLeftPosition < pControllerLiftLeft.setPoint) {
 
-            armPivotLeft.setPower(minPowerArmPivotLeft +
-                    pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
+            liftLeft.setPower(minPowerLiftLeft +
+                    pControllerLiftLeft.getComputedOutput(liftLeftPosition));
         } else {
-            armPivotLeft.setPower(minPowerArmPivotLeft -
-                    pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
+            liftLeft.setPower(minPowerLiftLeft -
+                    pControllerLiftLeft.getComputedOutput(liftLeftPosition));
         }
 
 
-        if (armPivotRightPosition < pControllerArmPivotRight.setPoint) {
+        if (liftRightPosition < pControllerLiftRight.setPoint) {
 
-            armPivotRight.setPower(minPowerArmPivotRight +
-                    pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
+            liftRight.setPower(minPowerLiftRight +
+                    pControllerLiftRight.getComputedOutput(liftRightPosition));
         } else {
-            armPivotRight.setPower(minPowerArmPivotRight -
-                    pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
+            liftRight.setPower(minPowerLiftRight -
+                    pControllerLiftRight.getComputedOutput(liftRightPosition));
         }
     }
 
 
-    /////////////////////////   PixelLift   /////////////////////////////////////
-    public class ArmPivotElevationMaintainer implements Action {
+    /////////////////////////   Lift   /////////////////////////////////////
+    public class LiftElevationMaintainer implements Action {
 
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
 
 
-                armPivotLeftPosition=armPivotLeft.getCurrentPosition();
+                liftLeftPosition=liftLeft.getCurrentPosition();
 
-                if (armPivotLeftPosition < pControllerArmPivotLeft.setPoint) {
+                if (liftLeftPosition < pControllerLiftLeft.setPoint) {
 
-                    armPivotLeft.setPower(minPowerArmPivotLeft +
-                            pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
+                    liftLeft.setPower(minPowerLiftLeft +
+                            pControllerLiftLeft.getComputedOutput(liftLeftPosition));
                 } else {
-                    armPivotLeft.setPower(minPowerArmPivotLeft -
-                            pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
+                    liftLeft.setPower(minPowerLiftLeft -
+                            pControllerLiftLeft.getComputedOutput(liftLeftPosition));
                 }
 
-            if (armPivotRightPosition < pControllerArmPivotRight.setPoint) {
+            if (liftRightPosition < pControllerLiftRight.setPoint) {
 
-                armPivotRight.setPower(minPowerArmPivotRight +
-                        pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
+                liftRight.setPower(minPowerLiftRight +
+                        pControllerLiftRight.getComputedOutput(liftRightPosition));
             } else {
-                armPivotRight.setPower(minPowerArmPivotRight -
-                        pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
+                liftRight.setPower(minPowerLiftRight -
+                        pControllerLiftRight.getComputedOutput(liftRightPosition));
             }
             return true;
 
         }
     }
-    public Action armPivotElevationMaintainer() {  // this method is for use in RR trajectories
-        return new ArmPivotElevationMaintainer();
+    public Action LiftElevationMaintainer() {  // this method is for use in RR trajectories
+        return new LiftElevationMaintainer();
     }
 
-    public Action setArmPivotPosition(int pixelLiftActionSetPosition) {  // this method is for use in RR trajectories
-        armPivotLeftActionPosition = pixelLiftActionSetPosition;
-        armPivotRightActionPosition = pixelLiftActionSetPosition;
-        return new ArmPivotActionSet();
+    public Action SetLiftPosition(int liftSetPosition) {  // this method is for use in RR trajectories
+        liftLeftActionPosition = liftSetPosition;
+        liftRightPosition = liftSetPosition;
+        return new LiftActionSet();
     }
 
-    public class ArmPivotActionSet implements Action {
+    public class LiftActionSet implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
 
-            pControllerArmPivotLeft.setSetPoint(armPivotLeftActionPosition);
-            pControllerArmPivotRight.setSetPoint(armPivotRightActionPosition);
+            pControllerLiftLeft.setSetPoint(liftLeftActionPosition);
+            pControllerLiftRight.setSetPoint(liftRightActionPosition);
             return false;
 
         }
     }
-    public class ArmPivotActionHome implements Action {
+    public class LiftActionHome implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
 
-            pControllerArmPivotLeft.setSetPoint(0);
-            pControllerArmPivotRight.setSetPoint(0);
+            pControllerLiftLeft.setSetPoint(0);
+            pControllerLiftRight.setSetPoint(0);
             return false;
 
         }
     }
-    public Action setArmPivotActionHome() {  // this method is for use in RR trajectories
+    public Action setLiftActionHome() {  // this method is for use in RR trajectories
 
-        return new ArmPivotActionHome();
+        return new LiftActionHome();
     }
-        public class ArmPivotActionLow implements Action {
+        public class LiftActionLow implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
 
-                pControllerArmPivotLeft.setSetPoint(600);
-                pControllerArmPivotRight.setSetPoint(600);
+                pControllerLiftLeft.setSetPoint(600);
+                pControllerLiftRight.setSetPoint(600);
                 return false;
 
             }
     }
-    public Action setArmPivotActionLow() {  // this method is for use in RR trajectories
+    public Action setLiftActionLow() {  // this method is for use in RR trajectories
 
-        return new ArmPivotActionLow();
+        return new LiftActionLow();
     }
-    public class ArmPivotActionHigh implements Action {
+    public class LiftActionHigh implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
 
-            pControllerArmPivotLeft.setSetPoint(700);
-            pControllerArmPivotRight.setSetPoint(700);
+            pControllerLiftLeft.setSetPoint(700);
+            pControllerLiftRight.setSetPoint(700);
             return false;
 
         }
     }
-    public Action setArmPivotActionHigh() {  // this method is for use in RR trajectories
+    public Action setLiftActionHigh() {  // this method is for use in RR trajectories
 
-        return new ArmPivotActionHigh();
+        return new LiftActionHigh();
     }
 
 
