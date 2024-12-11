@@ -104,6 +104,15 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         }
     }
 
+    public void setLiftVelocityFromPivotVelocity(double pivotVelocity)
+    {
+        double velocity = pivotVelocity / 5.0611;
+
+        liftRight.setVelocity(velocity);
+        liftLeft.setVelocity(velocity);
+    }
+
+
 
     /////////////////////////   Lift   /////////////////////////////////////
     public class LiftElevationMaintainer implements Action {

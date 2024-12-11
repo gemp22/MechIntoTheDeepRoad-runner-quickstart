@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ArmPivot {  //this is a subsystem Class used in Auto. its based on example for RR actions.
@@ -81,7 +80,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     }
 
-    public void updateLiftPosition() {
+    public void updateArmPivotPosition() {
         armPivotLeftPosition=armPivotLeft.getCurrentPosition();
         armPivotRightPosition=armPivotRight.getCurrentPosition();
 
@@ -104,6 +103,12 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
                     pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
         }
     }
+    public void setArmPivotVelocity(double velocity)
+    {
+        armPivotLeft.setVelocity(velocity);
+        armPivotRight.setVelocity(velocity);
+    }
+
 
 
     /////////////////////////   PixelLift   /////////////////////////////////////
