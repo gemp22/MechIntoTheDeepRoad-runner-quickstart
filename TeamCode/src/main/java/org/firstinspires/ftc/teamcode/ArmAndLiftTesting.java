@@ -62,7 +62,7 @@ public class ArmAndLiftTesting extends OpMode
     //int armPivotRightPosition = 0;
     int pivotMaxTicks = 2370;
     int stage = 0;
-    int velocity = 1000;
+    int velocity = 0;
     int x;
 
 
@@ -117,46 +117,47 @@ public class ArmAndLiftTesting extends OpMode
         //armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
         //manual pivot controller
 
-        if(armPivot.armPivotRightPosition >= 748 || armPivot.armPivotLeftPosition >= 748)
-        {
-            //linear interpolation variables
-            int y1 = 3087;
-            int y2 = 0;
-            int x1 = 748;
-            int x2 = 935;
-            //current arm position as one variable
-            x = (armPivot.armPivotLeftPosition + armPivot.armPivotRightPosition) / 2;
 
-            //linear interpolation formula - will linearly ramp power down as we approach max pivot angle
-            velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
-        }
 
-        else if(armPivot.armPivotRightPosition >= 935 || armPivot.armPivotLeftPosition >= 935)
-        {
-            armPivot.setArmPivotVelocity(0);
-            armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
-            armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
-        }
 
-        if (gamepad1.dpad_down) {   ///move lift up and sets controller position
 
-            //armPivot.armPivotLeft.setPower(.98);
-            //armPivot.armPivotRight.setPower(.98);
+        if (gamepad1.dpad_down && armPivot.armPivotRightPosition >0 && armPivot.armPivotLeftPosition >0) {   ///move arm down up and sets controller position
 
-            armPivot.setArmPivotVelocity(-velocity);
-            lift.setLiftVelocityFromPivotVelocity(-velocity);
-            armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
-            armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
-            lift.pControllerLiftLeft.setSetPoint(lift.liftLeftPosition);
-            lift.pControllerLiftRight.setSetPoint(lift.liftRightPosition);
+                velocity = -1000;
+                armPivot.setArmPivotVelocity(velocity);
+                armPivot.setArmPivotPosition();
+                lift.setLiftVelocityFromPivotVelocity(velocity);
+                lift.setLiftPosition();
+                armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
+                armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
+                lift.pControllerLiftLeft.setSetPoint(lift.liftLeftPosition);
+                lift.pControllerLiftRight.setSetPoint(lift.liftRightPosition);
 
         }
-        else if (gamepad1.dpad_up) {  //move lift down and sets controller position
+        else if (gamepad1.dpad_up && armPivot.armPivotRightPosition <950 && armPivot.armPivotLeftPosition <950) {  //move arm up and sets controller position
 
-            //armPivot.armPivotLeft.setPower(-.98);
-            //armPivot.armPivotRight.setPower(-.98);
+
+            if(armPivot.armPivotRightPosition >= 748 || armPivot.armPivotLeftPosition >= 748)
+            {
+                //linear interpolation variables
+                int y1 = 1000;
+                int y2 = 0;
+                int x1 = 748;
+                int x2 = 935;
+                //current arm position as one variable
+                x = (armPivot.armPivotLeftPosition + armPivot.armPivotRightPosition) / 2;
+
+                //linear interpolation formula - will linearly ramp power down as we approach max pivot angle
+                velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
+            }
+            else {
+                velocity = 1000;
+            }
+
             armPivot.setArmPivotVelocity(velocity);
+            armPivot.setArmPivotPosition();
             lift.setLiftVelocityFromPivotVelocity(velocity);
+            lift.setLiftPosition();
             armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
             armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
             lift.pControllerLiftLeft.setSetPoint(lift.liftLeftPosition);
@@ -164,27 +165,14 @@ public class ArmAndLiftTesting extends OpMode
 
         }
         else {                                       //uses proportional controller to hold lift in correct spot
-                armPivot.updateArmPivotPosition();
-                lift.updateLiftPosition();
+            //armPivot.setArmPivotVelocity(0);
+            //lift.setLiftVelocityFromPivotVelocity(0);
+            armPivot.updateArmPivotPosition();
+            lift.updateLiftPosition();
 
-                // I think this is the same thing as the conditions below
-
-//            if (armPivotLeftPosition < armPivot.pControllerArmPivotLeft.setPoint) {
-//
-//                armPivot.armPivotLeft.setPower(armPivot.minPowerArmPivotLeft +
-//                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
-//            } else {
-//                armPivot.armPivotLeft.setPower(armPivot.minPowerArmPivotLeft -
-//                        armPivot.pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
-//            }
         }
 
 
-
-//        armPivot.pControllerArmPivotRight.setSetPoint(armSetPointRight);
-//        armPivot.pControllerArmPivotLeft.setSetPoint(armSetPointLeft);
-//
-//        armPivot.updateLiftPosition();
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("arm SetPoint Left", armPivot.armPivotLeftPosition);
@@ -193,6 +181,9 @@ public class ArmAndLiftTesting extends OpMode
         telemetry.addData("Right Motor", armPivot.armPivotRight.getCurrentPosition());
         telemetry.addData("Right Motor pwr", armPivot.armPivotRight.getPower());
         telemetry.addData("Left Motor pwr", armPivot.armPivotLeft.getPower());
+        telemetry.addData("Right Motor velocity", armPivot.armPivotRight.getVelocity());
+        telemetry.addData("Left Motor velocity", armPivot.armPivotLeft.getVelocity());
+
         telemetry.addData("stage", stage);
         telemetry.addData("arm position averaged ", x);
         telemetry.addData("arm velocity ", velocity);
