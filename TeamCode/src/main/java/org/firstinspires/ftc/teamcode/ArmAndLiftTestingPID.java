@@ -48,7 +48,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="armAndLift", group="Iterative OpMode")
-public class ArmAndLiftTesting extends OpMode
+public class ArmAndLiftTestingPID extends OpMode
 {
 
     //gitTest
@@ -79,8 +79,8 @@ public class ArmAndLiftTesting extends OpMode
         // step (using the FTC Robot Controller app on the phone).
         armPivot = new ArmPivot(hardwareMap);
         lift = new Lift(hardwareMap);
-        lift.initLiftPController();
-        armPivot.InitArmPivotPController();
+        lift.initLiftPIDController();
+        armPivot.InitArmPivotPIDController();
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -113,13 +113,6 @@ public class ArmAndLiftTesting extends OpMode
     @Override
     public void loop() {
 
-        //armPivotLeftPosition = armPivot.armPivotLeft.getCurrentPosition();  I don't think we need this if using the "update arm pivot method in th ArmPivot Class
-        //armPivotRightPosition = armPivot.armPivotRight.getCurrentPosition();
-        //manual pivot controller
-
-
-
-
 
         if (gamepad1.dpad_down && armPivot.armPivotRightPosition >0 && armPivot.armPivotLeftPosition >0) {   ///move arm down up and sets controller position
 
@@ -128,10 +121,10 @@ public class ArmAndLiftTesting extends OpMode
                 armPivot.setArmPivotPosition();
                 lift.setLiftVelocityFromPivotVelocity(velocity);
                 lift.setLiftPosition();
-                armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
-                armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
-                lift.pControllerLiftLeft.setSetPoint(lift.liftLeftPosition);
-                lift.pControllerLiftRight.setSetPoint(lift.liftRightPosition);
+                armPivot.pidControllerArmPivotLeft.setSetPointPID(armPivot.armPivotLeftPosition);
+                armPivot.pidControllerArmPivotRight.setSetPointPID(armPivot.armPivotRightPosition);
+                lift.pidControllerLiftLeft.setSetPointPID(lift.liftLeftPosition);
+                lift.pidControllerLiftRight.setSetPointPID(lift.liftRightPosition);
 
         }
         else if (gamepad1.dpad_up && armPivot.armPivotRightPosition <950 && armPivot.armPivotLeftPosition <950) {  //move arm up and sets controller position
@@ -158,19 +151,18 @@ public class ArmAndLiftTesting extends OpMode
             armPivot.setArmPivotPosition();
             lift.setLiftVelocityFromPivotVelocity(velocity);
             lift.setLiftPosition();
-            armPivot.pControllerArmPivotLeft.setSetPoint(armPivot.armPivotLeftPosition);
-            armPivot.pControllerArmPivotRight.setSetPoint(armPivot.armPivotRightPosition);
-            lift.pControllerLiftLeft.setSetPoint(lift.liftLeftPosition);
-            lift.pControllerLiftRight.setSetPoint(lift.liftRightPosition);
+            armPivot.pidControllerArmPivotLeft.setSetPointPID(armPivot.armPivotLeftPosition);
+            armPivot.pidControllerArmPivotRight.setSetPointPID(armPivot.armPivotRightPosition);
+            lift.pidControllerLiftLeft.setSetPointPID(lift.liftLeftPosition);
+            lift.pidControllerLiftRight.setSetPointPID(lift.liftRightPosition);
 
         }
         else {                                       //uses proportional controller to hold lift in correct spot
 
-            armPivot.updateArmPivotPosition();
-            lift.updateLiftPosition();
+            armPivot.updateArmPivotPositionPID();
+            lift.updateLiftPositionPID();
 
         }
-
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());

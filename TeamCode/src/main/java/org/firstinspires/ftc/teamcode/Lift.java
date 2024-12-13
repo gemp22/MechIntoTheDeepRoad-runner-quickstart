@@ -30,6 +30,9 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     public PController pControllerLiftLeft = new PController(0.005);
     public PController pControllerLiftRight = new PController(0.005);
 
+    public PIDController pidControllerLiftLeft = new PIDController(0.005,0,0);
+    public PIDController pidControllerLiftRight = new PIDController(0.005,0,0);
+
     public Lift(HardwareMap hardwareMap) {
         liftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
         liftLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -52,6 +55,21 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+    }
+    public void initLiftPController(){
+
+        pControllerLiftLeft.setInputRange(0, liftLeftMaxTicks);
+        pControllerLiftLeft.setSetPoint(0);
+        pControllerLiftLeft.setOutputRange(minPowerLiftLeft, maxPowerLiftLeft);
+        pControllerLiftLeft.setThresholdValue(5);
+
+
+        pControllerLiftRight.setInputRange(0, liftRightMaxTicks);
+        pControllerLiftRight.setSetPoint(0);
+        pControllerLiftRight.setOutputRange(minPowerLiftRight, maxPowerLiftRight);
+        pControllerLiftRight.setThresholdValue(5);
+        //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // this is for lift left, change Kp to calibrate
     }
     public void initLiftPIDController(){
 
@@ -81,6 +99,29 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     }
 
     public void updateLiftPosition() {
+        liftLeftPosition=liftLeft.getCurrentPosition();
+        liftRightPosition=liftRight.getCurrentPosition();
+
+        if (liftLeftPosition < pControllerLiftLeft.setPoint) {
+
+            liftLeft.setPower(minPowerLiftLeft +
+                    pControllerLiftLeft.getComputedOutput(liftLeftPosition));
+        } else {
+            liftLeft.setPower(minPowerLiftLeft -
+                    pControllerLiftLeft.getComputedOutput(liftLeftPosition));
+        }
+
+
+        if (liftRightPosition < pControllerLiftRight.setPoint) {
+
+            liftRight.setPower(minPowerLiftRight +
+                    pControllerLiftRight.getComputedOutput(liftRightPosition));
+        } else {
+            liftRight.setPower(minPowerLiftRight -
+                    pControllerLiftRight.getComputedOutput(liftRightPosition));
+        }
+    }
+    public void updateLiftPositionPID() {
         liftLeftPosition=liftLeft.getCurrentPosition();
         liftRightPosition=liftRight.getCurrentPosition();
 

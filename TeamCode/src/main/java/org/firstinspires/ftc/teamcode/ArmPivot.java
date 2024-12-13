@@ -30,6 +30,9 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public PController pControllerArmPivotLeft = new PController(0.005);
     public PController pControllerArmPivotRight = new PController(0.005);
 
+    public PIDController pidControllerArmPivotLeft = new PIDController(0.005,0,0);
+    public PIDController pidControllerArmPivotRight = new PIDController(0.005,0,0);
+
     public ArmPivot(HardwareMap hardwareMap) {
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
         armPivotLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -53,7 +56,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
 
     }
-    public void InitArmPivotPIDController(){
+    public void InitArmPivotPController(){
 
         pControllerArmPivotLeft.setInputRange(0, armPivotLeftMaxTicks);
         pControllerArmPivotLeft.setSetPoint(0);
@@ -65,6 +68,21 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         pControllerArmPivotRight.setSetPoint(0);
         pControllerArmPivotRight.setOutputRange(minPowerArmPivotRight, maxPowerArmPivotRight);
         pControllerArmPivotRight.setThresholdValue(5);
+        //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // this is for lift left, change Kp to calibrate
+    }
+    public void InitArmPivotPIDController(){
+
+        pidControllerArmPivotLeft.setInputRangePID(0, armPivotLeftMaxTicks);
+        pidControllerArmPivotLeft.setSetPointPID(0);
+        pidControllerArmPivotLeft.setOutputRangePID(minPowerArmPivotLeft, maxPowerArmPivotLeft);
+        pidControllerArmPivotLeft.setThresholdValuePID(5);
+
+
+        pidControllerArmPivotRight.setInputRangePID(0, armPivotRightMaxTicks);
+        pidControllerArmPivotRight.setSetPointPID(0);
+        pidControllerArmPivotRight.setOutputRangePID(minPowerArmPivotRight, maxPowerArmPivotRight);
+        pidControllerArmPivotRight.setThresholdValuePID(5);
         //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // this is for lift left, change Kp to calibrate
     }
@@ -101,6 +119,29 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         } else {
             armPivotRight.setPower(minPowerArmPivotRight -
                     pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
+        }
+    }
+    public void updateArmPivotPositionPID() {
+        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
+        armPivotRightPosition=armPivotRight.getCurrentPosition();
+
+        if (armPivotLeftPosition < pidControllerArmPivotLeft.setPoint) {
+
+            armPivotLeft.setPower(minPowerArmPivotLeft +
+                    pidControllerArmPivotLeft.getComputedOutputPID(armPivotLeftPosition));
+        } else {
+            armPivotLeft.setPower(minPowerArmPivotLeft -
+                    pidControllerArmPivotLeft.getComputedOutputPID(armPivotLeftPosition));
+        }
+
+
+        if (armPivotRightPosition < pidControllerArmPivotRight.setPoint) {
+
+            armPivotRight.setPower(minPowerArmPivotRight +
+                    pidControllerArmPivotRight.getComputedOutputPID(armPivotRightPosition));
+        } else {
+            armPivotRight.setPower(minPowerArmPivotRight -
+                    pidControllerArmPivotRight.getComputedOutputPID(armPivotRightPosition));
         }
     }
     public void setArmPivotVelocity(double velocity)
