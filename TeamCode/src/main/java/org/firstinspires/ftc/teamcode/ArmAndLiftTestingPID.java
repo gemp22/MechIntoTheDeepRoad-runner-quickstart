@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="armAndLift", group="Iterative OpMode")
+@TeleOp(name="armAndLift PID", group="Iterative OpMode")
 public class ArmAndLiftTestingPID extends OpMode
 {
 
