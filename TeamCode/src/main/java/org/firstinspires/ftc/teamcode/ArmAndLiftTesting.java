@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="armAndLift", group="Iterative OpMode")
+@TeleOp(name="armAndLiftTesting", group="Iterative OpMode")
 public class ArmAndLiftTesting extends OpMode
 {
 
@@ -121,9 +121,9 @@ public class ArmAndLiftTesting extends OpMode
 
 
 
-        if (gamepad1.dpad_down && armPivot.armPivotRightPosition >0 && armPivot.armPivotLeftPosition >0) {   ///move arm down up and sets controller position
+        if (gamepad1.dpad_down && armPivot.armPivotRightPosition <0 && armPivot.armPivotLeftPosition <0) {   ///move arm down up and sets controller position
 
-                velocity = -1000;
+                velocity = 1000;
                 armPivot.setArmPivotVelocity(velocity);
                 armPivot.setArmPivotPosition();
                 lift.setLiftVelocityFromPivotVelocity(velocity);
@@ -137,13 +137,13 @@ public class ArmAndLiftTesting extends OpMode
         else if (gamepad1.dpad_up && armPivot.armPivotRightPosition <950 && armPivot.armPivotLeftPosition <950) {  //move arm up and sets controller position
 
 
-            if(armPivot.armPivotRightPosition >= 748 || armPivot.armPivotLeftPosition >= 748)
+            if(armPivot.armPivotRightPosition <= -748 || armPivot.armPivotLeftPosition <= -748)
             {
                 //linear interpolation variables
-                int y1 = 1000;
+                int y1 = -1000;
                 int y2 = 0;
-                int x1 = 748;
-                int x2 = 935;
+                int x1 = -748;
+                int x2 = -935;
                 //current arm position as one variable
                 x = (armPivot.armPivotLeftPosition + armPivot.armPivotRightPosition) / 2;
 
@@ -151,7 +151,7 @@ public class ArmAndLiftTesting extends OpMode
                 velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
             }
             else {
-                velocity = 1000;
+                velocity = -1000;
             }
 
             armPivot.setArmPivotVelocity(velocity);
