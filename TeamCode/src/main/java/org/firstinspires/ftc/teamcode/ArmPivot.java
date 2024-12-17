@@ -30,8 +30,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public PController pControllerArmPivotLeft = new PController(0.005);
     public PController pControllerArmPivotRight = new PController(0.005);
 
-    public PIDController pidControllerArmPivotLeft = new PIDController(0.005,0,0);
-    public PIDController pidControllerArmPivotRight = new PIDController(0.005,0,0);
+    public PIDController pidControllerArmPivotLeft = new PIDController(0.005,0.00007,0);
+    public PIDController pidControllerArmPivotRight = new PIDController(0.005,0.00007,0);
 
     public ArmPivot(HardwareMap hardwareMap) {
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");

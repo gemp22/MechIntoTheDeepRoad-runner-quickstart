@@ -166,14 +166,19 @@ public class ArmAndLiftTestingPID extends OpMode
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("arm SetPoint Left", armPivot.armPivotLeftPosition);
-        telemetry.addData("arm SetPoint Right", armPivot.armPivotRightPosition);
-        telemetry.addData("Left Motor", armPivot.armPivotLeft.getCurrentPosition());
-        telemetry.addData("Right Motor", armPivot.armPivotRight.getCurrentPosition());
-        telemetry.addData("Right Motor pwr", armPivot.armPivotRight.getPower());
-        telemetry.addData("Left Motor pwr", armPivot.armPivotLeft.getPower());
-        telemetry.addData("Right Motor velocity", armPivot.armPivotRight.getVelocity());
-        telemetry.addData("Left Motor velocity", armPivot.armPivotLeft.getVelocity());
+
+        telemetry.addData("arm SetPoint Left", armPivot.pidControllerArmPivotLeft.setPoint);
+        telemetry.addData("arm SetPoint Right", armPivot.pidControllerArmPivotRight.setPoint);
+        telemetry.addData("Lift SetPoint Left", lift.pidControllerLiftLeft.setPoint);
+        telemetry.addData("Lift SetPoint Right", lift.pidControllerLiftRight.setPoint);
+        telemetry.addData("arm position Left", armPivot.armPivotLeftPosition);
+        telemetry.addData("arm position Right", armPivot.armPivotRightPosition);
+        telemetry.addData("arm Left Motor", armPivot.armPivotLeft.getCurrentPosition());
+        telemetry.addData("arm Right Motor", armPivot.armPivotRight.getCurrentPosition());
+        telemetry.addData("arm Right Motor pwr", armPivot.armPivotRight.getPower());
+        telemetry.addData("arm Left Motor pwr", armPivot.armPivotLeft.getPower());
+        telemetry.addData("arm Right Motor velocity", armPivot.armPivotRight.getVelocity());
+        telemetry.addData("arm Left Motor velocity", armPivot.armPivotLeft.getVelocity());
 
         telemetry.addData("stage", stage);
         telemetry.addData("arm position averaged ", x);

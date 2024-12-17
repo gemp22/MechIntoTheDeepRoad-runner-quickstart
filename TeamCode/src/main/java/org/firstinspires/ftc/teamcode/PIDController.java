@@ -13,6 +13,7 @@ public class PIDController {
     private double Kd;
 
     private double integralSum = 0;
+    private double intergralLimit = .25;
     private double lastError = 0;
 
     ElapsedTime PIDtimer = new ElapsedTime();
@@ -40,12 +41,19 @@ public class PIDController {
     }
     public double getComputedOutputPID(double input) {
         // get the error as absolute value - the sign of error is immaterial since
-        // that gets taken care of where the P Controller value is used
+        // that gets taken care of where the PID Controller value is used
         currentError = Math.abs(Math.abs(setPoint) - Math.abs(input));
 
         derivative = (currentError - lastError) / PIDtimer.seconds();
 
         integralSum = integralSum + (currentError * PIDtimer.seconds());
+
+        if(integralSum>intergralLimit) {
+            integralSum=intergralLimit;
+        }
+        if(integralSum<-intergralLimit) { // this if probably isn't need since taken care of where the PID Controller value is used
+            integralSum=-intergralLimit;
+        }
 
         double computedOutput =  ((currentError * Kp) + (Ki * integralSum) + (Kd * derivative))* (maxOutput - minOutput);
 

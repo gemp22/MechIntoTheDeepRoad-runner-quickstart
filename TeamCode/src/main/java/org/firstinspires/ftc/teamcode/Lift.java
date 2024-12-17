@@ -30,8 +30,8 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     public PController pControllerLiftLeft = new PController(0.005);
     public PController pControllerLiftRight = new PController(0.005);
 
-    public PIDController pidControllerLiftLeft = new PIDController(0.005,0,0);
-    public PIDController pidControllerLiftRight = new PIDController(0.005,0,0);
+    public PIDController pidControllerLiftLeft = new PIDController(0.005,.00007,0);
+    public PIDController pidControllerLiftRight = new PIDController(0.005,0.00007,0);
 
     public Lift(HardwareMap hardwareMap) {
         liftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
@@ -73,19 +73,20 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     }
     public void initLiftPIDController(){
 
-        pControllerLiftLeft.setInputRange(0, liftLeftMaxTicks);
-        pControllerLiftLeft.setSetPoint(0);
-        pControllerLiftLeft.setOutputRange(minPowerLiftLeft, maxPowerLiftLeft);
-        pControllerLiftLeft.setThresholdValue(5);
+        pidControllerLiftLeft.setInputRangePID(0, liftLeftMaxTicks);
+        pidControllerLiftLeft.setSetPointPID(0);
+        pidControllerLiftLeft.setOutputRangePID(minPowerLiftLeft, maxPowerLiftLeft);
+        pidControllerLiftLeft.setThresholdValuePID(5);
 
 
-        pControllerLiftRight.setInputRange(0, liftRightMaxTicks);
-        pControllerLiftRight.setSetPoint(0);
-        pControllerLiftRight.setOutputRange(minPowerLiftRight, maxPowerLiftRight);
-        pControllerLiftRight.setThresholdValue(5);
+        pidControllerLiftRight.setInputRangePID(0, liftRightMaxTicks);
+        pidControllerLiftRight.setSetPointPID(0);
+        pidControllerLiftRight.setOutputRangePID(minPowerLiftRight, maxPowerLiftRight);
+        pidControllerLiftRight.setThresholdValuePID(5);
         //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // this is for lift left, change Kp to calibrate
     }
+
 
     public void setLiftPosition() {
         liftLeftPosition=liftLeft.getCurrentPosition();
@@ -125,23 +126,23 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftLeftPosition=liftLeft.getCurrentPosition();
         liftRightPosition=liftRight.getCurrentPosition();
 
-        if (liftLeftPosition < pControllerLiftLeft.setPoint) {
+        if (liftLeftPosition < pidControllerLiftLeft.setPoint) {
 
             liftLeft.setPower(minPowerLiftLeft +
-                    pControllerLiftLeft.getComputedOutput(liftLeftPosition));
+                    pidControllerLiftLeft.getComputedOutputPID(liftLeftPosition));
         } else {
             liftLeft.setPower(minPowerLiftLeft -
-                    pControllerLiftLeft.getComputedOutput(liftLeftPosition));
+                    pidControllerLiftLeft.getComputedOutputPID(liftLeftPosition));
         }
 
 
-        if (liftRightPosition < pControllerLiftRight.setPoint) {
+        if (liftRightPosition < pidControllerLiftRight.setPoint) {
 
             liftRight.setPower(minPowerLiftRight +
-                    pControllerLiftRight.getComputedOutput(liftRightPosition));
+                    pidControllerLiftRight.getComputedOutputPID(liftRightPosition));
         } else {
             liftRight.setPower(minPowerLiftRight -
-                    pControllerLiftRight.getComputedOutput(liftRightPosition));
+                    pidControllerLiftRight.getComputedOutputPID(liftRightPosition));
         }
     }
 
