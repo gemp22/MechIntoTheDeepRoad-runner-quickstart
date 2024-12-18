@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import kotlin.math.UMathKt;
+
 public class ArmPivot {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx armPivotLeft;
     public DcMotorEx armPivotRight;
@@ -143,6 +145,57 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
             armPivotRight.setPower(minPowerArmPivotRight -
                     pidControllerArmPivotRight.getComputedOutputPID(armPivotRightPosition));
         }
+    }
+
+    public void updateArmPivotPositionPIDwMotionProf(double percentOfSlowDown, double minVelocity, double maxVelocity) {
+        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
+        armPivotRightPosition=armPivotRight.getCurrentPosition();
+
+        double ticksToRightSetPoint = Math.abs(pidControllerArmPivotRight.setPoint);
+        double ticksSlowDownThresholdRight = ticksToRightSetPoint*percentOfSlowDown;
+        double ticksToLeftSetPoint = Math.abs(pidControllerArmPivotLeft.setPoint);
+        double ticksSlowDownThresholdLeft = ticksToLeftSetPoint*percentOfSlowDown;
+
+        if (armPivotRightPosition > pidControllerArmPivotRight.setPoint + 10 || armPivotRightPosition < pidControllerArmPivotRight.setPoint - 10) {
+
+            //linear interpolation formula - will linearly ramp power down as we approach max pivot angle
+            //velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
+            double velocityRight = maxVelocity + (armPivotRightPosition -ticksSlowDownThresholdRight) * ((minVelocity - maxVelocity) / (pidControllerArmPivotRight.setPoint
+                    - ticksSlowDownThresholdRight));
+            double velocityLeft = maxVelocity + (armPivotLeftPosition -ticksSlowDownThresholdLeft) * ((minVelocity - maxVelocity) / (pidControllerArmPivotLeft.setPoint
+                    - ticksSlowDownThresholdRight));
+        }
+        if (armPivotRightPosition > pidControllerArmPivotRight.setPoint + 10 || armPivotRightPosition < pidControllerArmPivotRight.setPoint - 10) {
+
+            //linear interpolation formula - will linearly ramp power down as we approach max pivot angle
+            //velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
+            double velocityRight = maxVelocity + (armPivotRightPosition -ticksSlowDownThresholdRight) * ((minVelocity - maxVelocity) / (pidControllerArmPivotRight.setPoint
+                    - ticksSlowDownThresholdRight));
+            double velocityLeft = maxVelocity + (armPivotLeftPosition -ticksSlowDownThresholdLeft) * ((minVelocity - maxVelocity) / (pidControllerArmPivotLeft.setPoint
+                    - ticksSlowDownThresholdRight));
+        }
+
+        else {
+            if (armPivotLeftPosition < pidControllerArmPivotLeft.setPoint) {
+
+                armPivotLeft.setPower(minPowerArmPivotLeft +
+                        pidControllerArmPivotLeft.getComputedOutputPID(armPivotLeftPosition));
+            } else {
+                armPivotLeft.setPower(minPowerArmPivotLeft -
+                        pidControllerArmPivotLeft.getComputedOutputPID(armPivotLeftPosition));
+            }
+
+
+            if (armPivotRightPosition < pidControllerArmPivotRight.setPoint) {
+
+                armPivotRight.setPower(minPowerArmPivotRight +
+                        pidControllerArmPivotRight.getComputedOutputPID(armPivotRightPosition));
+            } else {
+                armPivotRight.setPower(minPowerArmPivotRight -
+                        pidControllerArmPivotRight.getComputedOutputPID(armPivotRightPosition));
+            }
+        }
+
     }
     public void setArmPivotVelocity(double velocity)
     {
