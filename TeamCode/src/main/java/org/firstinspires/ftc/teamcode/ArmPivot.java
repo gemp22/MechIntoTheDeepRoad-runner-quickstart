@@ -1,12 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
+
+import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import kotlin.math.UMathKt;
 
@@ -35,9 +43,16 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public PIDController pidControllerArmPivotLeft = new PIDController(0.005,0.00007,0);
     public PIDController pidControllerArmPivotRight = new PIDController(0.005,0.00007,0);
 
+    private double angularVelocity = 0.0;
+    private double lastAngle = 0.0;
+
+    private long lastUpdateStartTime = 0;
+
+    public static double turnSlipAmountFor1RPS = 0.05;
+
     public ArmPivot(HardwareMap hardwareMap) {
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
-        armPivotLeft.setDirection(DcMotor.Direction.REVERSE);
+        armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
@@ -49,15 +64,14 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
 
         armPivotRight = hardwareMap.get(DcMotorEx.class, "rightPivot");
-        armPivotRight.setDirection(DcMotor.Direction.FORWARD);
+        armPivotRight.setDirection(DcMotor.Direction.REVERSE);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotRight.setPower(0);
         armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
     }
+
     public void InitArmPivotPController(){
 
         pControllerArmPivotLeft.setInputRange(0, armPivotLeftMaxTicks);
@@ -98,6 +112,55 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeft.setPower(armPivotPower);
         armPivotRight.setPower(armPivotPower);
 
+    }
+
+    private double armMotorPower = 0;
+
+    public void update(double targetAngle, double power, double slowDown, double slowDownPower, Telemetry telemetry) {
+        long currentTime = SystemClock.uptimeMillis();
+
+        double elapsedTime = (double) (currentTime - lastUpdateStartTime)/1000.0;
+
+        lastUpdateStartTime = currentTime;
+
+        armPivotLeftPosition=armPivotLeft.getCurrentPosition();
+        armPivotRightPosition=armPivotRight.getCurrentPosition();
+
+        double averageArmPosition = (armPivotLeftPosition+armPivotRightPosition)/2.0;
+
+        double armAngle = (averageArmPosition / 10.390208333) - 8; // degrees
+
+        angularVelocity = AngleWrap(Math.toRadians(armAngle)-lastAngle) / elapsedTime;
+
+        lastAngle = Math.toRadians(armAngle);
+
+        double relativePointAngle = Math.toRadians(targetAngle) - Math.toRadians(armAngle); //AngleWrap(point_angle-worldAngle_rad);
+        double velocityAdjustedRelativePointAngle = relativePointAngle-currSlipAngle();
+
+        telemetry.addData("Relative Point Angle", relativePointAngle);
+
+        //Scale down the relative angle by 40 and multiply by point speed
+        double turnSpeed = (velocityAdjustedRelativePointAngle/Math.toRadians(slowDown))*power;
+
+        //now just clip the result to be in range
+        double powerOut = Range.clip(turnSpeed, -power, power);
+
+        armMotorPower = Movement.minPower(powerOut, slowDownPower);
+
+        //smooths down the last bit to finally settle on an angle
+        armMotorPower *= Range.clip(Math.abs(relativePointAngle)/Math.toRadians(2),0,1); // was 3
+
+        telemetry.addData("Output Power", armMotorPower);
+
+        setArmPivotPower(armMotorPower);
+    }
+
+    public double getRadPerSecond() {
+        return angularVelocity;
+    }
+
+    public double currSlipAngle() {
+        return getRadPerSecond() * turnSlipAmountFor1RPS;
     }
 
     public void updateArmPivotPosition() {
@@ -147,35 +210,21 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         }
     }
 
-    public void updateArmPivotPositionPIDwMotionProf(double percentOfSlowDown, double minVelocity, double maxVelocity) {
+    public void updateArmPivotPositionPIDwMotionProf() {
         armPivotLeftPosition=armPivotLeft.getCurrentPosition();
         armPivotRightPosition=armPivotRight.getCurrentPosition();
+        double pidThreshold = 2*10.3920833; //2 degrees * 10.3920133 tick/deg = ticks see Excel calcs
+        double decelSlope = 4;
+        double setPointAvg = (pidControllerArmPivotLeft.setPoint + pidControllerArmPivotRight.setPoint)/2;
+        int positionAvg = (armPivotLeftPosition+armPivotRightPosition)/2;
 
-        double ticksToRightSetPoint = Math.abs(pidControllerArmPivotRight.setPoint);
-        double ticksSlowDownThresholdRight = ticksToRightSetPoint*percentOfSlowDown;
-        double ticksToLeftSetPoint = Math.abs(pidControllerArmPivotLeft.setPoint);
-        double ticksSlowDownThresholdLeft = ticksToLeftSetPoint*percentOfSlowDown;
 
-        if (armPivotRightPosition > pidControllerArmPivotRight.setPoint + 10 || armPivotRightPosition < pidControllerArmPivotRight.setPoint - 10) {
-
-            //linear interpolation formula - will linearly ramp power down as we approach max pivot angle
-            //velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
-            double velocityRight = maxVelocity + (armPivotRightPosition -ticksSlowDownThresholdRight) * ((minVelocity - maxVelocity) / (pidControllerArmPivotRight.setPoint
-                    - ticksSlowDownThresholdRight));
-            double velocityLeft = maxVelocity + (armPivotLeftPosition -ticksSlowDownThresholdLeft) * ((minVelocity - maxVelocity) / (pidControllerArmPivotLeft.setPoint
-                    - ticksSlowDownThresholdRight));
+        if (setPointAvg-pidThreshold > positionAvg || setPointAvg+pidThreshold < positionAvg){
+            double armPivotvelocity = Math.min(1000, Math.abs(0+(decelSlope*(positionAvg-setPointAvg))));// point slope formula to get velocity profile see excel file
+            double liftVelocity = armPivotvelocity/5.061079545;
         }
-        if (armPivotRightPosition > pidControllerArmPivotRight.setPoint + 10 || armPivotRightPosition < pidControllerArmPivotRight.setPoint - 10) {
-
-            //linear interpolation formula - will linearly ramp power down as we approach max pivot angle
-            //velocity = y1 + (x -x1) * ((y2 - y1) / (x2 - x1));
-            double velocityRight = maxVelocity + (armPivotRightPosition -ticksSlowDownThresholdRight) * ((minVelocity - maxVelocity) / (pidControllerArmPivotRight.setPoint
-                    - ticksSlowDownThresholdRight));
-            double velocityLeft = maxVelocity + (armPivotLeftPosition -ticksSlowDownThresholdLeft) * ((minVelocity - maxVelocity) / (pidControllerArmPivotLeft.setPoint
-                    - ticksSlowDownThresholdRight));
-        }
-
         else {
+
             if (armPivotLeftPosition < pidControllerArmPivotLeft.setPoint) {
 
                 armPivotLeft.setPower(minPowerArmPivotLeft +

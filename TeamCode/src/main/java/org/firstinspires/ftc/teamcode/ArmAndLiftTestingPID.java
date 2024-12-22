@@ -112,9 +112,16 @@ public class ArmAndLiftTestingPID extends OpMode
      */
     @Override
     public void loop() {
+        if (gamepad1.right_bumper) {
+            armPivot.update(90, 1, 20,0.2, telemetry);
+        } else if (gamepad1.left_bumper) {
+            armPivot.update(-7, 1, 5, 0.5, telemetry);
+        }
+
+        lift.setLiftPower(gamepad1.right_stick_y);
 
 
-        if (gamepad1.dpad_down && armPivot.armPivotRightPosition <0 && armPivot.armPivotLeftPosition <0) {   ///move arm down up and sets controller position
+        /*if (gamepad1.dpad_down && armPivot.armPivotRightPosition <0 && armPivot.armPivotLeftPosition <0) {   ///move arm down up and sets controller position
 
                 velocity = 1000;
                 armPivot.setArmPivotVelocity(velocity);
@@ -182,7 +189,7 @@ public class ArmAndLiftTestingPID extends OpMode
 
         telemetry.addData("stage", stage);
         telemetry.addData("arm position averaged ", x);
-        telemetry.addData("arm velocity ", velocity);
+        telemetry.addData("arm velocity ", velocity);*/
 
     }
 
