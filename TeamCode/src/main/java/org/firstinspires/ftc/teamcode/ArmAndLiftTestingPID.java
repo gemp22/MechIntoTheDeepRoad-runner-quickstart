@@ -32,6 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -63,8 +66,6 @@ public class ArmAndLiftTestingPID extends OpMode
     int pivotMaxTicks = 2370;
     int stage = 0;
     int velocity = 0;
-    int x;
-
 
 
     /*
@@ -79,7 +80,7 @@ public class ArmAndLiftTestingPID extends OpMode
         // step (using the FTC Robot Controller app on the phone).
         armPivot = new ArmPivot(hardwareMap);
         lift = new Lift(hardwareMap);
-        lift.initLiftPIDController();
+        lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
 
 
@@ -106,20 +107,112 @@ public class ArmAndLiftTestingPID extends OpMode
     public void start() {
         runtime.reset();
     }
+    double wantedPos = 0.5;
+
+    public static double groundToPivot = 5.988;
+
+    public void intakeMagic(double x, Telemetry telemetry) {
+        double liftX = 0 + 1.133 * Math.sin(Math.toRadians(armPivot.getArmAngle()));
+        double liftY = 5.988 + 1.133 * Math.cos(Math.toRadians(armPivot.getArmAngle()));
+
+        double targetX = x+liftX;
+        double targetY = 5-liftY;
+
+        double liftWantedExtension = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY + 5.988, 2)); // ref is right side of bot
+        double armWantedAngle = Math.toDegrees(Math.atan2(targetY, targetX));
+        double intakeWantedAngle = armWantedAngle * -1;
+
+        armWantedAngle = Range.clip(armWantedAngle, -8, 90);
+        armPivot.update(armWantedAngle, 0.5, 30,0.2, telemetry);
+
+        liftWantedExtension = Range.clip(liftWantedExtension, -8, 25);
+        lift.setSetPoint(liftWantedExtension);
+
+        armPivot.setIntakeTiltAngle(intakeWantedAngle);
+
+        telemetry.addData("liftWantedExtension", liftWantedExtension);
+        telemetry.addData("armWantedAngle", armWantedAngle);
+        telemetry.addData("intakeWantedAngle", intakeWantedAngle);
+        telemetry.addData("Lift X", liftX);
+        telemetry.addData("Lift Y", liftY);
+
+        telemetry.addData("arm angle", armPivot.getArmAngle());
+    }
+
+    double wantedX = 15.0;
 
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     @Override
     public void loop() {
-        if (gamepad1.right_bumper) {
-            armPivot.update(90, 1, 20,0.2, telemetry);
+        /*if (gamepad1.right_bumper) {
+            armPivot.update(90, 0.5, 30,0.2, telemetry);
         } else if (gamepad1.left_bumper) {
-            armPivot.update(-7, 1, 5, 0.5, telemetry);
+            armPivot.update(0, 0.15, 60, 0.02, telemetry);
         }
 
-        lift.setLiftPower(gamepad1.right_stick_y);
+        //lift.setLiftPower(gamepad1.right_stick_y);
 
+
+        if (gamepad1.dpad_up) {
+//            wantedPos += 0.002;
+            armPivot.setIntakeTiltAngle(0);
+        } else if (gamepad1.dpad_down) {
+//            wantedPos -= 0.002;
+            armPivot.setIntakeTiltAngle(90);
+        } else if (gamepad1.dpad_left) {
+//            wantedPos -= 0.002;
+            armPivot.setIntakeTiltAngle(45);
+        }*/
+//
+//        if (gamepad1.a) {
+//            lift.setSetPoint(15);
+//
+//        }
+//        lift.updateLiftPosition();
+
+        if (gamepad1.dpad_up) {
+            wantedX += 0.05;
+        }
+        if (gamepad1.dpad_down) {
+            wantedX -= 0.05;
+        }
+
+        double x = wantedX + 18;
+
+        double liftX = 0 + 1.133 * Math.sin(Math.toRadians(armPivot.getArmAngle()));
+        double liftY = 5.988 + 1.133 * Math.cos(Math.toRadians(armPivot.getArmAngle()));
+
+        double targetX = x+liftX;
+        double targetY = 5-liftY;
+
+        double liftWantedExtension = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY + 5.988, 2)) -18; // ref is right side of bot
+        double armWantedAngle = Math.toDegrees(Math.atan2(targetY, targetX));
+        double intakeWantedAngle = armWantedAngle * -1;
+
+        armWantedAngle = Range.clip(armWantedAngle, -8, 90);
+        armPivot.update(armWantedAngle, 1, 30,0.8, telemetry);
+
+        liftWantedExtension = Range.clip(liftWantedExtension, -8, 25);
+        lift.setSetPoint(liftWantedExtension);
+        lift.updateLiftPosition();
+
+        armPivot.setIntakeTiltAngle(intakeWantedAngle);
+
+        telemetry.addData("liftWantedExtension", liftWantedExtension);
+        telemetry.addData("armWantedAngle", armWantedAngle);
+        telemetry.addData("intakeWantedAngle", intakeWantedAngle);
+        telemetry.addData("Lift X", liftX);
+        telemetry.addData("Lift Y", liftY);
+
+        telemetry.addData("arm angle", armPivot.getArmAngle());
+
+        telemetry.addData("wanted X", wantedX);
+
+//        wantedPos = Range.clip(wantedPos, 0, 1);
+//        armPivot.intakeTilt.setPosition(wantedPos);
+//        telemetry.addData("servo pos", wantedPos);
 
         /*if (gamepad1.dpad_down && armPivot.armPivotRightPosition <0 && armPivot.armPivotLeftPosition <0) {   ///move arm down up and sets controller position
 
