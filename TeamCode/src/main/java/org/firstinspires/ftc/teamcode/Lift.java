@@ -99,6 +99,15 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
 
     }
 
+    public double getLiftExtension() {
+        liftLeftPosition=liftLeft.getCurrentPosition();
+        liftRightPosition=liftRight.getCurrentPosition();
+
+        double averageLiftPosition = (liftLeftPosition+liftRightPosition)/2.0;
+
+        return (averageLiftPosition / 177.333); //in inches
+    }
+
     public void setSetPoint(double in) {
         pControllerLiftLeft.setSetPoint(in * 177.333);
         pControllerLiftRight.setSetPoint(in * 177.333);

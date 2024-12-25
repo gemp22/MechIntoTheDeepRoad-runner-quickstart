@@ -11,14 +11,12 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import kotlin.math.UMathKt;
 
 public class ArmPivot {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx armPivotLeft;
@@ -27,6 +25,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
 
     public Servo intakeTilt;
+
+    public Servo intakeJawServo;
 
 
 
@@ -62,8 +62,14 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public ArmPivot(HardwareMap hardwareMap) {
         vexIntake = (CRServo) hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
-        intakeTilt.setPosition(0.5);
+        //intakeTilt.setPosition(0.5);
+
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
+
+        intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
+        intakeJawServo.setDirection(Servo.Direction.REVERSE);
+
+
         armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
@@ -126,11 +132,20 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     }
     public void setIntakeTiltAngle (double angle){
-        double intakeTilt0Deg = 0.356;
-        double intakeTilt90Deg = 0.57;
+        double intakeTilt0Deg = 0.314;
+        double intakeTilt90Deg = 0.50;
         double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
 
         intakeTilt.setPosition(Range.clip(output, 0.206, intakeTilt90Deg));
+    }
+
+    public double getIntakeTiltAngle (){
+
+        double intakeTilt0Deg = 0.314;
+        double intakeTilt90Deg = 0.50;
+
+        return ((intakeTilt.getPosition() - intakeTilt0Deg) / ((intakeTilt90Deg - intakeTilt0Deg) / 90));
+
     }
     private double armMotorPower = 0;
 
@@ -179,7 +194,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
         double averageArmPosition = (armPivotLeftPosition+armPivotRightPosition)/2.0;
 
-        return (averageArmPosition / 10.390208333) - 8;
+        return (averageArmPosition / 10.390208333) - 5;
     }
 
     public double getRadPerSecond() {
