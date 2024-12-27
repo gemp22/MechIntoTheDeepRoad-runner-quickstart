@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -69,6 +70,13 @@ public class ArmAndLiftTestingPID extends OpMode
     int velocity = 0;
     double startingTiltPos = 0;
     double startingJawPos = 0;
+    double startingTwistPos = 0;
+
+    boolean guideToggle = false;
+    boolean guidePreValue = false;
+    boolean liftLimitToggle = false;
+    boolean liftLimitPreValue = false;
+
 
 
     /*
@@ -89,6 +97,7 @@ public class ArmAndLiftTestingPID extends OpMode
 
         startingTiltPos = armPivot.intakeTilt.getPosition();
         startingJawPos = armPivot.intakeJawServo.getPosition();
+        startingTwistPos = armPivot.twist.getPosition();
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -105,6 +114,13 @@ public class ArmAndLiftTestingPID extends OpMode
      */
     @Override
     public void init_loop() {
+        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("tilt servo Start pos", startingTiltPos);
+        telemetry.addData("intake tilt Start servo pos", startingTiltPos);
+        telemetry.addData("intake twist servo pos", startingTwistPos);
+
+        telemetry.addData("jaw servo Start pos", startingJawPos);
+        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
     }
 
     /*
@@ -146,32 +162,17 @@ public class ArmAndLiftTestingPID extends OpMode
         telemetry.addData("arm angle", armPivot.getArmAngle());
     }
 
-    public void intakeMagicNoArmPower(double x, Telemetry telemetry) {
-        double liftX = 0 + 1.133 * Math.sin(Math.toRadians(armPivot.getArmAngle()));
-        double liftY = 5.988 + 1.133 * Math.cos(Math.toRadians(armPivot.getArmAngle()));
+    public double intakeTiltNoArmPower(double liftExtension) {
 
-        double targetX = x+liftX;
-        double targetY = 5-liftY;
-
-        double liftWantedExtension = Math.sqrt(Math.pow(targetX, 2) + Math.pow(targetY + 5.988, 2)); // ref is right side of bot
-
-        liftWantedExtension = Range.clip(liftWantedExtension, -8, 25);
-        lift.setSetPoint(liftWantedExtension);
-
-        //armPivot.setIntakeTiltAngle(intakeWantedAngle);
-
-        telemetry.addData("liftWantedExtension", liftWantedExtension);
-        //telemetry.addData("armWantedAngle", armWantedAngle);
-        //telemetry.addData("intakeWantedAngle", intakeWantedAngle);
-        telemetry.addData("Lift X", liftX);
-        telemetry.addData("Lift Y", liftY);
-
-        telemetry.addData("arm angle", armPivot.getArmAngle());
+        double intakeTiltAngle = -69+(liftExtension-4.33)*(-25-(-69))/(16.5-4.33);
+        telemetry.addData("Wanted intake", intakeTiltAngle);
+        return intakeTiltAngle;
     }
 
     double wantedX = 0;
     double wantedTiltPos = 0;
     double wantedJawPos = 0;
+    double wantedTwistPos = 0;
 
 
 
@@ -189,26 +190,52 @@ public class ArmAndLiftTestingPID extends OpMode
 */
         //lift.setLiftPower(gamepad1.right_stick_y);
 
-
+/*
         if (gamepad1.dpad_right) {
             wantedTiltPos += 0.002;
-            //armPivot.setIntakeTiltAngle(0);
+
         } else if (gamepad1.dpad_left) {
             wantedTiltPos -= 0.002;
-            //armPivot.setIntakeTiltAngle(90);
+
         } else {
             armPivot.intakeTilt.setPosition(startingTiltPos+wantedTiltPos);
         }
 
-        if (gamepad1.a) {
+ */
+
+        if (gamepad1.cross) {
             wantedJawPos += 0.002;
-            //armPivot.setIntakeTiltAngle(0);
-        } else if (gamepad1.b) {
+
+        } else if (gamepad1.circle) {
             wantedJawPos -= 0.002;
-            //armPivot.setIntakeTiltAngle(90);
+
         } else {
             armPivot.intakeJawServo.setPosition(startingJawPos+wantedJawPos);
         }
+
+        if (gamepad1.triangle) {
+            wantedTwistPos += 0.002;
+
+        } else if (gamepad1.square) {
+            wantedTwistPos -= 0.002;
+
+        } else {
+            armPivot.twist.setPosition(startingTwistPos+wantedTwistPos);
+        }
+
+        //intake reverser
+        if (gamepad1.guide && !guidePreValue) {
+
+            guideToggle = !guideToggle; // reverse boolean
+
+            if (guideToggle) {
+                armPivot.vexIntake.setPower(-.91); //on
+            } else {
+                armPivot.vexIntake.setPower(0); //off
+            }
+        }
+        guidePreValue = gamepad1.guide;
+
 
 //
 //        if (gamepad1.a) {
@@ -217,12 +244,31 @@ public class ArmAndLiftTestingPID extends OpMode
 //        }
 //        lift.updateLiftPosition();
 
+
         if (gamepad1.dpad_up) {
             wantedX += 0.05;
         }
         if (gamepad1.dpad_down) {
             wantedX -= 0.05;
         }
+
+        if (lift.getLiftExtension()>4.33) {
+            armPivot.setIntakeTiltAngle(intakeTiltNoArmPower(lift.getLiftExtension()));
+            //armPivot.setIntakeTiltAngle(-60);
+        }
+        else  {
+            armPivot.setIntakeTiltAngle(90);
+        }
+
+
+        if (armPivot.getLiftLimitState() && !liftLimitPreValue) {
+            lift.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            lift.liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            wantedX =0;
+        }
+        liftLimitPreValue = armPivot.getLiftLimitState();
 
 
         lift.setSetPoint(wantedX);
@@ -232,14 +278,26 @@ public class ArmAndLiftTestingPID extends OpMode
         telemetry.addData("lift pos", lift.getLiftExtension());
         telemetry.addData("arm angle", armPivot.getArmAngle());
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
-        telemetry.addData("tilt servo Start pos", startingTiltPos);
-        telemetry.addData("intake tilt servo pos", wantedTiltPos+startingTiltPos);
+        telemetry.addData("calc", intakeTiltNoArmPower(lift.getLiftExtension()));
 
+        telemetry.addData("tilt servo Start pos", startingTiltPos);
+        telemetry.addData("intake tilt servo pos", armPivot.intakeTilt.getPosition());
+
+        telemetry.addData("twist servo Start pos", startingTwistPos);
+        telemetry.addData("twist servo pos", wantedTwistPos+startingTwistPos);
+
+        telemetry.addData("intake pow", armPivot.vexIntake.getPower());
 
         telemetry.addData("jaw servo Start pos", startingJawPos);
         telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
 
+        telemetry.addData("lift limit Switch state", armPivot.getLiftLimitState());
+        telemetry.addData("limit limit switch state", armPivot.getPivotLimitState());
+
         telemetry.addData("wanted X", wantedX);
+        telemetry.addData("lift position",lift.liftRight.getCurrentPosition());
+        telemetry.addData("lift limit preVal",liftLimitPreValue);
+
 
 //        wantedPos = Range.clip(wantedPos, 0, 1);
 //        armPivot.intakeTilt.setPosition(wantedPos);

@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -22,11 +23,13 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public DcMotorEx armPivotLeft;
     public DcMotorEx armPivotRight;
     public CRServo vexIntake = null;
-
-
     public Servo intakeTilt;
-
     public Servo intakeJawServo;
+    public Servo twist;
+
+    DigitalChannel liftLimitSwitch = null;
+    DigitalChannel pivotLimitSwitch = null;
+
 
 
 
@@ -60,21 +63,26 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public static double turnSlipAmountFor1RPS = 0.05;
 
     public ArmPivot(HardwareMap hardwareMap) {
-        vexIntake = (CRServo) hardwareMap.get(CRServo.class, "vexIntake");
+        vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
-        //intakeTilt.setPosition(0.5);
+        intakeTilt.setPosition(0.5);
 
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
 
         intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
         intakeJawServo.setDirection(Servo.Direction.REVERSE);
+        intakeJawServo.setPosition(.7);
+
+        twist = hardwareMap.get(ServoImplEx.class, "twist");
+        twist.setPosition(0);
+
+        liftLimitSwitch = hardwareMap.get(DigitalChannel.class, "liftLimitSwitch");
+        pivotLimitSwitch = hardwareMap.get(DigitalChannel.class, "pivotLimitSwitch");
 
 
         armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
-        //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
-        //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -134,9 +142,12 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public void setIntakeTiltAngle (double angle){
         double intakeTilt0Deg = 0.314;
         double intakeTilt90Deg = 0.50;
-        double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
 
-        intakeTilt.setPosition(Range.clip(output, 0.206, intakeTilt90Deg));
+
+        //double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
+        double output = intakeTilt90Deg+((angle-90)*(intakeTilt0Deg-intakeTilt90Deg)/(0-90));
+
+        intakeTilt.setPosition(Range.clip(output, 0.19, intakeTilt90Deg));
     }
 
     public double getIntakeTiltAngle (){
@@ -144,7 +155,9 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         double intakeTilt0Deg = 0.314;
         double intakeTilt90Deg = 0.50;
 
-        return ((intakeTilt.getPosition() - intakeTilt0Deg) / ((intakeTilt90Deg - intakeTilt0Deg) / 90));
+        //return ((intakeTilt.getPosition() - intakeTilt0Deg) / ((intakeTilt90Deg - intakeTilt0Deg) / 90));
+
+        return (90 + ((intakeTilt.getPosition() - intakeTilt90Deg) * (0 - 90) / (intakeTilt0Deg - intakeTilt90Deg)));
 
     }
     private double armMotorPower = 0;
@@ -292,6 +305,16 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     {
         armPivotLeft.setVelocity(velocity);
         armPivotRight.setVelocity(velocity);
+    }
+
+    public boolean getLiftLimitState(){
+        return (liftLimitSwitch.getState());
+
+    }
+
+    public boolean getPivotLimitState(){
+        return (pivotLimitSwitch.getState());
+
     }
 
 
