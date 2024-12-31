@@ -168,6 +168,13 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftLeft.setVelocity(velocity);
     }
 
+    public void resetLiftEncoders(){
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
 
 
     /////////////////////////   Lift   /////////////////////////////////////

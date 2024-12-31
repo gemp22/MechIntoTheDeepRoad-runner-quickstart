@@ -18,48 +18,25 @@ import java.util.ArrayList;
 
 public abstract class AutoMaster extends OpMode {
     MecanumDrive drive = null;
-    //PixelLift pixelLift = null;
 
-   // ArmPivot armPivot = null;
     public DcMotorEx robotLift = null;
 
-    FourBars fourBars = null;
-    Intake intake = null;
-    Wrist wrist = null;
-    FourBarRotator fourBarRotator = null;
-    PixelTwister pixelTwister = null;
-    DroneAndRobotLiftRotator droneAndRobotLiftRotator = null;
-    DroneLauncher droneLauncher = null;
+    ArmPivot armPivot;
+    Lift lift;
 
-    IntakeJawServo intakeJawServo = null;
+    double armSetPointLeft = 0;
+    double armSetPointRight = 0;
+    //int armPivotLeftPosition = 0;
+    //int armPivotRightPosition = 0;
+    int pivotMaxTicks = 2370;
+    int stage = 0;
+    int velocity = 0;
+    double startingTiltPos = 0;
+    double startingJawPos = 0;
+    double startingTwistPos = 0;
 
-    DigitalChannel limitSwitch = null;
-
-    //public DcMotorEx lift = null;
-
-    //variables for pixel lift
-    boolean rrLoopOn = true;
-    int liftPosition = 0;
-    int liftHome = 0;
-    double liftMotorMax = 340 * 0.8;     //NeveRest 20 80% max rev/min
-    double liftTicksPerRev = 537.6; //NeveRest 20 encoder spec  ticks per rev
-    double liftVelocity = liftMotorMax * liftTicksPerRev / 60;
-    double liftMaxTicks = 2370;
-    // for lift pController input
-    double minPowerLift = .001;
-    double maxPowerLift = 0.5;
-
-    ///variables for Robot lift
-    int robotLiftPosition = 0;
-    int robotLiftHome = 0;
-    double robotLiftMotorMax = 340 * 0.85;     //NeveRest 20 80% max rev/min
-    double robotLiftTicksPerRev = 537.6; //NeveRest 20 encoder spec  ticks per rev
-    double robotLiftVelocity = liftMotorMax * liftTicksPerRev / 60;
-    double robotLiftMaxTicks = 15000;
-    double minPowerRobotLift = .001;
-    double maxPowerRobotLift = 0.98;
-
-    public int spikeLocation;
+    boolean guideToggle = false;
+    boolean guidePreValue = false;
 
     AnalogInput rightDistance;
     AnalogInput leftDistance;
@@ -72,10 +49,7 @@ public abstract class AutoMaster extends OpMode {
     ElapsedTime waitTimer2 = new ElapsedTime();
 
     //Lift P controllers
-    //PController pControllerRobotLift = new PController(0.002); // this is for lift left, change Kp to calibrate
-    PController pControllerLift = new PController(0.002); // this is for lift right, change Kp to calibrate
 
-    PController pControllerArmPivot = new PController(0.002); // this is for lift right, change Kp to calibrate
 
     Servo pawright;
 
@@ -159,6 +133,9 @@ public abstract class AutoMaster extends OpMode {
     DigitalChannel frontPixelReceiver;
     DigitalChannel backPixelReceiver;
 
+    boolean liftLimitToggle = false;
+    boolean liftLimitPreValue = false;
+
     public ArrayList<CurvePoint> mirrorPoints(ArrayList<CurvePoint> points) {
         ArrayList<CurvePoint> newPoints = new ArrayList<>();
         for (CurvePoint point : points) {
@@ -171,34 +148,15 @@ public abstract class AutoMaster extends OpMode {
 
     @Override
     public void init() {
-        //initTfod();
-/*
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId",
-                "id",
-                hardwareMap.appContext.getPackageName());
-        vision = new Vision(
-                OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                                "Webcam 1"),
-                        cameraMonitorViewId));
-        vision.openCameraDevice();
-        vision.setPipeline(new Vision.AutoVisionPipeline());
-        vision.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-*/
-        //limitSwitch = hardwareMap.get(DigitalChannel.class, "lift_limit_switch");
 
-        //fourBars = new FourBars(hardwareMap);
-        intake = new Intake(hardwareMap);
-        wrist = new Wrist(hardwareMap);
+        armPivot = new ArmPivot(hardwareMap);
+        lift = new Lift(hardwareMap);
+        lift.initLiftPController();
+        armPivot.InitArmPivotPIDController();
 
-        intakeJawServo = new IntakeJawServo(hardwareMap);
-//TODO: UNCOMMENT THESE - was testing w/o expa
-        //armPivot = new ArmPivot(hardwareMap);
-        //armPivot.InitArmPivotPIDController();
-
-        wrist.setIntakeTwistPosition(0);
-        wrist.setIntakeTiltPosition(0);
-
-
+        startingTiltPos = armPivot.intakeTilt.getPosition();
+        startingJawPos = armPivot.intakeJawServo.getPosition();
+        startingTwistPos = armPivot.twist.getPosition();
 
     }
 
@@ -217,44 +175,15 @@ public abstract class AutoMaster extends OpMode {
     private int pixelData = 0;
     private ArrayList<Boolean> count = new ArrayList<>();
 
-    public boolean gatherPixelData() {
-        if (pixelData == 5) {
-            int countOfTrue = 0;
-            for (Boolean val : count) {
-                if (val) {
-                    countOfTrue++;
-                }
-            }
-            count.clear();
-
-            return countOfTrue > 3;
-        }
-
-        boolean frontSeen = !frontPixelReceiver.getState();
-        boolean backSeen = !backPixelReceiver.getState();
-
-        count.add(frontSeen && backSeen);
-
-        pixelData += 1;
-
-        return false;
-    }
-
     private int position = 1;
 
-    public int pixelsInConveyor() {
-        boolean hasFront = !frontPixelReceiver.getState();
-        boolean hasBack = !backPixelReceiver.getState();
+    double wantedX = 0;
+    double wantedTiltPos = 0;
+    double wantedJawPos = 0;
+    double wantedTwistPos = 0;
+    int intakeTiltState = 0;
+    boolean gamepad1abool = false;
 
-        if (hasFront && hasBack) {
-            return 2;
-        } else if (hasFront || hasBack) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-    //ee
     @Override
     public void init_loop() {
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
@@ -264,91 +193,22 @@ public abstract class AutoMaster extends OpMode {
                 gamepad2.dpad_down, gamepad2.dpad_right, gamepad2.dpad_left, gamepad2.right_bumper,
                 gamepad2.left_bumper, gamepad2.left_stick_button, gamepad2.right_stick_button);
 
-        if (ButtonPress.isGamepad1_a_pressed()) {
-            position += 1;
-        }
+        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("tilt servo Start pos", startingTiltPos);
+        telemetry.addData("intake tilt Start servo pos", startingTiltPos);
+        telemetry.addData("intake twist servo pos", startingTwistPos);
 
-        if (ButtonPress.isGamepad1_b_pressed()) {
-            position -= 1;
-        }
-
-        if (position > 2) {
-            position = 2;
-        } else if (position < 1) {
-            position = 1;
-        }
-
-        if (ButtonPress.isGamepad1_dpad_down_pressed()) {
-            if (position == 1) {
-                Vision.setSample1Y(Vision.getSample1Y() - 10);
-            } else {
-                Vision.setSample2Y(Vision.getSample2Y() - 10);
-            }
-        }
-
-        if (ButtonPress.isGamepad1_dpad_up_pressed()) {
-            if (position == 1) {
-                Vision.setSample1Y(Vision.getSample1Y() + 10);
-            } else if (position == 2) {
-                Vision.setSample2Y(Vision.getSample2Y() + 10);
-            } else {
-                Vision.setSample3Y(Vision.getSample3Y() + 10);
-            }
-        }
-
-        if (ButtonPress.isGamepad1_dpad_left_pressed()) {
-            if (position == 1) {
-                Vision.setSample1X(Vision.getSample1X() - 10);
-            } else if (position == 2) {
-                Vision.setSample2X(Vision.getSample2X() - 10);
-            } else {
-                Vision.setSample3X(Vision.getSample3X() - 10);
-            }
-        }
-
-        if (ButtonPress.isGamepad1_dpad_right_pressed()) {
-            if (position == 1) {
-                Vision.setSample1X(Vision.getSample1X() + 10);
-            } else if (position == 2) {
-                Vision.setSample2X(Vision.getSample2X() + 10);
-            } else {
-                Vision.setSample3X(Vision.getSample3X() + 10);
-            }
-        }
-
-
-        telemetry.addData("Position to change", position);
-        telemetry.addData("Position 1 Box X", Vision.getSample1X());
-        telemetry.addData("Position 1 Box Y", Vision.getSample1Y());
-        telemetry.addData("Position 2 Box X", Vision.getSample2X());
-        telemetry.addData("Position 2 Box Y", Vision.getSample2Y());
-
-        telemetry.addData("Error Left", Vision.errorLeft);
-        telemetry.addData("Error Right", Vision.errorRight);
-        telemetry.addData("H", Vision.h);
-        telemetry.addData("S", Vision.s);
-        telemetry.addData("V", Vision.v);
-
-        telemetry.addData("We Are on Right", Vision.weAreOnRightSide);
-
-        telemetry.addData("Is Red", Vision.isRed);
-
-        if (Vision.getCubeLocation() == 0) {
-            telemetry.addData("Current Team Maker Position", "Left");
-        } else if (Vision.getCubeLocation() == 1) {
-            telemetry.addData("Current Team Maker Position", "Center");
-        } else if (Vision.getCubeLocation() == 2) {
-            telemetry.addData("Current Team Maker Position", "Right");
-        }
+        telemetry.addData("jaw servo Start pos", startingJawPos);
+        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
 
     }
+
 
     @Override
     public void start() {
         programStage = 0;
 
-        //vision.stopStreamingVision();
-        //robotLiftAlignServo.setPosition(robotLiftRotatorPosition);
+
     }
 
     @Override
@@ -356,6 +216,10 @@ public abstract class AutoMaster extends OpMode {
         double startLoopTime = SystemClock.uptimeMillis();
         //PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
+        mainAutoLoop();
+
+
+        telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
         telemetry.addData("Position Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
         worldXPosition = drive.pose.position.x;
@@ -367,10 +231,32 @@ public abstract class AutoMaster extends OpMode {
 
         telemetry.addData("Velocity Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
-        mainAutoLoop();
-
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+        telemetry.addData("lift pos", lift.getLiftExtension());
+        telemetry.addData("arm angle", armPivot.getArmAngle());
+        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("calc", armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+
+        telemetry.addData("tilt state", intakeTiltState);
+        telemetry.addData("Button a is pressed", ButtonPress.isGamepad1_a_pressed());
+
+        telemetry.addData("intake tilt servo pos", armPivot.intakeTilt.getPosition());
+
+        telemetry.addData("twist servo Start pos", startingTwistPos);
+        telemetry.addData("twist servo pos", wantedTwistPos+startingTwistPos);
+
+        telemetry.addData("intake pow", armPivot.vexIntake.getPower());
+
+        telemetry.addData("jaw servo Start pos", startingJawPos);
+        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
+
+        telemetry.addData("lift limit Switch state", armPivot.getLiftLimitState());
+        telemetry.addData("pivot limit switch state", armPivot.getPivotLimitState());
+
+        telemetry.addData("wanted X", wantedX);
+        telemetry.addData("lift position",lift.liftRight.getCurrentPosition());
+        telemetry.addData("lift limit preVal",liftLimitPreValue);
     }
 
     public void initializeStateVariables() {
@@ -461,4 +347,5 @@ public abstract class AutoMaster extends OpMode {
 
     }
     */
+
 }

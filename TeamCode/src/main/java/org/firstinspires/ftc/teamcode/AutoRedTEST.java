@@ -90,9 +90,7 @@ public class AutoRedTEST extends AutoMaster {
     public void start() {
         super.start();
 
-        wrist.intakeTwist.setPosition(.5); // init Twist
-        wrist.intakeTilt.setPosition(.5); // init Tilt
-        intakeJawServo.intakeJawServo.setPosition(1);
+
 
 
         startTime = SystemClock.uptimeMillis();
@@ -414,8 +412,7 @@ public class AutoRedTEST extends AutoMaster {
         telemetry.addData("world y", worldYPosition);
         telemetry.addData("world ang", worldAngle_rad);
 
-        telemetry.addData("wrist tilt", wrist.intakeTilt.getPosition());
-        telemetry.addData("wrist twist", wrist.intakeTilt.getPosition());
+
         telemetry.addData("cycle", cycle);
 
         telemetry.addData("x", drive.pose.position.x);

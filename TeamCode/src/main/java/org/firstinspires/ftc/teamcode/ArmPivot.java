@@ -317,100 +317,18 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     }
 
+    public double intakeTiltNoArmPower(double liftExtension) {
 
+        double intakeTiltAngle = -69+(liftExtension-4.33)*(-25-(-69))/(16.5-4.33);
 
-    /////////////////////////   PixelLift   /////////////////////////////////////
-    public class ArmPivotElevationMaintainer implements Action {
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-
-
-                armPivotLeftPosition=armPivotLeft.getCurrentPosition();
-
-                if (armPivotLeftPosition < pControllerArmPivotLeft.setPoint) {
-
-                    armPivotLeft.setPower(minPowerArmPivotLeft +
-                            pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
-                } else {
-                    armPivotLeft.setPower(minPowerArmPivotLeft -
-                            pControllerArmPivotLeft.getComputedOutput(armPivotLeftPosition));
-                }
-
-            if (armPivotRightPosition < pControllerArmPivotRight.setPoint) {
-
-                armPivotRight.setPower(minPowerArmPivotRight +
-                        pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
-            } else {
-                armPivotRight.setPower(minPowerArmPivotRight -
-                        pControllerArmPivotRight.getComputedOutput(armPivotRightPosition));
-            }
-            return true;
-
-        }
-    }
-    public Action armPivotElevationMaintainer() {  // this method is for use in RR trajectories
-        return new ArmPivotElevationMaintainer();
+        return intakeTiltAngle;
     }
 
-    public Action setArmPivotPosition(int pixelLiftActionSetPosition) {  // this method is for use in RR trajectories
-        armPivotLeftActionPosition = pixelLiftActionSetPosition;
-        armPivotRightActionPosition = pixelLiftActionSetPosition;
-        return new ArmPivotActionSet();
-    }
 
-    public class ArmPivotActionSet implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
 
-            pControllerArmPivotLeft.setSetPoint(armPivotLeftActionPosition);
-            pControllerArmPivotRight.setSetPoint(armPivotRightActionPosition);
-            return false;
 
-        }
-    }
-    public class ArmPivotActionHome implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
 
-            pControllerArmPivotLeft.setSetPoint(0);
-            pControllerArmPivotRight.setSetPoint(0);
-            return false;
 
-        }
-    }
-    public Action setArmPivotActionHome() {  // this method is for use in RR trajectories
-
-        return new ArmPivotActionHome();
-    }
-        public class ArmPivotActionLow implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-
-                pControllerArmPivotLeft.setSetPoint(600);
-                pControllerArmPivotRight.setSetPoint(600);
-                return false;
-
-            }
-    }
-    public Action setArmPivotActionLow() {  // this method is for use in RR trajectories
-
-        return new ArmPivotActionLow();
-    }
-    public class ArmPivotActionHigh implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-
-            pControllerArmPivotLeft.setSetPoint(700);
-            pControllerArmPivotRight.setSetPoint(700);
-            return false;
-
-        }
-    }
-    public Action setArmPivotActionHigh() {  // this method is for use in RR trajectories
-
-        return new ArmPivotActionHigh();
-    }
 
 
 
