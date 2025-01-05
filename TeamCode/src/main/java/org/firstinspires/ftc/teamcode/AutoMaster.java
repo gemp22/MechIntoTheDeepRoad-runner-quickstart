@@ -217,7 +217,7 @@ public abstract class AutoMaster extends OpMode {
         double startLoopTime = SystemClock.uptimeMillis();
         PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
-        mainAutoLoop();
+        //mainAutoLoop();
 
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
@@ -228,12 +228,17 @@ public abstract class AutoMaster extends OpMode {
         worldAngle_rad = drive.pose.heading.toDouble();
 
         // DO NOT CHANGE THIS LINE
-        //SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
+        SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
 
         telemetry.addData("Velocity Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
+        mainAutoLoop();
+
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+
+
+
         telemetry.addData("lift pos", lift.getLiftExtension());
         telemetry.addData("arm angle", armPivot.getArmAngle());
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());

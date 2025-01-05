@@ -134,6 +134,8 @@ public class AutoRedTEST extends AutoMaster {
                     Math.toRadians(60), 0.6));
 
             drive.applyMovementDirectionBased();
+           // movement_y = 0.2;
+            //drive.applyMovementDirectionBased();
 
             if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
                 drive.stopAllMovementDirectionBased();
