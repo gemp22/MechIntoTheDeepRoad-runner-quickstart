@@ -65,16 +65,16 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public ArmPivot(HardwareMap hardwareMap) {
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
-        intakeTilt.setPosition(0.5);
+        //intakeTilt.setPosition(0.5);
 
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
 
         intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
         intakeJawServo.setDirection(Servo.Direction.REVERSE);
-        intakeJawServo.setPosition(.7);
+        //intakeJawServo.setPosition(.7);
 
         twist = hardwareMap.get(ServoImplEx.class, "twist");
-        twist.setPosition(0);
+       // twist.setPosition(0.2);
 
         liftLimitSwitch = hardwareMap.get(DigitalChannel.class, "liftLimitSwitch");
         pivotLimitSwitch = hardwareMap.get(DigitalChannel.class, "pivotLimitSwitch");
@@ -140,8 +140,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     }
     public void setIntakeTiltAngle (double angle){
-        double intakeTilt0Deg = 0.314;
-        double intakeTilt90Deg = 0.50;
+        double intakeTilt0Deg = 0.44;
+        double intakeTilt90Deg = 0.156;
 
 
         //double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
@@ -152,8 +152,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     public double getIntakeTiltAngle (){
 
-        double intakeTilt0Deg = 0.314;
-        double intakeTilt90Deg = 0.50;
+        double intakeTilt0Deg = 0.44;
+        double intakeTilt90Deg = 0.156;
 
         //return ((intakeTilt.getPosition() - intakeTilt0Deg) / ((intakeTilt90Deg - intakeTilt0Deg) / 90));
 

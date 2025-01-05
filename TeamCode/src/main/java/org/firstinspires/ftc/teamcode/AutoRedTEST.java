@@ -129,8 +129,8 @@ public class AutoRedTEST extends AutoMaster {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(150, stateStartingY,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
+            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
+                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
             drive.applyMovementDirectionBased();

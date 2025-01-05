@@ -36,6 +36,7 @@ import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.ArrayList;
@@ -50,6 +51,15 @@ public class NewTeleop extends AutoMaster {
     boolean justDidAReapproach = false;
 
     double robotLiftMaxTicks = 10573;
+
+    private enum ScoringStates {
+        RESTING,
+        SCORING_LEVEL_1,
+        SCORING_LEVEL_2,
+        PICKUP
+    }
+
+    private ScoringStates scoringState = ScoringStates.RESTING;
 
     @Override
     public void init() {
@@ -169,6 +179,10 @@ public class NewTeleop extends AutoMaster {
 
     private boolean intakeToggle = true;
 
+    private double liftWantedHeight = 0;
+
+    private long liftRestingStartTime = 0;
+
     @Override
     public void mainLoop() {
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
@@ -183,7 +197,7 @@ public class NewTeleop extends AutoMaster {
             movement_x = gamepad1.left_stick_x;
             movement_turn = -gamepad1.right_stick_x;
         }
-        //drive.applyMovementDirectionBased();//this applys movement useing the mecanumDrive class
+        drive.applyMovementDirectionBased();//this applys movement useing the mecanumDrive class
 
 //        if (gamepad1.dpad_up) {
 //            wantedX += 0.05;
@@ -199,28 +213,125 @@ public class NewTeleop extends AutoMaster {
         }
         liftLimitPreValue = armPivot.getLiftLimitState();
 
-//        lift.setSetPoint(wantedX);
-        lift.updateLiftPosition();
+        //lift.setSetPoint(wantedX);
+        //lift.updateLiftPosition();
 
-        lift.setLiftPower(-gamepad1.right_stick_y);
+       // lift.setLiftPower(-gamepad1.right_stick_y);
+
+        /*if (gamepad1.right_trigger > 0.05) {
+            lift.setLiftPower(gamepad1.right_trigger);
+            wantedX = lift.getLiftExtension();
+           // int liftLeftTicks = lift.liftLeft.getCurrentPosition();
+            //int liftRightTicks = lift.liftRight.getCurrentPosition();
+        }
+
+        else if (gamepad1.left_trigger > 0.05 && !armPivot.liftLimitSwitch.getState()) {
+            lift.setLiftPower(-gamepad1.left_trigger);
+            wantedX = lift.getLiftExtension();
+        }*/
+
+        //if (Math.abs(gamepad2.right_stick_y)>0.05){
+           // lift.setLiftPower(gamepad2.right_stick_y);
+       // }
+
+        if (ButtonPress.isGamepad2_y_pressed()) {
+            scoringState = ScoringStates.SCORING_LEVEL_2;
+            liftWantedHeight = 25;
+        } else if (ButtonPress.isGamepad2_x_pressed()) {
+            scoringState = ScoringStates.SCORING_LEVEL_1;
+            liftWantedHeight = 10;
+        } else if (ButtonPress.isGamepad2_a_pressed()) {
+            scoringState = ScoringStates.RESTING;
+            liftRestingStartTime = System.currentTimeMillis();
+            liftWantedHeight = 0;
+        }else if (ButtonPress.isGamepad2_b_pressed()) {
+            scoringState = ScoringStates.PICKUP;
+        }
+
+        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
+            liftWantedHeight += 0.5;
+        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
+            liftWantedHeight -= 0.5;
+        }
+
+        telemetry.addData("liftWantedHeight", liftWantedHeight);
+
+        if (scoringState == ScoringStates.SCORING_LEVEL_2) {
+
+            if (armPivot.getArmAngle() > 80){
+                armPivot.twist.setPosition(0.772);
+                armPivot.intakeTilt.setPosition(.25);
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+
+                if (!armPivot.getPivotLimitState()) {
+                    armPivot.setArmPivotPower(0.25);
+                } else {
+                    armPivot.setArmPivotPower(0);
+                }
+            } else {
+                armPivot.setIntakeTiltAngle(0);
+                armPivot.update(90, 0.75, 30,0.2, telemetry);
+            }
+        } else if (scoringState == ScoringStates.SCORING_LEVEL_1) {
+
+            if (armPivot.getArmAngle() > 80){
+                armPivot.twist.setPosition(0.772);
+                armPivot.intakeTilt.setPosition(.25);
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+
+                if (!armPivot.getPivotLimitState()) {
+                    armPivot.setArmPivotPower(0.25);
+                } else {
+                    armPivot.setArmPivotPower(0);
+                }
+            } else {
+                armPivot.setIntakeTiltAngle(0);
+                armPivot.update(90, 0.75, 30,0.2, telemetry);
+            }
+        } else if (scoringState == ScoringStates.RESTING) {
+            if (lift.getLiftExtension() <8) {
+                if (System.currentTimeMillis()-liftRestingStartTime > 1000) {
+                    armPivot.twist.setPosition(0.005);
+                    armPivot.update(0, 0.15, 45, 0.05, telemetry);
+                }
+            }
+            if (System.currentTimeMillis()-liftRestingStartTime > 1000) {
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+            }
+
+            if (armPivot.getArmAngle() < 45) {
+                armPivot.setIntakeTiltAngle(60);
+            } else {
+                armPivot.setIntakeTiltAngle(0);
+            }
+        }else if (scoringState == ScoringStates.PICKUP) {
+            lift.setLiftPower(-gamepad2.right_stick_y);
+
+            if (lift.getLiftExtension()>6){
+                armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+            }
+        }
 
         if (ButtonPress.isGamepad1_a_pressed()) {
             wePressed = true;
             intakeTiltState += 1;
         }
 
-        if (ButtonPress.isGamepad1_a_pressed() && lift.getLiftExtension() > 4.33) {
+        /*if (ButtonPress.isGamepad1_a_pressed() && lift.getLiftExtension() > 4.33) {
             if (intakeToggle) {
                 intakeToggle = false;
             } else {
                 armPivot.setIntakeTiltAngle(60);
                 intakeToggle = true;
             }
-        }
+        }*/
 
-        if (!intakeToggle && lift.getLiftExtension()>4.33){
+        /*if (!intakeToggle && lift.getLiftExtension()>4.33){
             armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-        }
+        }*/
 
         if( gamepad1.right_bumper){
             armPivot.vexIntake.setPower(-.91);
@@ -232,10 +343,11 @@ public class NewTeleop extends AutoMaster {
             armPivot.vexIntake.setPower(0);
         }
 
+        /*
         if (gamepad1.y) {
             armPivot.twist.setPosition(0.772);
-        }
-
+        }*/
+/*
         if (gamepad1.x){
             armPivot.setIntakeTiltAngle(0);
         }
@@ -244,13 +356,12 @@ public class NewTeleop extends AutoMaster {
             armPivot.intakeTilt.setPosition(.118);
         }
 
-
-
+*/
         if (gamepad1.dpad_right){
             armPivot.intakeJawServo.setPosition(.112);
         }
         if (gamepad1.dpad_left){
-            armPivot.intakeJawServo.setPosition(.7);
+            armPivot.intakeJawServo.setPosition(.72);
         }
 
         System.out.println("Button Press: " + ButtonPress.isGamepad1_a_pressed());
@@ -265,13 +376,11 @@ public class NewTeleop extends AutoMaster {
         telemetry.addData("Intake Tilt State", intakeTiltState);
         telemetry.addData("button is pressed at some time", wePressed);
         telemetry.addData("Gamepad 1 A", ButtonPress.isGamepad1_a_pressed());
+        telemetry.addData("gamepad1 left trigger", gamepad1.left_trigger);
+        telemetry.addData("lift left power", lift.liftLeft.getPower());
+        telemetry.addData("gamepad1 right trigger", gamepad1.right_trigger);
+        telemetry.addData("limit switch state", armPivot.liftLimitSwitch.getState());
 
-        if (gamepad1.dpad_up) {
-            armPivot.update(80, 0.5, 30,0.2, telemetry);
-        }
-
-        if (lift.getLiftExtension() < 4.33 && armPivot.getArmAngle() < 30){
-            armPivot.setIntakeTiltAngle(60);
-        }
+        telemetry.addData("lift right power", lift.liftRight.getPower());
     }
 }

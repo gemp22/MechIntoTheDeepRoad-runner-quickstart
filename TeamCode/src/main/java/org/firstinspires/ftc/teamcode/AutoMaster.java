@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -214,7 +215,7 @@ public abstract class AutoMaster extends OpMode {
     @Override
     public void loop() {
         double startLoopTime = SystemClock.uptimeMillis();
-        //PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
+        PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
         mainAutoLoop();
 

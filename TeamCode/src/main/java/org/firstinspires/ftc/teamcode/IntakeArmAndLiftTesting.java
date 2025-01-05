@@ -51,8 +51,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="armAndLift PID testing :)", group="Iterative OpMode")
-public class ArmAndLiftTestingPID extends OpMode
+@TeleOp(name="Intake Arm and Lift Testing", group="Iterative OpMode")
+public class IntakeArmAndLiftTesting extends OpMode
 {
 
     //gitTest
@@ -94,10 +94,10 @@ public class ArmAndLiftTestingPID extends OpMode
         lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
 
-//
-//        startingTiltPos = armPivot.intakeTilt.getPosition();
-//        startingJawPos = armPivot.intakeJawServo.getPosition();
-//        startingTwistPos = armPivot.twist.getPosition();
+
+        startingTiltPos = armPivot.intakeTilt.getPosition();
+        startingJawPos = armPivot.intakeJawServo.getPosition();
+        startingTwistPos = armPivot.twist.getPosition();
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -114,13 +114,13 @@ public class ArmAndLiftTestingPID extends OpMode
      */
     @Override
     public void init_loop() {
-//        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
-//        telemetry.addData("tilt servo Start pos", startingTiltPos);
-//        telemetry.addData("intake tilt Start servo pos", startingTiltPos);
-//        telemetry.addData("intake twist servo pos", startingTwistPos);
-//
-//        telemetry.addData("jaw servo Start pos", startingJawPos);
-//        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
+        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("tilt servo Start pos", startingTiltPos);
+        telemetry.addData("intake tilt Start servo pos", startingTiltPos);
+        telemetry.addData("intake twist servo pos", startingTwistPos);
+
+        telemetry.addData("jaw servo Start pos", startingJawPos);
+        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
     }
 
     double lastKnownAngle = 0;
@@ -180,7 +180,8 @@ public class ArmAndLiftTestingPID extends OpMode
      */
     @Override
     public void loop() {
-        /*if (gamepad1.right_bumper) {
+        /*
+        if (gamepad1.right_bumper) {
             armPivot.update(90, 0.5, 30,0.2, telemetry);
         } else if (gamepad1.left_bumper) {
             armPivot.update(0, 0.15, 60, 0.02, telemetry);
@@ -190,26 +191,26 @@ public class ArmAndLiftTestingPID extends OpMode
 
         lift.setLiftPower(-gamepad1.right_stick_y);
 
-        if (gamepad1.right_trigger > 0.01) {
-            armPivot.setArmPivotPower(gamepad1.right_trigger);
-            lastKnownAngle = armPivot.getArmAngle();
-        } else if (gamepad1.left_trigger > 0.01) {
-            armPivot.setArmPivotPower(-gamepad1.left_trigger);
-            lastKnownAngle = armPivot.getArmAngle();
-        } else {
-            if (gamepad1.a) {
-                armPivot.setArmPivotPower(0);
-                lastKnownAngle = armPivot.getArmAngle();
-            } else {
-                armPivot.update(lastKnownAngle, 1, 30, 0.2, telemetry);
-            }
-            //armPivot.setArmPivotPower(0);
-        }
+//        if (gamepad1.right_trigger > 0.01) {
+//            armPivot.setArmPivotPower(gamepad1.right_trigger);
+//            lastKnownAngle = armPivot.getArmAngle();
+//        } else if (gamepad1.left_trigger > 0.01) {
+//            armPivot.setArmPivotPower(-gamepad1.left_trigger);
+//            lastKnownAngle = armPivot.getArmAngle();
+//        } else {
+//            if (gamepad1.a) {
+//                armPivot.setArmPivotPower(0);
+//                lastKnownAngle = armPivot.getArmAngle();
+//            } else {
+//                armPivot.update(lastKnownAngle, 1, 30, 0.2, telemetry);
+//            }
+//            //armPivot.setArmPivotPower(0);
+//        }
 
 
 
 
-     /*
+
         if (gamepad1.dpad_right) {
             wantedTiltPos += 0.002;
 
@@ -258,7 +259,7 @@ public class ArmAndLiftTestingPID extends OpMode
 //        if (gamepad1.a) {
 //            lift.setSetPoint(15);
 //
-//        }
+////        }
 //        lift.updateLiftPosition();
 
         if (gamepad1.dpad_up) {
@@ -269,7 +270,7 @@ public class ArmAndLiftTestingPID extends OpMode
         }
 
 
-
+//
 //        if (lift.getLiftExtension()>4.33) {
 //            armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
 //            //armPivot.setIntakeTiltAngle(-60);
@@ -277,20 +278,20 @@ public class ArmAndLiftTestingPID extends OpMode
 //        else  {
 //            armPivot.setIntakeTiltAngle(90);
 //        }
-
-
-        if (armPivot.getLiftLimitState() && !liftLimitPreValue) {
-            lift.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            lift.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            lift.liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            lift.liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            wantedX =0;
-        }
-        liftLimitPreValue = armPivot.getLiftLimitState();
-
-
-        lift.setSetPoint(wantedX);
-        lift.updateLiftPosition();
+//
+//
+//        if (armPivot.getLiftLimitState() && !liftLimitPreValue) {
+//            lift.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            lift.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            lift.liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            lift.liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            wantedX =0;
+//        }
+//        liftLimitPreValue = armPivot.getLiftLimitState();
+//
+//
+//        lift.setSetPoint(wantedX);
+//        lift.updateLiftPosition();
 
 
 
@@ -315,9 +316,9 @@ public class ArmAndLiftTestingPID extends OpMode
         telemetry.addData("wanted X", wantedX);
         telemetry.addData("lift position Dpad Up Dpad Down",lift.liftRight.getCurrentPosition());
         telemetry.addData("lift limit preVal",liftLimitPreValue);
-        telemetry.addData("lift extension In?", lift.getLiftExtension());*/
+        telemetry.addData("lift extension In?", lift.getLiftExtension());
 
-
+//
 //        wantedPos = Range.clip(wantedPos, 0, 1);
 //        armPivot.intakeTilt.setPosition(wantedPos);
 //        telemetry.addData("servo pos", wantedPos);

@@ -93,6 +93,7 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftRightPosition=liftRight.getCurrentPosition();
 
     }
+
     public void setLiftPower(double liftPower) {
         liftLeft.setPower(liftPower);
         liftRight.setPower(liftPower);
