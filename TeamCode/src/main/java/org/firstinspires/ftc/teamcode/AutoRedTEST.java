@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_x;
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldXPosition;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
@@ -11,14 +8,14 @@ import android.os.SystemClock;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Autonomous
-public class AutoRedTEST extends AutoMaster {
+public class AutoRedTEST extends Robot {
 
     private final double SCALE_FACTOR = 1.6;
 

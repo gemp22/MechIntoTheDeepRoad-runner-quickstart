@@ -1,13 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
 
 import android.os.SystemClock;
+import android.util.Pair;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -18,6 +15,12 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Movement;
+import org.firstinspires.ftc.teamcode.PController;
+import org.firstinspires.ftc.teamcode.PIDController;
+
+import java.util.HashMap;
 
 public class ArmPivot {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx armPivotLeft;
@@ -27,11 +30,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public Servo intakeJawServo;
     public Servo twist;
 
-    DigitalChannel liftLimitSwitch = null;
-    DigitalChannel pivotLimitSwitch = null;
-
-
-
+    public DigitalChannel liftLimitSwitch = null;
+    public DigitalChannel pivotLimitSwitch = null;
 
     public int armPivotLeftPosition = 0;
     public int armPivotRightPosition = 0;
@@ -62,10 +62,12 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     public static double turnSlipAmountFor1RPS = 0.05;
 
-    public ArmPivot(HardwareMap hardwareMap) {
+    public ArmPivot(HardwareMap hardwareMap, HashMap<String, Pair<Servo, Double>> servoMap) {
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
-        //intakeTilt.setPosition(0.5);
+        intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
+
+        servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
 
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
 

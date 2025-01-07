@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import androidx.annotation.NonNull;
 
@@ -7,6 +7,10 @@ import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.PController;
+import org.firstinspires.ftc.teamcode.PIDController;
 
 public class Lift {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx liftLeft;
@@ -34,7 +38,7 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     public PIDController pidControllerLiftRight = new PIDController(0.005,0.00007,0);
 
     public Lift(HardwareMap hardwareMap) {
-        liftLeft = hardwareMap.get(DcMotorEx.class, "leftLift");
+        liftLeft = hardwareMap.get(DcMotorEx.class, Constants.LIFT_LEFT_MOTOR_ID);
         liftLeft.setDirection(DcMotor.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftLeft.setPower(0);
@@ -43,8 +47,6 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
 
         liftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
         liftRight.setDirection(DcMotor.Direction.FORWARD);

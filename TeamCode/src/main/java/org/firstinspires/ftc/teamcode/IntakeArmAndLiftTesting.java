@@ -31,11 +31,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.ArmPivot;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -167,10 +168,10 @@ public class IntakeArmAndLiftTesting extends OpMode
 
 
 
-    double wantedX = 0;
-    double wantedTiltPos = 0;
-    double wantedJawPos = 0;
-    double wantedTwistPos = 0;
+    double wantedX = .5;
+    double wantedTiltPos = .5; //PARALLEL WITH LIFT
+    double wantedJawPos = 1; // CLOSED
+    double wantedTwistPos = .344; // FLAT
 
 
 
@@ -218,7 +219,7 @@ public class IntakeArmAndLiftTesting extends OpMode
             wantedTiltPos -= 0.002;
 
         }
-        armPivot.intakeTilt.setPosition(startingTiltPos+wantedTiltPos);
+        armPivot.intakeTilt.setPosition(wantedTiltPos);
 
 
         if (gamepad1.cross) {
@@ -228,7 +229,7 @@ public class IntakeArmAndLiftTesting extends OpMode
             wantedJawPos -= 0.002;
 
         }
-        armPivot.intakeJawServo.setPosition(startingJawPos+wantedJawPos);
+        armPivot.intakeJawServo.setPosition(wantedJawPos);
 
 
         if (gamepad1.triangle) {
@@ -238,7 +239,7 @@ public class IntakeArmAndLiftTesting extends OpMode
             wantedTwistPos -= 0.002;
 
         }
-        armPivot.twist.setPosition(startingTwistPos+wantedTwistPos);
+        armPivot.twist.setPosition(wantedTwistPos);
 
 
 

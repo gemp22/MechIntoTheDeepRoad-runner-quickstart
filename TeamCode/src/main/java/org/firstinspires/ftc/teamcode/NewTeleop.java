@@ -35,9 +35,9 @@ import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,20 +46,12 @@ import java.util.HashMap;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @TeleOp(name = "NewTeleop", group = "Mechbot")
-public class NewTeleop extends AutoMaster {
+public class NewTeleop extends Robot {
 
     boolean justDidAReapproach = false;
 
     double robotLiftMaxTicks = 10573;
 
-    private enum ScoringStates {
-        RESTING,
-        SCORING_LEVEL_1,
-        SCORING_LEVEL_2,
-        PICKUP
-    }
-
-    private ScoringStates scoringState = ScoringStates.RESTING;
 
     @Override
     public void init() {
@@ -235,17 +227,20 @@ public class NewTeleop extends AutoMaster {
        // }
 
         if (ButtonPress.isGamepad2_y_pressed()) {
-            scoringState = ScoringStates.SCORING_LEVEL_2;
+            superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
             liftWantedHeight = 25;
         } else if (ButtonPress.isGamepad2_x_pressed()) {
-            scoringState = ScoringStates.SCORING_LEVEL_1;
+            //scoringState = ScoringStates.SCORING_LEVEL_1;
+            superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
             liftWantedHeight = 10;
         } else if (ButtonPress.isGamepad2_a_pressed()) {
-            scoringState = ScoringStates.RESTING;
+            //scoringState = ScoringStates.RESTING;
+            superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
             liftRestingStartTime = System.currentTimeMillis();
             liftWantedHeight = 0;
         }else if (ButtonPress.isGamepad2_b_pressed()) {
-            scoringState = ScoringStates.PICKUP;
+            //scoringState = ScoringStates.PICKUP;
+            superstructure.nextState(Superstructure.SuperstructureStates.PICKUP.ordinal());
         }
 
         if (ButtonPress.isGamepad2_dpad_up_pressed()) {
@@ -256,6 +251,7 @@ public class NewTeleop extends AutoMaster {
 
         telemetry.addData("liftWantedHeight", liftWantedHeight);
 
+        /*
         if (scoringState == ScoringStates.SCORING_LEVEL_2) {
 
             if (armPivot.getArmAngle() > 80){
@@ -318,7 +314,12 @@ public class NewTeleop extends AutoMaster {
         if (ButtonPress.isGamepad1_a_pressed()) {
             wePressed = true;
             intakeTiltState += 1;
-        }
+        }*/
+
+
+
+
+
 
         /*if (ButtonPress.isGamepad1_a_pressed() && lift.getLiftExtension() > 4.33) {
             if (intakeToggle) {

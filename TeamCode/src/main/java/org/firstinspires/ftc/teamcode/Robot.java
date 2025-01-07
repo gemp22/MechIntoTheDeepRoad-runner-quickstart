@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
 
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.Pair;
 
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -15,23 +16,24 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.ArmPivot;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public abstract class AutoMaster extends OpMode {
+public abstract class Robot extends OpMode {
     MecanumDrive drive = null;
-
-    public DcMotorEx robotLift = null;
 
     ArmPivot armPivot;
     Lift lift;
+    Superstructure superstructure;
+    HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
 
-    double armSetPointLeft = 0;
-    double armSetPointRight = 0;
-    //int armPivotLeftPosition = 0;
-    //int armPivotRightPosition = 0;
-    int pivotMaxTicks = 2370;
-    int stage = 0;
-    int velocity = 0;
+    public boolean isAuto = false;
+
     double startingTiltPos = 0;
     double startingJawPos = 0;
     double startingTwistPos = 0;
@@ -41,46 +43,6 @@ public abstract class AutoMaster extends OpMode {
 
     AnalogInput rightDistance;
     AnalogInput leftDistance;
-
-
-//clocks
-
-    ElapsedTime runtime = new ElapsedTime();
-    ElapsedTime waitTimer1 = new ElapsedTime();
-    ElapsedTime waitTimer2 = new ElapsedTime();
-
-    //Lift P controllers
-
-
-    Servo pawright;
-
-    // Vision for Tensor
-/*
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
-    // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "model_20231227_193805.tflite";
-    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
-    // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
-    // Define the labels recognized in the model for TFOD (must be in training order!)
-    private static final String[] LABELS = {
-            "TPB",
-            "TPR",
-    };
-    */
-
-    /**
-     * The variable to store our instance of the TensorFlow Object Detection processor.
-     */
-    //public TfodProcessor tfod; commented this out for the intothedeep season since there is not vision
-
-    /**
-     * The variable to store our instance of the vision portal.
-     */
-    //private VisionPortal visionPortal;
-
 
     //////// STATE MACHINE STUFF BELOW DO NOT TOUCH ////////
     public boolean stageFinished = true;
@@ -145,32 +107,22 @@ public abstract class AutoMaster extends OpMode {
         return newPoints;
     }
 
-    Vision vision;
-
     @Override
     public void init() {
 
-        armPivot = new ArmPivot(hardwareMap);
+        armPivot = new ArmPivot(hardwareMap, servoMap);
         lift = new Lift(hardwareMap);
         lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
+        superstructure = new Superstructure(armPivot, lift, this);
 
         startingTiltPos = armPivot.intakeTilt.getPosition();
         startingJawPos = armPivot.intakeJawServo.getPosition();
         startingTwistPos = armPivot.twist.getPosition();
-
     }
 
     public double mmToIn(double in) {
         return in / 25.4;
-    }
-
-    public double getRightDistanceIn() {
-        return mmToIn((rightDistance.getVoltage() / (3.3 / 1024)) * 6 - 300) + 4;
-    }
-
-    public double getLeftDistanceIn() {
-        return mmToIn((leftDistance.getVoltage() / (3.3 / 1024)) * 6 - 300) + 4;
     }
 
     private int pixelData = 0;
@@ -208,17 +160,12 @@ public abstract class AutoMaster extends OpMode {
     @Override
     public void start() {
         programStage = 0;
-
-
     }
 
     @Override
     public void loop() {
         double startLoopTime = SystemClock.uptimeMillis();
         PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
-
-        //mainAutoLoop();
-
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
         telemetry.addData("Position Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
@@ -232,12 +179,12 @@ public abstract class AutoMaster extends OpMode {
 
         telemetry.addData("Velocity Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
+        superstructure.update(telemetry, gamepad1, gamepad2);
+
         mainAutoLoop();
 
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
-
-
 
         telemetry.addData("lift pos", lift.getLiftExtension());
         telemetry.addData("arm angle", armPivot.getArmAngle());
@@ -290,68 +237,4 @@ public abstract class AutoMaster extends OpMode {
     }
 
     public abstract void mainLoop();
-
-    /*
-    private void initTfod() {
-
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
-
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
-
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
-                .setModelLabels(LABELS)
-                .setIsModelTensorFlow2(true)
-                .setIsModelQuantized(true)
-                .setModelInputSize(300)
-                .setModelAspectRatio(16.0 / 9.0)
-
-                .build();
-
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        //builder.setCameraResolution(new Size(640, 480));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableLiveView(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        //builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
-        builder.addProcessor(tfod);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.70f);
-
-        // Disable or re-enable the TFOD processor at any time.
-        visionPortal.setProcessorEnabled(tfod, true);
-
-    }
-    */
-
 }
