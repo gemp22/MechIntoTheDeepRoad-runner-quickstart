@@ -68,6 +68,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
 
         servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
+        servoMap.put("Twist Servo", new Pair<>(twist, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
+        servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
 
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
 

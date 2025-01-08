@@ -77,8 +77,8 @@ public class ArmTesting extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        armPivot = new ArmPivot(hardwareMap);
-        armPivot.InitArmPivotPController();
+       // armPivot = new ArmPivot(hardwareMap);
+        //armPivot.InitArmPivotPController();
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.

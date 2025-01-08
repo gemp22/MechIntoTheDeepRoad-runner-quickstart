@@ -8,13 +8,11 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
-import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.ArmPivot;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -26,21 +24,16 @@ import java.util.HashMap;
 
 public abstract class Robot extends OpMode {
     MecanumDrive drive = null;
-
     ArmPivot armPivot;
     Lift lift;
     Superstructure superstructure;
     HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
-
     public boolean isAuto = false;
-
     double startingTiltPos = 0;
     double startingJawPos = 0;
     double startingTwistPos = 0;
-
     boolean guideToggle = false;
     boolean guidePreValue = false;
-
     AnalogInput rightDistance;
     AnalogInput leftDistance;
 
@@ -57,9 +50,7 @@ public abstract class Robot extends OpMode {
     public double stateStartingX = 0;
     public double stateStartingY = 0;
     public double stateStartingAngle_rad = 0;
-
     private final boolean DEBUGGING = false;
-
     private boolean inDebugState = false;
 
     //holds the stage we are going to next
@@ -114,7 +105,9 @@ public abstract class Robot extends OpMode {
         lift = new Lift(hardwareMap);
         lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
+
         superstructure = new Superstructure(armPivot, lift, this);
+        drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         startingTiltPos = armPivot.intakeTilt.getPosition();
         startingJawPos = armPivot.intakeJawServo.getPosition();
@@ -165,7 +158,7 @@ public abstract class Robot extends OpMode {
     @Override
     public void loop() {
         double startLoopTime = SystemClock.uptimeMillis();
-        PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
+       // PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
         telemetry.addData("Position Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
@@ -175,7 +168,7 @@ public abstract class Robot extends OpMode {
         worldAngle_rad = drive.pose.heading.toDouble();
 
         // DO NOT CHANGE THIS LINE
-        SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
+        //SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
 
         telemetry.addData("Velocity Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
