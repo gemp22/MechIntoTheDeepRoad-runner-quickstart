@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Pair;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -61,9 +63,6 @@ public class GoBildaOdo {
 
     }
 
-     public void GoBildPinpointUpdate(){
-        odo.update();
-    }
 
     public void GoBildaPinpointPostionandIMUReset (){
         odo.resetPosAndIMU();
@@ -72,11 +71,14 @@ public class GoBildaOdo {
     public void GoBildaPinpointIMUOnly (){
         odo.recalibrateIMU();
     }
-    public void GoBildaGetPose2D(Telemetry telemetry){
-        Pose2D pos = odo.getPosition();
-        String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-        telemetry.addData("Position", data);
+
+    public Pair<Pose2D,Pose2D> GoBildaGetPose2D(){
+
+        odo.update();
+        return new Pair<>(odo.getPosition(),odo.getVelocity());
+
     }
+
 
 
 

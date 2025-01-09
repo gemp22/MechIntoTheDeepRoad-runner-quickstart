@@ -267,6 +267,14 @@ public class NewTeleop extends Robot {
         } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
             superstructure.liftWantedHeight -= 0.5;
         }
+        if (ButtonPress.isGamepad1_y_pressed()) {
+
+            superstructure.nextState(Superstructure.SuperstructureStates.HOLD_EVERYTHING.ordinal());
+        }
+        if (ButtonPress.isGamepad1_x_pressed()) {
+
+            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
+        }
 
         telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
 

@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -165,27 +166,33 @@ public abstract class Robot extends OpMode {
     @Override
     public void loop() {
         double startLoopTime = SystemClock.uptimeMillis();
-        PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
+        //PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
 
-        worldXPosition = drive.pose.position.x;
-        worldYPosition = drive.pose.position.y;
-        worldAngle_rad = drive.pose.heading.toDouble();
+//        worldXPosition = drive.pose.position.x;
+//        worldYPosition = drive.pose.position.y;
+//        worldAngle_rad = drive.pose.heading.toDouble();
 
         //GoBildaPinPoint
-        GoBildaOdo.GoBildPinpointUpdate();
-        GoBildaOdo.GoBildaGetPose2D(telemetry);
 
+         Pair<Pose2D,Pose2D> goBildaPose = GoBildaOdo.GoBildaGetPose2D();
 
+        worldXPosition = goBildaPose.first.getX(DistanceUnit.INCH);
+        worldYPosition = goBildaPose.first.getY(DistanceUnit.INCH);
+        worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
         // DO NOT CHANGE THIS LINE
-        SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
+        SpeedOmeter.update(goBildaPose.second.getY(DistanceUnit.INCH), goBildaPose.second.getX(DistanceUnit.INCH), goBildaPose.second.getHeading(AngleUnit.RADIANS));
 
         //superstructure.update(telemetry, gamepad1, gamepad2);
 
         mainAutoLoop();
 
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
+        telemetry.addData("World X", worldXPosition);
+        telemetry.addData("World Y", worldYPosition);
+        telemetry.addData("World Angle", worldAngle_rad);
+
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
     }
 
