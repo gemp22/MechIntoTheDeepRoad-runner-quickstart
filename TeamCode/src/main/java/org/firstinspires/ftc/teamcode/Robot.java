@@ -146,9 +146,7 @@ public abstract class Robot extends OpMode {
 
         telemetry.addData("jaw servo Start pos", startingJawPos);
         telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
-
     }
-
 
     @Override
     public void start() {
@@ -161,7 +159,6 @@ public abstract class Robot extends OpMode {
        // PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
-        telemetry.addData("Position Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
 
         worldXPosition = drive.pose.position.x;
         worldYPosition = drive.pose.position.y;
@@ -170,39 +167,12 @@ public abstract class Robot extends OpMode {
         // DO NOT CHANGE THIS LINE
         //SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
 
-        telemetry.addData("Velocity Calculation Loop Time", SystemClock.uptimeMillis() - startLoopTime);
-
-        superstructure.update(telemetry, gamepad1, gamepad2);
+        //superstructure.update(telemetry, gamepad1, gamepad2);
 
         mainAutoLoop();
 
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
-
-        telemetry.addData("lift pos", lift.getLiftExtension());
-        telemetry.addData("arm angle", armPivot.getArmAngle());
-        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
-        telemetry.addData("calc", armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-
-        telemetry.addData("tilt state", intakeTiltState);
-        telemetry.addData("Button a is pressed", ButtonPress.isGamepad1_a_pressed());
-
-        telemetry.addData("intake tilt servo pos", armPivot.intakeTilt.getPosition());
-
-        telemetry.addData("twist servo Start pos", startingTwistPos);
-        telemetry.addData("twist servo pos", wantedTwistPos+startingTwistPos);
-
-        telemetry.addData("intake pow", armPivot.vexIntake.getPower());
-
-        telemetry.addData("jaw servo Start pos", startingJawPos);
-        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
-
-        telemetry.addData("lift limit Switch state", armPivot.getLiftLimitState());
-        telemetry.addData("pivot limit switch state", armPivot.getPivotLimitState());
-
-        telemetry.addData("wanted X", wantedX);
-        telemetry.addData("lift position",lift.liftRight.getCurrentPosition());
-        telemetry.addData("lift limit preVal",liftLimitPreValue);
     }
 
     public void initializeStateVariables() {
@@ -229,5 +199,7 @@ public abstract class Robot extends OpMode {
         }
     }
 
-    public abstract void mainLoop();
+    public void mainLoop() {
+
+    }
 }

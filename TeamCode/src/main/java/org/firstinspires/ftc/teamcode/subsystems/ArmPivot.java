@@ -67,22 +67,17 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
         intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
 
-        servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
-        servoMap.put("Twist Servo", new Pair<>(twist, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
-        servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
-
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
 
         intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
         intakeJawServo.setDirection(Servo.Direction.REVERSE);
-        //intakeJawServo.setPosition(.7);
+        intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
 
         twist = hardwareMap.get(ServoImplEx.class, "twist");
-       // twist.setPosition(0.2);
+        twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
 
         liftLimitSwitch = hardwareMap.get(DigitalChannel.class, "liftLimitSwitch");
         pivotLimitSwitch = hardwareMap.get(DigitalChannel.class, "pivotLimitSwitch");
-
 
         armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -91,8 +86,6 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-
         armPivotRight = hardwareMap.get(DcMotorEx.class, "rightPivot");
         armPivotRight.setDirection(DcMotor.Direction.REVERSE);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -100,6 +93,10 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
+        servoMap.put("Twist Servo", new Pair<>(twist, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
+        servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants.JAW_SERVO_INTAKE_POSITION));
     }
 
     public void InitArmPivotPController(){
@@ -143,21 +140,18 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotRight.setPower(armPivotPower);
 
     }
-    public void setIntakeTiltAngle (double angle){
-        double intakeTilt0Deg = 0.44;
-        double intakeTilt90Deg = 0.156;
-
-
+    public void setIntakeTiltAngle(double angle){
+        double intakeTilt0Deg = Constants.TILT_SERVO_PARALLEL_WITH_FLOOR;
+        double intakeTilt90Deg = Constants.TILT_SERVO_90_DEGREES_UP;
         //double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
         double output = intakeTilt90Deg+((angle-90)*(intakeTilt0Deg-intakeTilt90Deg)/(0-90));
 
-        intakeTilt.setPosition(Range.clip(output, 0.19, intakeTilt90Deg));
+        intakeTilt.setPosition(Range.clip(output, intakeTilt90Deg, Constants.TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION));
     }
 
     public double getIntakeTiltAngle (){
-
-        double intakeTilt0Deg = 0.44;
-        double intakeTilt90Deg = 0.156;
+        double intakeTilt0Deg = Constants.TILT_SERVO_PARALLEL_WITH_FLOOR;
+        double intakeTilt90Deg = Constants.TILT_SERVO_90_DEGREES_UP;
 
         //return ((intakeTilt.getPosition() - intakeTilt0Deg) / ((intakeTilt90Deg - intakeTilt0Deg) / 90));
 

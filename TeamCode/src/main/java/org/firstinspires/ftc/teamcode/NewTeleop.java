@@ -177,6 +177,8 @@ public class NewTeleop extends Robot {
 
     @Override
     public void mainLoop() {
+        super.mainLoop();
+
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
                 gamepad1.left_bumper, gamepad1.left_stick_button, gamepad1.right_stick_button,
@@ -226,30 +228,47 @@ public class NewTeleop extends Robot {
            // lift.setLiftPower(gamepad2.right_stick_y);
        // }
 
+        System.out.println("TESTING!!! Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
+
         if (ButtonPress.isGamepad2_y_pressed()) {
+            System.out.println("Y is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
-            liftWantedHeight = 25;
+            superstructure.liftWantedHeight = 25;
         } else if (ButtonPress.isGamepad2_x_pressed()) {
+            System.out.println("X is Pressed");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
-            liftWantedHeight = 10;
+            superstructure.liftWantedHeight = 10;
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
+            System.out.println("A is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
             liftRestingStartTime = System.currentTimeMillis();
-            liftWantedHeight = 0;
-        }else if (ButtonPress.isGamepad2_b_pressed()) {
+            superstructure.liftWantedHeight = 0;
+        } else if (ButtonPress.isGamepad2_b_pressed()) {
             //scoringState = ScoringStates.PICKUP;
+            System.out.println("B is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.PICKUP.ordinal());
         }
 
-        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
-            liftWantedHeight += 0.5;
-        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
-            liftWantedHeight -= 0.5;
+
+        if (ButtonPress.isGamepad1_a_pressed()) {
+            superstructure.liftWantedHeight = 16;
+            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
         }
 
-        telemetry.addData("liftWantedHeight", liftWantedHeight);
+        if (ButtonPress.isGamepad1_b_pressed()) {
+            superstructure.liftWantedHeight = 0;
+            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
+        }
+
+        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
+            superstructure.liftWantedHeight += 0.5;
+        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
+            superstructure.liftWantedHeight -= 0.5;
+        }
+
+        telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
 
         /*
         if (scoringState == ScoringStates.SCORING_LEVEL_2) {
@@ -365,23 +384,6 @@ public class NewTeleop extends Robot {
             armPivot.intakeJawServo.setPosition(.72);
         }
 
-        System.out.println("Button Press: " + ButtonPress.isGamepad1_a_pressed());
-        System.out.println("Intake Tilt State: " + intakeTiltState);
-        System.out.println("intake tilt pose: " + armPivot.intakeTilt.getPosition());
-/*
-        if (ButtonPress.isGamepad1_a_pressed() && lift.getLiftExtension() > 4.33) {
-            armPivot.setIntakeTiltAngle(60);
-            intakeTiltState = 0;
-        }
-*/
-        telemetry.addData("Intake Tilt State", intakeTiltState);
-        telemetry.addData("button is pressed at some time", wePressed);
-        telemetry.addData("Gamepad 1 A", ButtonPress.isGamepad1_a_pressed());
-        telemetry.addData("gamepad1 left trigger", gamepad1.left_trigger);
-        telemetry.addData("lift left power", lift.liftLeft.getPower());
-        telemetry.addData("gamepad1 right trigger", gamepad1.right_trigger);
-        telemetry.addData("limit switch state", armPivot.liftLimitSwitch.getState());
-
-        telemetry.addData("lift right power", lift.liftRight.getPower());
+        superstructure.update(telemetry, gamepad1, gamepad2);
     }
 }

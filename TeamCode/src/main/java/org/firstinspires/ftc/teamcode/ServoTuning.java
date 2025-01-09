@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 
 @Autonomous
 public class ServoTuning extends Robot {
+
+    private int servoIndex = 0;
+    private double currentServoPosition = 0;
+
     @Override
     public void init() {
         super.init();
@@ -24,13 +28,17 @@ public class ServoTuning extends Robot {
     @Override
     public void start() {
         super.start();
-    }
 
-    private int servoIndex = 0;
-    private double currentServoPosition = 0;
+        List<Map.Entry<String, Pair<Servo, Double>>> entryServoList = servoMap.entrySet().stream().collect(Collectors.toList());
+        Map.Entry<String, Pair<Servo, Double>> entry = entryServoList.get(servoIndex);
+
+        currentServoPosition = entry.getValue().second;
+    }
 
     @Override
     public void mainLoop() {
+        super.mainLoop();
+
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
                 gamepad1.left_bumper, gamepad1.left_stick_button, gamepad1.right_stick_button,
@@ -69,4 +77,3 @@ public class ServoTuning extends Robot {
         telemetry.addData("Current Servo Position", currentServoPosition);
     }
 }
-
