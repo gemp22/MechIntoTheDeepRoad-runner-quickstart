@@ -14,16 +14,22 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.ArmPivot;
+import org.firstinspires.ftc.teamcode.subsystems.GoBildaOdo;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public abstract class Robot extends OpMode {
     MecanumDrive drive = null;
+    GoBildaOdo GoBildaOdo; // Declare OpMode member for the Odometry Computer
     ArmPivot armPivot;
     Lift lift;
     Superstructure superstructure;
@@ -107,7 +113,10 @@ public abstract class Robot extends OpMode {
         armPivot.InitArmPivotPIDController();
 
         superstructure = new Superstructure(armPivot, lift, this);
+
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
+        GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
 
         startingTiltPos = armPivot.intakeTilt.getPosition();
         startingJawPos = armPivot.intakeJawServo.getPosition();
@@ -118,7 +127,7 @@ public abstract class Robot extends OpMode {
         return in / 25.4;
     }
 
-    private int pixelData = 0;
+
     private ArrayList<Boolean> count = new ArrayList<>();
 
     private int position = 1;
@@ -156,7 +165,7 @@ public abstract class Robot extends OpMode {
     @Override
     public void loop() {
         double startLoopTime = SystemClock.uptimeMillis();
-       // PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
+        PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
 
@@ -164,8 +173,13 @@ public abstract class Robot extends OpMode {
         worldYPosition = drive.pose.position.y;
         worldAngle_rad = drive.pose.heading.toDouble();
 
+        //GoBildaPinPoint
+        GoBildaOdo.GoBildPinpointUpdate();
+        GoBildaOdo.GoBildaGetPose2D(telemetry);
+
+
         // DO NOT CHANGE THIS LINE
-        //SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
+        SpeedOmeter.update(currentPoseVel.linearVel.y, currentPoseVel.linearVel.x, currentPoseVel.angVel);
 
         //superstructure.update(telemetry, gamepad1, gamepad2);
 
