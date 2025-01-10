@@ -23,18 +23,28 @@ public class Superstructure {
     private long lastHangRestTime = 0;
 
     public enum SuperstructureStates {
+        //basket delivery////
         RESTING,
         PICKUP,
         DELIVERY_LEVEL_1,
         DELIVERY_LEVEL_2,
-
+      // hang automation
         HANG_BAR_1_PREP,
         HANG_BAR_1,
         HANG_BAR_2_PREP,
         HANG_BAR_2,
         HANG_BAR_2_FINISH,
         ROBOT_RESTING_ON_BAR_2,
-        HOLD_EVERYTHING
+        HOLD_EVERYTHING,
+
+        //specimen State
+
+        COLLECT_SPECIMEN_PREP,
+        COLLECT_SPECIMEN_WALL,
+        DELIVER_SPECIMEN_PREP,
+        DELIVER_SPECIMEN
+
+
     }
     private int currentState = SuperstructureStates.RESTING.ordinal();
     private long stateStartTime = 0;
@@ -70,6 +80,8 @@ public class Superstructure {
         System.out.println("Superstructure State: " + currentState);
         System.out.println("Tilt Pos: " + armPivot.intakeTilt.getPosition());
 
+
+
         if (currentState == SuperstructureStates.RESTING.ordinal()) {
             if (stateFinished) {
                 // init vars as needed
@@ -78,12 +90,15 @@ public class Superstructure {
 
             if (lift.getLiftExtension() < 8) {
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
-                armPivot.update(0, 0.5, 45, 0.05, telemetry);
+
+                    if(SystemClock.uptimeMillis()-stateStartTime>550){
+                    armPivot.update(0, 0.5, 45, 0.05, telemetry);
+                    }
             }
             lift.setSetPoint(liftWantedHeight);
             lift.updateLiftPosition();
 
-            if (armPivot.getArmAngle() < 45) {
+            if (armPivot.getArmAngle() < 0) {
                 System.out.println("Setting servo 60 degrees");
                 armPivot.setIntakeTiltAngle(60);
             } else {
@@ -153,10 +168,13 @@ public class Superstructure {
             }
         }
 
+        ////// Hang States /////////
+
         if (currentState == SuperstructureStates.HANG_BAR_1_PREP.ordinal()){
             if (stateFinished){
                 initializeStateVariables();
             }
+            System.out.println("HANG_BAR_1PREP DEBUG Arm Angle: " + armPivot.getArmAngle());
 
             lift.setSetPoint(liftWantedHeight);
             lift.updateLiftPosition();
@@ -329,6 +347,63 @@ public class Superstructure {
             armPivot.update(holdEveryThingLiftAngle, 1, 10, 0.3, telemetry);
 
         }
+        ///// specimen states/////
+
+        if (currentState == SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal()){
+            if (stateFinished){
+                initializeStateVariables();
+            }
+
+            System.out.println("SPECIMEN DEBUG Lift In State: " + (lift.getLiftExtension() < 5));
+            System.out.println("SPECIMEN DEBUG Lift Height: " + lift.getLiftExtension());
+            System.out.println("SPECIMEN DEBUG Lift Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("SPECIMEN DEBUG Jaw pos: " + armPivot.intakeJawServo.getPosition());
+
+
+            if (armPivot.getArmAngle() > 5){
+                System.out.println("SPECIMEN Entered If Statement in State 11");
+                armPivot.twist.setPosition(Constants.TWIST_SERVO_WALL_COLLECTION_POSITION);
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
+                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_WALL_COLLECTION);
+                armPivot.vexIntake.setPower(-.8);
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+
+                if (!armPivot.getPivotLimitState()) {
+                    armPivot.setArmPivotPower(0.25);
+                } else {
+                    armPivot.setArmPivotPower(0);
+                }
+            } else {
+                armPivot.setIntakeTiltAngle(0);
+                armPivot.update(9, 0.9, 2,0.7, telemetry);
+            }
+        }
+
+        if (currentState == SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal()){
+            if (stateFinished){
+                initializeStateVariables();
+            }
+
+            System.out.println("SPECIMEN WALL GRAB DEBUG Lift In State: " + (lift.getLiftExtension() < 5));
+            System.out.println("SPECIMEN WALL GRAB DEBUG Lift Height: " + lift.getLiftExtension());
+            System.out.println("SPECIMEN WALL GRAB DEBUG Lift Arm Angle: " + armPivot.getArmAngle());
+
+            armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+            armPivot.vexIntake.setPower(0);
+
+            if (SystemClock.uptimeMillis()-stateStartTime>550){
+                System.out.println("SPECIMEN Grab Entered If Statement in State 12");
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+
+            } else {
+                armPivot.update(10, 0.8, 1,0.6, telemetry);
+            }
+        }
+
+
+
 
     }
 }

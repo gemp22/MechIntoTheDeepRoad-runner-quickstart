@@ -60,10 +60,7 @@ public class AutoRedTEST extends Robot {
     public void init() {
         super.init();
 
-
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
-
 
     }
 
@@ -86,17 +83,8 @@ public class AutoRedTEST extends Robot {
     @Override
     public void start() {
         super.start();
-
-
-
-
         startTime = SystemClock.uptimeMillis();
-
-        //pixelDropLocation = Vision.getCubeLocation();
-
         drive.pose = new Pose2d(0, 0, 0);
-
-
     }
 
     private int pixelDropLocation = 0;
@@ -122,22 +110,23 @@ public class AutoRedTEST extends Robot {
                 initializeStateVariables();
             }
 
-            ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
-                    0, 0, 0, 0, 0, 0));
+//            ArrayList<CurvePoint> points = new ArrayList<>();
+//            points.add(new CurvePoint(stateStartingX, stateStartingY,
+//                    0, 0, 0, 0, 0, 0));
+//
+//            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
+//                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
+//                    Math.toRadians(60), 0.6));
+//
+//            drive.applyMovementDirectionBased();
 
-            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
-                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
+            //movement_y = 0.2;
             drive.applyMovementDirectionBased();
-           // movement_y = 0.2;
-            //drive.applyMovementDirectionBased();
 
-            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
-                drive.stopAllMovementDirectionBased();
-                nextStage();
-            }
+//            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
+//                drive.stopAllMovementDirectionBased();
+//                nextStage();
+//            }
         }
 
 //        if (programStage == progStates.placePixel.ordinal()) {

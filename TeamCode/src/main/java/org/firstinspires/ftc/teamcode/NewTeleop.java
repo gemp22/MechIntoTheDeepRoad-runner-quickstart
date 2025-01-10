@@ -229,7 +229,7 @@ public class NewTeleop extends Robot {
        // }
 
         System.out.println("TESTING!!! Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
-
+        // Basket Delivery State Machines
         if (ButtonPress.isGamepad2_y_pressed()) {
             System.out.println("Y is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
@@ -250,7 +250,28 @@ public class NewTeleop extends Robot {
             System.out.println("B is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.PICKUP.ordinal());
         }
+        // Specimens pick up and drop off
+        if (ButtonPress.isGamepad2_dpad_left_pressed()) {
+            System.out.println("Dpad left");
+            superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
+            superstructure.liftWantedHeight = 5;
+        } else if (ButtonPress.isGamepad2_dpad_right_pressed()) {
+            System.out.println("Dpad right");
+            //scoringState = ScoringStates.SCORING_LEVEL_1;
+            superstructure.nextState(Superstructure.SuperstructureStates.DELIVER_SPECIMEN.ordinal());
+            superstructure.liftWantedHeight = 2;
+        }
+        if (ButtonPress.isGamepad2_left_bumper_pressed()) {
+            System.out.println("gp2 Dpad left bumper");
+            superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
+            superstructure.liftWantedHeight = 0;
 
+        } else if (ButtonPress.isGamepad2_right_bumper_pressed()) {
+            System.out.println("gp 2 Dpad right bumper");
+            //scoringState = ScoringStates.SCORING_LEVEL_1;
+            superstructure.nextState(Superstructure.SuperstructureStates.DELIVER_SPECIMEN_PREP.ordinal());
+            superstructure.liftWantedHeight = 1;
+        }
 
         if (ButtonPress.isGamepad1_a_pressed()) {
             superstructure.liftWantedHeight = 16;
@@ -385,12 +406,12 @@ public class NewTeleop extends Robot {
         }
 
 */
-        if (gamepad1.dpad_right){
-            armPivot.intakeJawServo.setPosition(.112);
-        }
-        if (gamepad1.dpad_left){
-            armPivot.intakeJawServo.setPosition(.72);
-        }
+//        if (gamepad1.dpad_right){
+//            armPivot.intakeJawServo.setPosition(.112);
+//        }
+//        if (gamepad1.dpad_left){
+//            armPivot.intakeJawServo.setPosition(.72);
+//        }
 
         superstructure.update(telemetry, gamepad1, gamepad2);
     }
