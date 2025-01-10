@@ -13,8 +13,8 @@ public class Superstructure {
     private ArmPivot armPivot;
     private Lift lift;
     private Robot robot;
-    public double liftWantedHeight = 0; // inches
-
+    public double liftWantedHeight = 0;// inches
+    public double armWantedAngle = 0; // inches
     boolean liftIsReadyForBar2Pivot = false;
     boolean liftSwitchPressedOnce = false;
     double holdEveryThingLiftPose = 0;
@@ -360,12 +360,12 @@ public class Superstructure {
             System.out.println("SPECIMEN DEBUG Jaw pos: " + armPivot.intakeJawServo.getPosition());
 
 
-            if (armPivot.getArmAngle() > 5){
+            if (armPivot.getArmAngle() > 3){
                 System.out.println("SPECIMEN Entered If Statement in State 11");
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_WALL_COLLECTION_POSITION);
                 armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_WALL_COLLECTION);
-                armPivot.vexIntake.setPower(-.8);
+                armPivot.vexIntake.setPower(-.5);
                 lift.setSetPoint(liftWantedHeight);
                 lift.updateLiftPosition();
 
@@ -376,7 +376,7 @@ public class Superstructure {
                 }
             } else {
                 armPivot.setIntakeTiltAngle(0);
-                armPivot.update(9, 0.9, 2,0.7, telemetry);
+                armPivot.update(9, 0.8, 2,0.6, telemetry);
             }
         }
 
@@ -397,8 +397,6 @@ public class Superstructure {
                 lift.setSetPoint(liftWantedHeight);
                 lift.updateLiftPosition();
 
-            } else {
-                armPivot.update(10, 0.8, 1,0.6, telemetry);
             }
         }
 
