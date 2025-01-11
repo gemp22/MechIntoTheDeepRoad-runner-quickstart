@@ -116,7 +116,6 @@ public abstract class Robot extends OpMode {
         superstructure = new Superstructure(armPivot, lift, this);
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-
         GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
 
         startingTiltPos = armPivot.intakeTilt.getPosition();
@@ -181,6 +180,10 @@ public abstract class Robot extends OpMode {
         worldXPosition = goBildaPose.first.getX(DistanceUnit.INCH);
         worldYPosition = goBildaPose.first.getY(DistanceUnit.INCH);
         worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
+
+//        worldXPosition = goBildaPose.first.getY(DistanceUnit.INCH);
+//        worldYPosition = goBildaPose.first.getX(DistanceUnit.INCH);
+//        worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
         // DO NOT CHANGE THIS LINE
         SpeedOmeter.update(goBildaPose.second.getY(DistanceUnit.INCH), goBildaPose.second.getX(DistanceUnit.INCH), goBildaPose.second.getHeading(AngleUnit.RADIANS));
 

@@ -30,7 +30,7 @@ public class GoBildaOdo {
         the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
         backwards is a negative number.
          */
-        odo.setOffsets(177, 180.0); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setOffsets(177.5, 172.567); //based of CAD from JT
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -60,23 +60,16 @@ public class GoBildaOdo {
          */
         //odo.recalibrateIMU();
         odo.resetPosAndIMU();
-
     }
-
-
     public void GoBildaPinpointPostionandIMUReset (){
         odo.resetPosAndIMU();
     }
-
     public void GoBildaPinpointIMUOnly (){
         odo.recalibrateIMU();
     }
-
     public Pair<Pose2D,Pose2D> GoBildaGetPose2D(){
-
         odo.update();
         return new Pair<>(odo.getPosition(),odo.getVelocity());
-
     }
 
 

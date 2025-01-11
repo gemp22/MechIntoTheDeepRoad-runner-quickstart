@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.MovementVars.movement_x;
+import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
+import static org.firstinspires.ftc.teamcode.MovementVars.movement_turn;
+
+
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldXPosition;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
@@ -109,19 +114,19 @@ public class AutoRedTEST extends Robot {
             if (stageFinished) {
                 initializeStateVariables();
             }
-
+//
 //            ArrayList<CurvePoint> points = new ArrayList<>();
 //            points.add(new CurvePoint(stateStartingX, stateStartingY,
 //                    0, 0, 0, 0, 0, 0));
 //
 //            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
-//                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
+//                    0.3 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
 //                    Math.toRadians(60), 0.6));
-//
-//            drive.applyMovementDirectionBased();
 
-            //movement_y = 0.2;
+            movement_x = 0.4;
+
             drive.applyMovementDirectionBased();
+
 
 //            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
 //                drive.stopAllMovementDirectionBased();
@@ -398,7 +403,7 @@ public class AutoRedTEST extends Robot {
 
         telemetry.addData("world x", worldXPosition);
         telemetry.addData("world y", worldYPosition);
-        telemetry.addData("world ang", worldAngle_rad);
+        telemetry.addData("world ang", Math.toDegrees(worldAngle_rad));
 
 
         telemetry.addData("cycle", cycle);

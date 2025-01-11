@@ -264,7 +264,7 @@ public class NewTeleop extends Robot {
         if (ButtonPress.isGamepad2_left_bumper_pressed()) {
             System.out.println("gp2 Dpad left bumper");
             superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
-            superstructure.liftWantedHeight = 0;
+
 
         } else if (ButtonPress.isGamepad2_right_bumper_pressed()) {
             System.out.println("gp 2 Dpad right bumper");

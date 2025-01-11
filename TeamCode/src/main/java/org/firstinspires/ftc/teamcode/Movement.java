@@ -129,6 +129,9 @@ public class Movement {
         movement_x = Range.clip(movement_x_power, -movement_speed, movement_speed);
         movement_y = Range.clip(movement_y_power, -movement_speed, movement_speed);
 
+//testing movement x and movement y flip
+//        movement_y = Range.clip(movement_x_power, -movement_speed, movement_speed);
+//        movement_x = Range.clip(movement_y_power, -movement_speed, movement_speed);
 
         /**NOW WE CAN DEAL WITH TURNING STUFF */
         //actualRelativePointAngle is adjusted for what side of the robot the user wants pointed
