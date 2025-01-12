@@ -148,6 +148,9 @@ public abstract class Robot extends OpMode {
                 gamepad2.dpad_down, gamepad2.dpad_right, gamepad2.dpad_left, gamepad2.right_bumper,
                 gamepad2.left_bumper, gamepad2.left_stick_button, gamepad2.right_stick_button);
 
+        telemetry.addData("World X", worldXPosition);
+        telemetry.addData("World Y", worldYPosition);
+        telemetry.addData("World Angle", worldAngle_rad);
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
         telemetry.addData("tilt servo Start pos", startingTiltPos);
         telemetry.addData("intake tilt Start servo pos", startingTiltPos);

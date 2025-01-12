@@ -254,7 +254,7 @@ public class NewTeleop extends Robot {
         if (ButtonPress.isGamepad2_dpad_left_pressed()) {
             System.out.println("Dpad left");
             superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
-            superstructure.liftWantedHeight = 5;
+
         } else if (ButtonPress.isGamepad2_dpad_right_pressed()) {
             System.out.println("Dpad right");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
@@ -363,9 +363,6 @@ public class NewTeleop extends Robot {
             wePressed = true;
             intakeTiltState += 1;
         }*/
-
-
-
 
 
 

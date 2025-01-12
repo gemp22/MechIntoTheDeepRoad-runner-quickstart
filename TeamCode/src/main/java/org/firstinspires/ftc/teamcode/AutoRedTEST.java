@@ -15,6 +15,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,19 +31,7 @@ public class AutoRedTEST extends Robot {
 
     public enum progStates {
         driveForward,
-        placePixel,
-        //backAwayFromPixel,
-        driveToCentralizedPosition,
-        turnToStack,
-        pickupFirstPixel,
-        wait,
-        wait2,
 
-        driveToBackdrop,
-        dropPixel,
-        driveToPixels,
-
-        reapproachToStack,
 
 
         endBehavior
@@ -104,28 +93,38 @@ public class AutoRedTEST extends Robot {
     private boolean hasGrabbedPixels = false;
 
     private double cutOffTime = 22.5;
+    private int currentState = AutoRedTEST.programStage;
 
     @Override
     public void mainLoop() {
         telemetry.addData("pixels", pixelsCounted);
         boolean jamDetected = false;//pixelJamAndCounting();
+        telemetry.addData("Superstructure State", currentState);
+        System.out.println("Superstructure State: " + currentState);
 
         if (programStage == progStates.driveForward.ordinal()) {
             if (stageFinished) {
                 initializeStateVariables();
             }
-//
-//            ArrayList<CurvePoint> points = new ArrayList<>();
-//            points.add(new CurvePoint(stateStartingX, stateStartingY,
-//                    0, 0, 0, 0, 0, 0));
-//
-//            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
-//                    0.3 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
-//                    Math.toRadians(60), 0.6));
 
-            movement_x = 0.4;
+            ArrayList<CurvePoint> points = new ArrayList<>();
+            points.add(new CurvePoint(stateStartingX, stateStartingY,
+                    0, 0, 0, 0, 0, 0));
+
+            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
+                    0.8 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
+                    Math.toRadians(60), 0.6));
 
             drive.applyMovementDirectionBased();
+
+            if (Movement.followCurve(points, Math.toRadians(90))) {
+                drive.stopAllMovementDirectionBased();
+                //nextStage(progStates.trustSpikeLocationState2.ordinal());
+            }
+
+//            movement_x = 0.4;
+//
+//            drive.applyMovementDirectionBased();
 
 
 //            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
