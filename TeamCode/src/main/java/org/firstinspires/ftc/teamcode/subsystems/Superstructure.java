@@ -362,6 +362,7 @@ public class Superstructure {
                 initializeStateVariables();
                 targetPivotAngle=6.0;   // adjust this for optimal specimen on the wall height
                 liftWantedHeight = 5;
+                armPivot.setIntakeTiltAngle(0);
             }
 
             System.out.println("SPECIMEN PREP Lift In State: " + (lift.getLiftExtension() < 5));
@@ -390,8 +391,7 @@ public class Superstructure {
 //                armPivot.update(9, 0.8, 2,0.6, telemetry);
 //            }
 
-                armPivot.setIntakeTiltAngle(0);
-                armPivot.update(targetPivotAngle, 0.9, 10,0.31, telemetry);
+               armPivot.update(targetPivotAngle, 0.9, 10,0.31, telemetry);
 
         }
 
@@ -466,8 +466,9 @@ public class Superstructure {
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()){
             if (stateFinished){
                 initializeStateVariables();
-                targetPivotAngle=6.0;   // adjust this for optimal specimen on the wall height
-                liftWantedHeight = 5;
+                targetPivotAngle=90;   // adjust this for optimal specimen on the wall height
+                liftWantedHeight = 0;
+                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
             }
 
             System.out.println("SPECIMEN HANG PREP Lift In State: " + (lift.getLiftExtension() < 5));
@@ -475,19 +476,14 @@ public class Superstructure {
             System.out.println("SPECIMEN HANG PREP Lift Arm Angle: " + armPivot.getArmAngle());
             System.out.println("SPECIMEN HANG PREP JAW: " + armPivot.intakeJawServo.getPosition());
 
-
-            if (armPivot.getArmAngle() > 3){
+            if (armPivot.getArmAngle() > 45){
                 System.out.println("SPECIMEN Entered If Statement in State 11");
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_WALL_COLLECTION_POSITION);
-                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
-                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_WALL_COLLECTION);
-                //armPivot.vexIntake.setPower(-.8);
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_PIVOT);
                 lift.setSetPoint(liftWantedHeight);
                 lift.updateLiftPosition();
 
-                if (!armPivot.getPivotLimitState()) {
-                    armPivot.setArmPivotPower(0.25);
-                } else {
+                if (armPivot.getPivotLimitState()) {
                     armPivot.setArmPivotPower(0);
                 }
             }
@@ -496,7 +492,7 @@ public class Superstructure {
 //                armPivot.update(9, 0.8, 2,0.6, telemetry);
 //            }
 
-            armPivot.setIntakeTiltAngle(0);
+
             armPivot.update(targetPivotAngle, 0.9, 10,0.31, telemetry);
 
         }
