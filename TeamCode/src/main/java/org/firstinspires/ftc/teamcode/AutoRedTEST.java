@@ -14,6 +14,9 @@ import android.os.SystemClock;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 
@@ -78,7 +81,8 @@ public class AutoRedTEST extends Robot {
     public void start() {
         super.start();
         startTime = SystemClock.uptimeMillis();
-        drive.pose = new Pose2d(0, 0, 0);
+        //drive.pose = new Pose2d(0, 0, 0);
+        GoBildaOdo.setRobotPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, Math.PI));
     }
 
     private int pixelDropLocation = 0;
@@ -95,6 +99,8 @@ public class AutoRedTEST extends Robot {
     private double cutOffTime = 22.5;
     private int currentState = AutoRedTEST.programStage;
 
+    private boolean past5In = false;
+
     @Override
     public void mainLoop() {
         telemetry.addData("pixels", pixelsCounted);
@@ -104,6 +110,7 @@ public class AutoRedTEST extends Robot {
 
         if (programStage == progStates.driveForward.ordinal()) {
             if (stageFinished) {
+                past5In = false;
                 initializeStateVariables();
             }
 
@@ -111,305 +118,56 @@ public class AutoRedTEST extends Robot {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(stateStartingX+10, stateStartingY,
-                    0.8 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
+            points.add(new CurvePoint(stateStartingX+20, stateStartingY,
+                    0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
+
+            points.add(new CurvePoint(stateStartingX+27.3, stateStartingY,
+                    0.15 * SCALE_FACTOR, 0.15 * SCALE_FACTOR, 15, 15,
+                    Math.toRadians(60), 0.6));
+
+            if (Math.abs(Math.hypot(worldXPosition - 10, worldYPosition - 0)) < 5) {
+                if (!past5In) {
+                    superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
+                    past5In = true;
+                }
+            }
 
             drive.applyMovementDirectionBased();
 
-            if (Movement.followCurve(points, Math.toRadians(90))) {
+            if (Movement.followCurve(points, Math.toRadians(-90))) {
                 drive.stopAllMovementDirectionBased();
-                //nextStage(progStates.trustSpikeLocationState2.ordinal());
+                nextStage(progStates.endBehavior.ordinal());
             }
 
-//            movement_x = 0.4;
-//
-//            drive.applyMovementDirectionBased();
-
-
-//            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
-//                drive.stopAllMovementDirectionBased();
-//                nextStage();
-//            }
         }
 
-//        if (programStage == progStates.placePixel.ordinal()) {
-//            if (stageFinished) {
-//                initializeStateVariables();
-//            }
-//
-//            ArrayList<CurvePoint> points = new ArrayList<>();
-//            points.add(new CurvePoint(stateStartingX, stateStartingY,
-//                    0, 0, 0, 0, 0, 0));
-//
-//            points.add(new CurvePoint(120, 120,
-//                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-//                    Math.toRadians(60), 0.6));
-//
-//
-//            //points.add(new CurvePoint(purpleDrop.get(pixelDropLocation).x, purpleDrop.get(pixelDropLocation).y,
-//              //      0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
-//                //    Math.toRadians(60), 0.6));
-//
-//            //Movement.movementResult r = Movement.pointAngle(Math.toRadians(purpleDropWantedHeadings.get(pixelDropLocation)), 1, Math.toRadians(30));
-//
-//            drive.applyMovementDirectionBased();
-//
-//            if (Movement.followCurve(points, Math.toRadians(-90), 4)) {
-//                drive.stopAllMovementDirectionBased();
-//                wrist.intakeTilt.setPosition(0.50);
-//                nextStage();
-//            }
-//        }
-
-/*
-        if (programStage == progStates.driveToCentralizedPosition.ordinal()) {
+        if (programStage == progStates.endBehavior.ordinal()) {
             if (stageFinished) {
+                superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal());
                 initializeStateVariables();
             }
 
-            if (SystemClock.uptimeMillis() - stateStartTime < 500) {
-                movement_y = 0.4;
-                drive.applyMovementDirectionBased();
-            } else {
+            if (SystemClock.uptimeMillis()-stateStartTime > 2000) {
                 ArrayList<CurvePoint> points = new ArrayList<>();
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
-                points.add(new CurvePoint(118, 30,
-                        0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
+                points.add(new CurvePoint(stateStartingX-10, stateStartingY,
+                        0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
                 drive.applyMovementDirectionBased();
 
-                if (Movement.followCurve(points, Math.toRadians(90), 3)) {
+                if (Movement.followCurve(points, Math.toRadians(90))) {
                     drive.stopAllMovementDirectionBased();
-                    nextStage();
                 }
-            }
-        }
-*/
-/*
-        if (programStage == progStates.turnToStack.ordinal()) {
-            if (stageFinished) {
-                initializeStateVariables();
-               wrist.setIntakeTiltPosition(0.5);
-            }
-
-            Movement.movementResult r = Movement.pointAngle(Math.atan2(5 - stateStartingY, 105.5 - stateStartingX), 1, Math.toRadians(30));
-
-            drive.applyMovementDirectionBased();
-
-            if (Math.abs(r.turnDelta_rad) < Math.toRadians(4)) {
-                drive.stopAllMovementDirectionBased();
-
-                nextStage();
-            }
-        }
-
- */
-/*
-        if (programStage == progStates.pickupFirstPixel.ordinal()) {
-            if (stageFinished) {
-                initializeStateVariables();
-
-                wrist.setIntakeTiltPosition(0.5);
-
-                if (!jamDetected) {
-                    intake.vexIntake.setPower(-.91);
-                }
-                //turnOnJamAlgorithm = true;
-                intake.vexIntake.setPower(.91);
-            }
-
-            ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
-                    0, 0, 0, 0, 0, 0));
-
-            points.add(new CurvePoint(104, 12.5,
-                    0.85 * SCALE_FACTOR, 0.85 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            if (worldYPosition < 24) {
-                Movement.movementResult r = Movement.pointAngle(Math.toRadians(-90), 0.75, Math.toRadians(20));
-            }
-
-            drive.applyMovementDirectionBased();
-
-            if (Movement.followCurve(points, Math.toRadians(90), 1.5) || SystemClock.uptimeMillis() - stateStartTime > 2500) {
-                drive.stopAllMovementDirectionBased();
-                nextStage();
-            }
-        }
-*/
- /*
-        if (programStage == progStates.wait.ordinal()) {
-            if (stageFinished) {
-                initializeStateVariables();
+            } else {
                 drive.stopAllMovementDirectionBased();
             }
-
-
-            movement_y = 0.175;
-
-
-            drive.applyMovementDirectionBased();
-
-            boolean gotDaPixel = false;
-
-            if ((cycle == 0 && pixelsCounted >= 1) || (cycle >= 1 && pixelsCounted >= 2)) {
-                gotDaPixel = true;
-            }
-
-            if (SystemClock.uptimeMillis() - stateStartTime > 750 || gotDaPixel || pixelsInConveyor() == 2) {
-                drive.stopAllMovementDirectionBased();
-                if (!gotDaPixel) {
-                    if (!jamDetected) {
-                        //intake.intake.setPower(-1);
-                    }
-                }
-
-                wrist.intakeTilt.setPosition(.5);
-                nextStage();
-            }
-        }
-*/
- /*
-        if (programStage == progStates.wait2.ordinal()) {
-            if (stageFinished) {
-                initializeStateVariables();
-            }
-
-            Movement.movementResult r = Movement.pointAngle(Math.toRadians(-90), 0.7, Math.toRadians(20));
-
-            movement_y = -0.2;
-            movement_x = -0.2;
-
-            drive.applyMovementDirectionBased();
-
-            if (SystemClock.uptimeMillis() - stateStartTime > 750) {
-                drive.stopAllMovementDirectionBased();
-                nextStage();
-            }
-        }
-*/
- /*
-        if (programStage == progStates.driveToBackdrop.ordinal()) {
-            if (stageFinished) {
-                //pixelLift.pControllerPixelLift.setSetPoint(100);
-
-                if (cycle <= 1) {
-                    wrist.intakeTilt.setPosition(.5);
-                }
-
-                intake.vexIntake.setPower(1);
-
-                hasGrabbedPixels = false;
-
-                initializeStateVariables();
-            }
-
-            ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
-                    0, 0, 0, 0, 0, 0));
-1
-
-            points.add(new CurvePoint(128.25, 25,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            points.add(new CurvePoint(128.25, 83,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-
-
-            if (worldYPosition > 20 && worldYPosition < 25) {
-                intake.vexIntake.setPower(-.91);
-            }
-
-            if (worldYPosition > 35 && worldYPosition < 45) {
-                //fourBars.setFourBarPosition(1);
-                intake.vexIntake.setPower(1);
-            }
-
-        }
-        */
-/*
-        if (programStage == progStates.dropPixel.ordinal()) {
-            if (stageFinished) {
-                cycle = cycle + 1;
-                initializeStateVariables();
-            }
-
-            armPivot.updateLiftPosition();
-
-            Movement.movementResult r = Movement.pointAngle(Math.toRadians(-90), 0.2, Math.toRadians(20));
-
-
-            double timeDropPixel = cycle == 1 ? 350 : 250;
-
-
-
-            double timeDropDriveBack = cycle == 1 ? 750 : 650;
-            double timeDropDriveForward = cycle == 1 ? 950 : 850;
-
-
-
-            drive.applyMovementDirectionBased();
         }
 
-        */
-
-
-/*
-        if (programStage == progStates.driveToPixels.ordinal()) {
-            if (stageFinished) {
-                initializeStateVariables();
-                pixelsCounted = 0;
-                pixelTwister.setPixelTwisterPosition(.49);
-            }
-
-            ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
-                    0, 0, 0, 0, 0, 0));
-
-            points.add(new CurvePoint(128.25, 95,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            points.add(new CurvePoint(128.25, 35,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            points.add(new CurvePoint(103, 17,
-                    0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            points.add(new CurvePoint(103, 12.5,
-                    0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            if (Movement.followCurve(points, Math.toRadians(90), 2)) {
-                drive.stopAllMovementDirectionBased();
-
-                nextStage(progStates.wait.ordinal());
-            }
-
-            drive.applyMovementDirectionBased();
-        }
-        */
-
-        telemetry.addData("world x", worldXPosition);
-        telemetry.addData("world y", worldYPosition);
-        telemetry.addData("world ang", Math.toDegrees(worldAngle_rad));
-
-
-        telemetry.addData("cycle", cycle);
-
-        telemetry.addData("x", drive.pose.position.x);
-        telemetry.addData("y", drive.pose.position.y);
-        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+        superstructure.update(telemetry, gamepad1, gamepad2);
     }
 }
 

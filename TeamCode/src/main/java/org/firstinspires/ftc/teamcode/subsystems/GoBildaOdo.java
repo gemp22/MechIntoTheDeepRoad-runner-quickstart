@@ -72,7 +72,9 @@ public class GoBildaOdo {
         return new Pair<>(odo.getPosition(),odo.getVelocity());
     }
 
-
+    public void setRobotPosition(Pose2D newPos) {
+        odo.setPosition(newPos);
+    }
 
 
 }

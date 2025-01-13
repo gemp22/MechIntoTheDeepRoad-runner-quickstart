@@ -28,7 +28,7 @@ public class SpeedOmeter {
         }*/
 
         if (currTime - lastUpdateStartTime > timeBetweenUpdates) {
-            currSpeedX = -xVel;
+            currSpeedX = xVel;
             currSpeedY = yVel;
             angularVelocity = angVel;
 

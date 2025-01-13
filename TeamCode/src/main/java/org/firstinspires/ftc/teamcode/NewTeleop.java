@@ -300,57 +300,7 @@ public class NewTeleop extends Robot {
         telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
 
         /*
-        if (scoringState == ScoringStates.SCORING_LEVEL_2) {
 
-            if (armPivot.getArmAngle() > 80){
-                armPivot.twist.setPosition(0.772);
-                armPivot.intakeTilt.setPosition(.25);
-                lift.setSetPoint(liftWantedHeight);
-                lift.updateLiftPosition();
-
-                if (!armPivot.getPivotLimitState()) {
-                    armPivot.setArmPivotPower(0.25);
-                } else {
-                    armPivot.setArmPivotPower(0);
-                }
-            } else {
-                armPivot.setIntakeTiltAngle(0);
-                armPivot.update(90, 0.75, 30,0.2, telemetry);
-            }
-        } else if (scoringState == ScoringStates.SCORING_LEVEL_1) {
-
-            if (armPivot.getArmAngle() > 80){
-                armPivot.twist.setPosition(0.772);
-                armPivot.intakeTilt.setPosition(.25);
-                lift.setSetPoint(liftWantedHeight);
-                lift.updateLiftPosition();
-
-                if (!armPivot.getPivotLimitState()) {
-                    armPivot.setArmPivotPower(0.25);
-                } else {
-                    armPivot.setArmPivotPower(0);
-                }
-            } else {
-                armPivot.setIntakeTiltAngle(0);
-                armPivot.update(90, 0.75, 30,0.2, telemetry);
-            }
-        } else if (scoringState == ScoringStates.RESTING) {
-            if (lift.getLiftExtension() <8) {
-                if (System.currentTimeMillis()-liftRestingStartTime > 1000) {
-                    armPivot.twist.setPosition(0.005);
-                    armPivot.update(0, 0.15, 45, 0.05, telemetry);
-                }
-            }
-            if (System.currentTimeMillis()-liftRestingStartTime > 1000) {
-                lift.setSetPoint(liftWantedHeight);
-                lift.updateLiftPosition();
-            }
-
-            if (armPivot.getArmAngle() < 45) {
-                armPivot.setIntakeTiltAngle(60);
-            } else {
-                armPivot.setIntakeTiltAngle(0);
-            }
         }else if (scoringState == ScoringStates.PICKUP) {
             lift.setLiftPower(-gamepad2.right_stick_y);
 
@@ -383,7 +333,7 @@ public class NewTeleop extends Robot {
             armPivot.vexIntake.setPower(-.91);
         }
         else if( gamepad1.left_bumper){
-            armPivot.vexIntake.setPower(.5);
+            superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
         }
         else {
             armPivot.vexIntake.setPower(0);

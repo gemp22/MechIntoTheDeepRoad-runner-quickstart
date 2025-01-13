@@ -32,6 +32,7 @@ public class Superstructure {
         PICKUP,
         DELIVERY_LEVEL_1,
         DELIVERY_LEVEL_2,
+        DELIVERY_SAMPLE_DROP,
 
         // hang automation
         HANG_BAR_1_PREP,
@@ -43,14 +44,15 @@ public class Superstructure {
         HOLD_EVERYTHING,
 
         //specimen States
-
         COLLECT_SPECIMEN_PREP,
         COLLECT_SPECIMEN_WALL,
         SPECIMEN_TRANSPORT,
         SPECIMEN_HANG_PREP,
         SPECIMEN_HANG_CHAMBER,
-        HOME_STATE, // MAY BE ABLE TO JUST GO TO RESTING OR TRANSPORT STATES?
 
+        //SAMPLE COLLECTION //////
+        SAMPLE_COLLECTION_EXTENSTION,
+        SAMPLE_COLLECTION_INTAKE
 
     }
 
@@ -112,6 +114,7 @@ public class Superstructure {
             } else {
                 armPivot.setIntakeTiltAngle(0);
             }
+            armPivot.vexIntake.setPower(0);
         }
 
         if (currentState == SuperstructureStates.PICKUP.ordinal()) {
@@ -139,7 +142,7 @@ public class Superstructure {
 
             if (armPivot.getArmAngle() > 80) {
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_BASKET_DEPOSIT_POSITION);
-                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_BASKET_DELIVERY);
                 lift.setSetPoint(liftWantedHeight);
                 lift.updateLiftPosition();
 
@@ -175,6 +178,16 @@ public class Superstructure {
                 armPivot.update(90, 0.75, 30, 0.2, telemetry);
             }
         }
+        if (currentState == SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal()) {
+            if (stateFinished) {
+                initializeStateVariables();
+            }
+            armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION);
+            armPivot.vexIntake.setPower(.4);
+
+        }
+
+
 
         ////// Hang States /////////
 
@@ -359,10 +372,10 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal()) {
             if (stateFinished) {
-                initializeStateVariables();
                 targetPivotAngle = 6.0;   // adjust this for optimal specimen on the wall height
                 liftWantedHeight = 5;
                 armPivot.setIntakeTiltAngle(0);
+                initializeStateVariables();
             }
 
             System.out.println("SPECIMEN PREP Lift In State: " + (lift.getLiftExtension() < 5));
@@ -398,9 +411,9 @@ public class Superstructure {
         if (currentState == SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal()) {
             if (stateFinished) {
                 armPivotReadytoGrabOffTheWall = false;
-                initializeStateVariables();
                 //armPivot.vexIntake.setPower(-.91);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+                initializeStateVariables();
             }
             armPivot.vexIntake.setPower(-.91);
 
@@ -443,9 +456,9 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.SPECIMEN_TRANSPORT.ordinal()) {
             if (stateFinished) {
-                initializeStateVariables();
                 liftWantedHeight = .1;
                 targetPivotAngle = -2;
+                initializeStateVariables();
             }
 
             if (SystemClock.uptimeMillis() - stateStartTime > 250 && armPivot.getArmAngle() < 0) {
@@ -466,12 +479,12 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_PREP.ordinal()) {
             if (stateFinished) {
-                initializeStateVariables();
                 targetPivotAngle = 90;
                 liftWantedHeight = 0;
                 lift.setSetPoint(liftWantedHeight);
                 armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_PIVOT);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+                initializeStateVariables();
             }
 
             System.out.println("SPECIMEN HANG PREP Lift Height: " + lift.getLiftExtension());
@@ -481,18 +494,17 @@ public class Superstructure {
             if (SystemClock.uptimeMillis() - stateStartTime > 250 && armPivot.getArmAngle() > 60) {
                 System.out.println("SPECIMEN Entered If Statement in State 14");
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_WALL_COLLECTION_POSITION);
-
             }
 
             lift.updateLiftPosition();
-            armPivot.update(targetPivotAngle, 0.8, 20, 0.2, telemetry);
-
+            armPivot.update(targetPivotAngle, 0.8, 30, 0.15, telemetry);
         }
+
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {
             if (stateFinished) {
-                initializeStateVariables();
-                liftWantedHeight = 1.9;
+                liftWantedHeight = 1.7;
                 lift.setSetPoint(liftWantedHeight);
+                initializeStateVariables();
             }
             System.out.println("SPECIMEN HANG Lift Height: " + lift.getLiftExtension());
             System.out.println("SPECIMEN HANG Lift Arm Angle: " + armPivot.getArmAngle());
@@ -508,5 +520,9 @@ public class Superstructure {
             lift.updateLiftPosition();
             armPivot.update(targetPivotAngle, .9, 20, 0.1, telemetry);
         }
+
+        ///////SAMPLE COLLECTION////////////////////////////////////////////
+
+
     }
 }

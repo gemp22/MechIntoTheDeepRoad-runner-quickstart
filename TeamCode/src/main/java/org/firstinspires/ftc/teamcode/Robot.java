@@ -112,15 +112,17 @@ public abstract class Robot extends OpMode {
         lift = new Lift(hardwareMap);
         lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
+        armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
+        armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 
         superstructure = new Superstructure(armPivot, lift, this);
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
 
-        startingTiltPos = armPivot.intakeTilt.getPosition();
-        startingJawPos = armPivot.intakeJawServo.getPosition();
-        startingTwistPos = armPivot.twist.getPosition();
+//        startingTiltPos = armPivot.intakeTilt.getPosition();
+//        startingJawPos = armPivot.intakeJawServo.getPosition();
+//        startingTwistPos = armPivot.twist.getPosition();
     }
 
     public double mmToIn(double in) {
@@ -188,7 +190,10 @@ public abstract class Robot extends OpMode {
 //        worldYPosition = goBildaPose.first.getX(DistanceUnit.INCH);
 //        worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
         // DO NOT CHANGE THIS LINE
-        SpeedOmeter.update(goBildaPose.second.getY(DistanceUnit.INCH), goBildaPose.second.getX(DistanceUnit.INCH), goBildaPose.second.getHeading(AngleUnit.RADIANS));
+        SpeedOmeter.update(
+                goBildaPose.second.getX(DistanceUnit.INCH),
+                goBildaPose.second.getY(DistanceUnit.INCH),
+                goBildaPose.second.getHeading(AngleUnit.RADIANS));
 
         //superstructure.update(telemetry, gamepad1, gamepad2);
 
@@ -197,7 +202,13 @@ public abstract class Robot extends OpMode {
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
         telemetry.addData("World X", worldXPosition);
         telemetry.addData("World Y", worldYPosition);
-        telemetry.addData("World Angle", worldAngle_rad);
+        telemetry.addData("World Angle", Math.toDegrees(worldAngle_rad));
+
+        telemetry.addData("vel x", goBildaPose.second.getX(DistanceUnit.INCH));
+        telemetry.addData("vel y", goBildaPose.second.getY(DistanceUnit.INCH));
+        telemetry.addData("vel heading", goBildaPose.second.getHeading(AngleUnit.RADIANS));
+
+
 
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
     }
