@@ -231,46 +231,46 @@ public class NewTeleop extends Robot {
         System.out.println("TESTING!!! Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
         // Basket Delivery State Machines
         if (ButtonPress.isGamepad2_y_pressed()) {
-            System.out.println("Y is Pressed");
+            System.out.println("gp2 Y is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
             superstructure.liftWantedHeight = 25;
         } else if (ButtonPress.isGamepad2_x_pressed()) {
-            System.out.println("X is Pressed");
+            System.out.println("gp2 X is Pressed");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
             superstructure.liftWantedHeight = 10;
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
-            System.out.println("A is Pressed");
+            System.out.println("gp2 A is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
             liftRestingStartTime = System.currentTimeMillis();
             superstructure.liftWantedHeight = 0;
         } else if (ButtonPress.isGamepad2_b_pressed()) {
             //scoringState = ScoringStates.PICKUP;
-            System.out.println("B is Pressed");
+            System.out.println("gp2 B is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.PICKUP.ordinal());
         }
+
         // Specimens pick up and drop off
         if (ButtonPress.isGamepad2_dpad_left_pressed()) {
-            System.out.println("Dpad left");
+            System.out.println("gp2 Dpad left");
             superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
 
         } else if (ButtonPress.isGamepad2_dpad_right_pressed()) {
-            System.out.println("Dpad right");
+            System.out.println("gp2 Dpad right");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
-            superstructure.nextState(Superstructure.SuperstructureStates.DELIVER_SPECIMEN.ordinal());
+            superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
             superstructure.liftWantedHeight = 2;
         }
         if (ButtonPress.isGamepad2_left_bumper_pressed()) {
             System.out.println("gp2 Dpad left bumper");
             superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
 
-
         } else if (ButtonPress.isGamepad2_right_bumper_pressed()) {
-            System.out.println("gp 2 Dpad right bumper");
+            System.out.println("gp2 Dpad right bumper");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
-            superstructure.nextState(Superstructure.SuperstructureStates.DELIVER_SPECIMEN_PREP.ordinal());
-            superstructure.liftWantedHeight = 1;
+            superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal());
+
         }
 
         if (ButtonPress.isGamepad1_a_pressed()) {
