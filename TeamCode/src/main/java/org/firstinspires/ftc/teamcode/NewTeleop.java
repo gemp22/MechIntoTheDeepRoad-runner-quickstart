@@ -244,7 +244,7 @@ public class NewTeleop extends Robot {
             System.out.println("gp2 A is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
             liftRestingStartTime = System.currentTimeMillis();
-            superstructure.liftWantedHeight = 0;
+
         } else if (ButtonPress.isGamepad2_b_pressed()) {
             //scoringState = ScoringStates.PICKUP;
             System.out.println("gp2 B is Pressed");

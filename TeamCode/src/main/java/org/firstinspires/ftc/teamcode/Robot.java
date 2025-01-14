@@ -154,12 +154,7 @@ public abstract class Robot extends OpMode {
         telemetry.addData("World Y", worldYPosition);
         telemetry.addData("World Angle", worldAngle_rad);
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
-        telemetry.addData("tilt servo Start pos", startingTiltPos);
-        telemetry.addData("intake tilt Start servo pos", startingTiltPos);
-        telemetry.addData("intake twist servo pos", startingTwistPos);
 
-        telemetry.addData("jaw servo Start pos", startingJawPos);
-        telemetry.addData("intake jaw servo pos", wantedJawPos+startingTiltPos);
     }
 
     @Override
@@ -191,8 +186,8 @@ public abstract class Robot extends OpMode {
 //        worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
         // DO NOT CHANGE THIS LINE
         SpeedOmeter.update(
-                goBildaPose.second.getX(DistanceUnit.INCH),
                 goBildaPose.second.getY(DistanceUnit.INCH),
+                goBildaPose.second.getX(DistanceUnit.INCH),
                 goBildaPose.second.getHeading(AngleUnit.RADIANS));
 
         //superstructure.update(telemetry, gamepad1, gamepad2);

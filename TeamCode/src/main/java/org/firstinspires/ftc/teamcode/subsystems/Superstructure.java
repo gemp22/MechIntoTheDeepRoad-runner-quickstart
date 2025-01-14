@@ -94,6 +94,7 @@ public class Superstructure {
         if (currentState == SuperstructureStates.RESTING.ordinal()) {
             if (stateFinished) {
                 // init vars as needed
+                liftWantedHeight = 0;
                 initializeStateVariables();
             }
 
@@ -502,7 +503,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {
             if (stateFinished) {
-                liftWantedHeight = 1.7;
+                liftWantedHeight = 1.45;
                 lift.setSetPoint(liftWantedHeight);
                 initializeStateVariables();
             }
@@ -510,15 +511,15 @@ public class Superstructure {
             System.out.println("SPECIMEN HANG Lift Arm Angle: " + armPivot.getArmAngle());
             System.out.println("SPECIMEN HANG JAW: " + armPivot.intakeJawServo.getPosition());
 
-            if(lift.getLiftExtension()>1.5 && SystemClock.uptimeMillis() - stateStartTime > 2000){
-                targetPivotAngle = 55;
-                if(armPivot.getArmAngle()<86){
+            if(lift.getLiftExtension()>1.0 && SystemClock.uptimeMillis() - stateStartTime > 300){
+                targetPivotAngle = 57;
+                if(armPivot.getArmAngle()<85){
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
                 }
             }
 
             lift.updateLiftPosition();
-            armPivot.update(targetPivotAngle, .9, 20, 0.1, telemetry);
+            armPivot.update(targetPivotAngle, .9, 20, 0.15, telemetry);
         }
 
         ///////SAMPLE COLLECTION////////////////////////////////////////////
