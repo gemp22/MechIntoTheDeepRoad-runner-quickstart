@@ -116,6 +116,7 @@ public class AutoRedTEST extends Robot {
             if (stageFinished) {
                 past5In = false;
                 initializeStateVariables();
+
             }
             ArrayList<CurvePoint> points = new ArrayList<>();
             points.add(new CurvePoint(stateStartingX, stateStartingY,
