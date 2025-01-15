@@ -6,6 +6,7 @@ public class Constants {
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = 1;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = .052;
     public static final double JAW_SERVO_WALL_COLLECTION = .55;
+    public static final double JAW_SERVO_WALL_GRAB_PREP = .65;
     public static final double JAW_SERVO_INTAKE_POSITION = 0.63;
     public static final double TILT_SERVO_90_DEGREES_UP = 0.178;
     public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.441;

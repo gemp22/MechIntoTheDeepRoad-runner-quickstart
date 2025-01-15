@@ -206,6 +206,8 @@ public abstract class Robot extends OpMode {
 
 
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+       // System.out.println("Loop Time: " + (SystemClock.uptimeMillis() - startLoopTime));
+
     }
 
     public void initializeStateVariables() {

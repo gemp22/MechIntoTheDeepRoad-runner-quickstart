@@ -126,7 +126,7 @@ public class AutoRedTEST extends Robot {
                     0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
-            points.add(new CurvePoint(27.1, 0,
+            points.add(new CurvePoint(26, 0,
                     0.15 * SCALE_FACTOR, 0.15 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
@@ -183,11 +183,11 @@ public class AutoRedTEST extends Robot {
                         0, 0, 0, 0, 0, 0));
 
                 points.add(new CurvePoint(25, -45,
-                        0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 10, 10,
+                        0.3 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 10, 10,
                         Math.toRadians(60), 0.6));
 
                 points.add(new CurvePoint(10, -45,
-                        0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 10, 10,
+                        0.3 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 10, 10,
                         Math.toRadians(60), 0.6));
 
                 /*points.add(new CurvePoint(stateStartingX-10, -49,
