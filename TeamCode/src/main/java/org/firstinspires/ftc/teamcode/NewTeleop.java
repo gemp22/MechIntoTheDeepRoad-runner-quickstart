@@ -228,17 +228,18 @@ public class NewTeleop extends Robot {
            // lift.setLiftPower(gamepad2.right_stick_y);
        // }
 
+
         System.out.println("TESTING!!! Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
         // Basket Delivery State Machines
         if (ButtonPress.isGamepad2_y_pressed()) {
             System.out.println("gp2 Y is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
-            superstructure.liftWantedHeight = 25;
+
         } else if (ButtonPress.isGamepad2_x_pressed()) {
             System.out.println("gp2 X is Pressed");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
-            superstructure.liftWantedHeight = 10;
+
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
             System.out.println("gp2 A is Pressed");
@@ -260,7 +261,7 @@ public class NewTeleop extends Robot {
             System.out.println("gp2 Dpad right");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
-            superstructure.liftWantedHeight = 2;
+
         }
         if (ButtonPress.isGamepad2_left_bumper_pressed()) {
             System.out.println("gp2 Dpad left bumper");
@@ -270,7 +271,6 @@ public class NewTeleop extends Robot {
             System.out.println("gp2 Dpad right bumper");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal());
-
         }
 
         if (ButtonPress.isGamepad1_a_pressed()) {
@@ -297,8 +297,19 @@ public class NewTeleop extends Robot {
             superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
         }
 
-        telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
 
+
+
+        if(-gamepad2.right_stick_y > 0.05 && lift.getLiftExtension() >= 0)
+        {
+            lift.setLiftPower(-gamepad2.right_stick_y);
+            liftWantedHeight = lift.getLiftExtension();
+        }
+        if(ButtonPress.isGamepad2_right_stick_button_pressed())
+        {
+            armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+
+        }
         /*
 
         }else if (scoringState == ScoringStates.PICKUP) {
@@ -329,7 +340,7 @@ public class NewTeleop extends Robot {
             armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
         }*/
 
-        if( gamepad1.right_bumper){
+        /*if( gamepad1.right_bumper){
             armPivot.vexIntake.setPower(-.91);
         }
         else if( gamepad1.left_bumper){
@@ -337,7 +348,7 @@ public class NewTeleop extends Robot {
         }
         else {
             armPivot.vexIntake.setPower(0);
-        }
+        }*/
 
         /*
         if (gamepad1.y) {

@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Movement;
@@ -317,7 +318,9 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
     public double intakeTiltNoArmPower(double liftExtension) {
 
-        double intakeTiltAngle = -69+(liftExtension-4.33)*(-25-(-69))/(16.5-4.33);
+        //linear interpolation to return tilt angle for sample collection off the floor
+        double intakeTiltAngle = Constants.TILT_INTAKE_ANGLE_CLOSE_TO_BOT+(liftExtension-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT)*(Constants.TILT_INTAKE_ANGLE_FAR_FROM_BOT-(Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT))/
+                (Constants.LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT);
 
         return intakeTiltAngle;
     }

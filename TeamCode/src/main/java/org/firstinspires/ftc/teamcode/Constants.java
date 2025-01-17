@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 public class Constants {
     public static final double JAW_SERVO_DROP_POSITION = 0.4;
-    public static final double JAW_SERVO_GRAB_POSITION = 0.825;
+    public static final double JAW_SERVO_GRAB_POSITION = 0.835;
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = 1;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = .052;
     public static final double JAW_SERVO_WALL_COLLECTION = .55;
@@ -13,6 +13,8 @@ public class Constants {
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.712;
     public static final double TILT_SERVO_BASKET_DELIVERY = 0.72;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.74;
+    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -69;
+    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -25;
     public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.461;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.344;
     public static final double TWIST_SERVO_WALL_COLLECTION_POSITION = 0.068;
@@ -30,6 +32,8 @@ public class Constants {
     public static final double LIFT_HIGH_CHAMBER_POSITION_IN = 48;
     public static final double LIFT_HANG_FIRST_BAR_GRAB_POSITION_IN = 48;
     public static final double LIFT_HANG_SECOND_BAR_GRAB_POSITION_IN = 48;
+    public static final double LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT = 4.33;
+    public static final double LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT = 16.5;
     public static final double MAX_ARM_PIVOT_MOTOR_POWER= 0.75;
     public static final double MIN_ARM_PIVOT_MOTOR_POWER= 0.75;
     public static final double ARM_PIVOT_TICKS_PER_DEG = 48;

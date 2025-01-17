@@ -186,8 +186,8 @@ public abstract class Robot extends OpMode {
 //        worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
         // DO NOT CHANGE THIS LINE
         SpeedOmeter.update(
-                goBildaPose.second.getY(DistanceUnit.INCH),
                 goBildaPose.second.getX(DistanceUnit.INCH),
+                goBildaPose.second.getY(DistanceUnit.INCH),
                 goBildaPose.second.getHeading(AngleUnit.RADIANS));
 
         //superstructure.update(telemetry, gamepad1, gamepad2);
@@ -201,7 +201,11 @@ public abstract class Robot extends OpMode {
 
         telemetry.addData("vel x", goBildaPose.second.getX(DistanceUnit.INCH));
         telemetry.addData("vel y", goBildaPose.second.getY(DistanceUnit.INCH));
-        telemetry.addData("vel heading", goBildaPose.second.getHeading(AngleUnit.RADIANS));
+        telemetry.addData("vel heading RAD", goBildaPose.second.getHeading(AngleUnit.RADIANS));
+        telemetry.addData("vel heading DEG", goBildaPose.second.getHeading(AngleUnit.DEGREES));
+        telemetry.addData("lift extension", lift.getLiftExtension());
+        telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
+
 
 
 
