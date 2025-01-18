@@ -112,17 +112,15 @@ public abstract class Robot extends OpMode {
         lift = new Lift(hardwareMap);
         lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
-        armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
-        armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+        //armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
+        //armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 
         superstructure = new Superstructure(armPivot, lift, this);
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
 
-//        startingTiltPos = armPivot.intakeTilt.getPosition();
-//        startingJawPos = armPivot.intakeJawServo.getPosition();
-//        startingTwistPos = armPivot.twist.getPosition();
+
     }
 
     public double mmToIn(double in) {
