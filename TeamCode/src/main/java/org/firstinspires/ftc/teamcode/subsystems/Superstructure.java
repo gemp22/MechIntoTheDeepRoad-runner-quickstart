@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.ButtonPress;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Robot;
 
@@ -14,11 +15,16 @@ public class Superstructure {
     private Lift lift;
     private Robot robot;
     public double liftWantedHeight = 0;// inches
+    public double tiltWantedAngle = 0;// inches
     public double armWantedAngle = 0; // inches
     boolean liftIsReadyForBar2Pivot = false;
     boolean liftSwitchPressedOnce = false;
     boolean armPivotReadytoGrabOffTheWall = false;
     boolean servosGrabOffTheWall = false;
+    boolean setToHomeResting = false;
+    boolean collectionMode = false;
+    boolean outTakeMode = false;
+    boolean outTakePreValue = false;
 
     double holdEveryThingLiftPose = 0;
     double holdEveryThingLiftAngle = 0;
@@ -26,7 +32,7 @@ public class Superstructure {
 
     private long lastHangRestTime = 0;
 
-    public boolean isManualControlActive = false;
+     boolean isManualControlActive = false;
 
     public enum SuperstructureStates {
         //basket delivery////
@@ -100,29 +106,91 @@ public class Superstructure {
         if (currentState == SuperstructureStates.RESTING.ordinal()) {
             if (stateFinished) {
                 // init vars as needed
+                setToHomeResting = false;
+                collectionMode = false;
+                armPivot.vexIntake.setPower(0);
                 liftWantedHeight = 0;
                 initializeStateVariables();
             }
 
             if (lift.getLiftExtension() < 8) {
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
-
                 if (SystemClock.uptimeMillis() - stateStartTime > 550) {
                     armPivot.update(0, 0.5, 45, 0.05, telemetry);
                 }
             }
-            lift.setSetPoint(liftWantedHeight);
-            lift.updateLiftPosition();
 
-            if (armPivot.getArmAngle() < 0) {
+            if (armPivot.getArmAngle() < 0 && !setToHomeResting) {
                 System.out.println("Setting servo 90 degrees");
+                setToHomeResting = true;
                 armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
-            } else {
-                armPivot.setIntakeTiltAngle(0);
             }
-            armPivot.vexIntake.setPower(0);
+//            else {
+//                armPivot.setIntakeTiltAngle(0);
+//            }
+
+            if(Math.abs(gamepad2.left_stick_y) > 0.05 && lift.getLiftExtension() >= -.03
+            && lift.getLiftExtension() < Constants.LIFT_MAX_HORIZONTAL_POSITION_IN)
+            {
+                lift.setLiftPower(-gamepad2.left_stick_y);
+                liftWantedHeight = lift.getLiftExtension();
+            }else {
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+            }
+//            lift.setSetPoint(liftWantedHeight);
+//            lift.updateLiftPosition();
+
+            if(ButtonPress.isGamepad2_left_stick_button_pressed() && lift.getLiftExtension()>4.5)
+            {
+                if(!collectionMode) {
+                    armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
+                    armPivot.vexIntake.setPower(-.91);
+                    collectionMode = true;
+                }else{
+                    armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+                    armPivot.vexIntake.setPower(0);
+                    armPivot.setIntakeTiltAngle(0);
+                    collectionMode = false;
+                }
+            }
+
+            if(collectionMode)
+            {
+                armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+            }
+
+            if(lift.getLiftExtension()<4.5)
+            {
+                collectionMode = false;
+                armPivot.setIntakeTiltAngle(90);
+            }
+
+            if(gamepad2.guide && !outTakePreValue)
+            {
+                if(!outTakeMode) {
+                    armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION);
+                    armPivot.vexIntake.setPower(.5);
+                    outTakeMode=true;
+                }else{
+                    armPivot.vexIntake.setPower(0);
+                    outTakeMode=false;
+                }
+            }
+            outTakePreValue = gamepad2.guide;
+
         }
+
+//        if(Math.abs(gamepad2.right_stick_y) > 0.05 && lift.getLiftExtension() >= 0)
+//        {
+//            lift.setLiftPower(-gamepad2.right_stick_y);
+//            liftWantedHeight = lift.getLiftExtension();
+//        }
+//        if(ButtonPress.isGamepad2_right_stick_button_pressed() && lift.getLiftExtension()>4.5)
+//        {
+//            armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+//        }
 
         if (currentState == SuperstructureStates.PICKUP.ordinal()) {
             if (stateFinished) {
@@ -464,7 +532,6 @@ public class Superstructure {
             armPivot.update(targetPivotAngle, 0.9, 15, 0.31, telemetry);
             lift.setSetPoint(liftWantedHeight);
             lift.updateLiftPosition();
-
         }
 
         if (currentState == SuperstructureStates.SPECIMEN_TRANSPORT.ordinal()) {

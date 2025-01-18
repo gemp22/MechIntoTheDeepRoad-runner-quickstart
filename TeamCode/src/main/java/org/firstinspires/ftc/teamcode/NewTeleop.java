@@ -283,11 +283,18 @@ public class NewTeleop extends Robot {
             superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
         }
 
-        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
-            superstructure.liftWantedHeight += 0.5;
-        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
-            superstructure.liftWantedHeight -= 0.5;
-        }
+//        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
+//            superstructure.liftWantedHeight += 0.5;
+//        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
+//            superstructure.liftWantedHeight -= 0.5;
+//        }
+//        if(Math.abs(gamepad2.right_stick_y) > 0.05 && lift.getLiftExtension() >= -.02
+//                && lift.getLiftExtension() < Constants.LIFT_MAX_HORIZONTAL_POSITION_IN)
+//        {
+//            lift.setLiftPower(-gamepad2.right_stick_y);
+//            superstructure.liftWantedHeight = lift.getLiftExtension();
+//        }
+
         if (ButtonPress.isGamepad1_y_pressed()) {
 
             superstructure.nextState(Superstructure.SuperstructureStates.HOLD_EVERYTHING.ordinal());
@@ -299,17 +306,6 @@ public class NewTeleop extends Robot {
 
 
 
-
-        if(-gamepad2.right_stick_y > 0.05 && lift.getLiftExtension() >= 0)
-        {
-            lift.setLiftPower(-gamepad2.right_stick_y);
-            liftWantedHeight = lift.getLiftExtension();
-        }
-        if(ButtonPress.isGamepad2_right_stick_button_pressed())
-        {
-            armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-
-        }
         /*
 
         }else if (scoringState == ScoringStates.PICKUP) {

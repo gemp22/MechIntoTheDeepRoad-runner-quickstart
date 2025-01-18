@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_x;
 import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_turn;
 
 
 import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
@@ -25,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Autonomous
-public class AutoRedTEST extends Robot {
+public class AutoSpecimens extends Robot {
 
     private final double SCALE_FACTOR = 1.6;
 
@@ -104,7 +102,7 @@ public class AutoRedTEST extends Robot {
     private boolean hasGrabbedPixels = false;
 
     private double cutOffTime = 22.5;
-    private int currentState = AutoRedTEST.programStage;
+    private int currentState = AutoSpecimens.programStage;
 
     private boolean past5In = false;
 
@@ -214,12 +212,12 @@ public class AutoRedTEST extends Robot {
                         Math.toRadians(60), 0.6));
                 * */
 
-                if (worldYPosition<-25) {
-                    if (!past5In) {
-                        superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
-                        past5In = true;
-                    }
-                }
+//                if (worldYPosition<-30) {
+//                    if (!past5In) {
+//                        superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
+//                        past5In = true;
+//                    }
+//                }
 
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
 
@@ -240,6 +238,12 @@ public class AutoRedTEST extends Robot {
                 initializeStateVariables();
             }
             if (SystemClock.uptimeMillis()-stateStartTime > 0) {
+
+                if (!past5In) {
+                    superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
+                    past5In = true;
+                }
+
                 /*ArrayList<CurvePoint> points = new ArrayList<>();
                 points.add(new CurvePoint(10, -45,
                         0, 0, 0, 0, 0, 0));
