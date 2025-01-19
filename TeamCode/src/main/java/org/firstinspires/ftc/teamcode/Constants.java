@@ -13,8 +13,8 @@ public class Constants {
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.712;
     public static final double TILT_SERVO_BASKET_DELIVERY = 0.72;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.74;
-    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -59;
-    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -19;
+    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -55;
+    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -15;
     public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.461;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.344;
     public static final double TWIST_SERVO_WALL_COLLECTION_POSITION = 0.068;

@@ -135,7 +135,7 @@ public class ArmTesting extends OpMode
 
         }
         else {                                       //uses proportional controller to hold lift in correct spot
-                armPivot.updateArmPivotPosition();   // I think this is the same thing as the conditions below
+                armPivot.updatePControlArmPivotPosition();   // I think this is the same thing as the conditions below
 
 //            if (armPivotLeftPosition < armPivot.pControllerArmPivotLeft.setPoint) {
 //

@@ -327,8 +327,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
         //linear interpolation to return tilt angle for sample collection off the floor
         double intakeTiltAngle = Constants.TILT_INTAKE_ANGLE_CLOSE_TO_BOT+
-                (liftExtension-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT)*
-                        (Constants.TILT_INTAKE_ANGLE_FAR_FROM_BOT-Constants.TILT_INTAKE_ANGLE_CLOSE_TO_BOT)/
+                (liftExtension-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT)* (Constants.TILT_INTAKE_ANGLE_FAR_FROM_BOT-Constants.TILT_INTAKE_ANGLE_CLOSE_TO_BOT)/
                 (Constants.LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT);
 //intakeTilt90Deg+((angle-90)*(intakeTilt0Deg-intakeTilt90Deg)/(0-90));
         return intakeTiltAngle;
