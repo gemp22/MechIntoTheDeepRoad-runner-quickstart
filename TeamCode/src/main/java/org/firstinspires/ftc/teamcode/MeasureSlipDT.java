@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 @Autonomous(name = "MeasureSlipDT", group = "auto1")
+@Disabled
 public class MeasureSlipDT extends Robot {
 
     //speed the robot will go before the slide

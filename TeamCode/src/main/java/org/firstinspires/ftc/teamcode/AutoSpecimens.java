@@ -276,12 +276,12 @@ public class AutoSpecimens extends Robot {
                         0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
                         Math.toRadians(60), 0.6));
 
-                points.add(new CurvePoint(12, -11,
+                points.add(new CurvePoint(13, -11,
                         0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
                         Math.toRadians(60), 0.6));
 
                 points.add(new CurvePoint(28.3, -10,
-                        0.32 * SCALE_FACTOR, 0.15 * SCALE_FACTOR, 10, 5,
+                        0.32 * SCALE_FACTOR, 0.45 * SCALE_FACTOR, 10, 10,
                         Math.toRadians(60), 0.6));
 
                 if (Math.abs(Math.hypot(worldXPosition - 25, worldYPosition - (-6))) < 5) {

@@ -12,10 +12,12 @@ import android.os.SystemClock;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 @Autonomous(name = "CalculateMinPower")
+@Disabled
 public class CalculateMinPower extends Robot {
 
     public enum progStates{
