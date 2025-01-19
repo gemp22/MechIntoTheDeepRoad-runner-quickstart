@@ -217,7 +217,14 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         return getRadPerSecond() * turnSlipAmountFor1RPS;
     }
 
-    public void updateArmPivotPosition() {
+    public void setLeftArmMotorSetPoint(int ticks) {
+        pControllerArmPivotLeft.setSetPoint(ticks);
+    }
+    public void setRightArmMotorSetPoint(int ticks) {
+        pControllerArmPivotRight.setSetPoint(ticks);
+    }
+
+    public void updatePControlArmPivotPosition() {
         armPivotLeftPosition=armPivotLeft.getCurrentPosition();
         armPivotRightPosition=armPivotRight.getCurrentPosition();
 

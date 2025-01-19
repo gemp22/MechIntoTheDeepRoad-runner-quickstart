@@ -339,12 +339,12 @@ public class NewTeleop extends Robot {
         /*if( gamepad1.right_bumper){
             armPivot.vexIntake.setPower(-.91);
         }
-        else if( gamepad1.left_bumper){
+        */
+
+        if( gamepad1.left_bumper){
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
         }
-        else {
-            armPivot.vexIntake.setPower(0);
-        }*/
+
 
         /*
         if (gamepad1.y) {

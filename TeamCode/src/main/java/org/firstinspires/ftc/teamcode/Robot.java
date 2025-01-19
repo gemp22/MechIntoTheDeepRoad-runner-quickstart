@@ -112,6 +112,8 @@ public abstract class Robot extends OpMode {
         lift = new Lift(hardwareMap);
         lift.initLiftPController();
         armPivot.InitArmPivotPIDController();
+        armPivot.InitArmPivotPController();
+
         //armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
         //armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 
@@ -207,10 +209,6 @@ public abstract class Robot extends OpMode {
 
         telemetry.addData("button press ", ButtonPress.isGamepad2_left_stick_button_pressed());
         telemetry.addData("intake tilt linear interpolation output ", armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-
-
-
-
 
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
        // System.out.println("Loop Time: " + (SystemClock.uptimeMillis() - startLoopTime));

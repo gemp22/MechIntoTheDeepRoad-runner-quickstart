@@ -169,7 +169,7 @@ public class ArmAndLiftTesting extends OpMode
         }
         else {                                       //uses proportional controller to hold lift in correct spot
 
-            armPivot.updateArmPivotPosition();
+            armPivot.updatePControlArmPivotPosition();
             lift.updateLiftPosition();
 
         }
