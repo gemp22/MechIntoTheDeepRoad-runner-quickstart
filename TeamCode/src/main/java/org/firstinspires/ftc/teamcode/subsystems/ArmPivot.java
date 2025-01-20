@@ -66,16 +66,16 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     public ArmPivot(HardwareMap hardwareMap, HashMap<String, Pair<Servo, Double>> servoMap) {
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
-        intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
+        //intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
 
         armPivotLeft = hardwareMap.get(DcMotorEx.class, "leftPivot");
 
         intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
         intakeJawServo.setDirection(Servo.Direction.REVERSE);
-        intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
+        //intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
 
         twist = hardwareMap.get(ServoImplEx.class, "twist");
-        twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
+        //twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
 
         liftLimitSwitch = hardwareMap.get(DigitalChannel.class, "liftLimitSwitch");
         pivotLimitSwitch = hardwareMap.get(DigitalChannel.class, "pivotLimitSwitch");

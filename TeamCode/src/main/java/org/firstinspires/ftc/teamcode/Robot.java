@@ -198,11 +198,12 @@ public abstract class Robot extends OpMode {
         telemetry.addData("World X", worldXPosition);
         telemetry.addData("World Y", worldYPosition);
         telemetry.addData("World Angle", Math.toDegrees(worldAngle_rad));
+        telemetry.addData("arm angle", armPivot.getArmAngle());
 
-        telemetry.addData("vel x", goBildaPose.second.getX(DistanceUnit.INCH));
-        telemetry.addData("vel y", goBildaPose.second.getY(DistanceUnit.INCH));
-        telemetry.addData("vel heading RAD", goBildaPose.second.getHeading(AngleUnit.RADIANS));
-        telemetry.addData("vel heading DEG", goBildaPose.second.getHeading(AngleUnit.DEGREES));
+//        telemetry.addData("vel x", goBildaPose.second.getX(DistanceUnit.INCH));
+//        telemetry.addData("vel y", goBildaPose.second.getY(DistanceUnit.INCH));
+//        telemetry.addData("vel heading RAD", goBildaPose.second.getHeading(AngleUnit.RADIANS));
+//        telemetry.addData("vel heading DEG", goBildaPose.second.getHeading(AngleUnit.DEGREES));
         telemetry.addData("lift extension", lift.getLiftExtension());
         telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());

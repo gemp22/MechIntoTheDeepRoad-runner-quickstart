@@ -187,12 +187,13 @@ public class AutoSamples extends Robot {
                 }
 
                 Movement.movementResult r = Movement.pointAngle(
-                        Math.atan2(11 - stateStartingY, 36 - stateStartingX),
+                        Math.atan2(11 - stateStartingY, 37 - stateStartingX),
                         0.7,
                         Math.toRadians(30));
 
                 if (Math.abs(r.turnDelta_rad) < Math.toRadians(3)) {
-                    nextStage(progStates.endBehavior.ordinal());
+                    superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                    //nextStage(progStates.endBehavior.ordinal());
                 }
 
                 drive.applyMovementDirectionBased(); // always put at end of state

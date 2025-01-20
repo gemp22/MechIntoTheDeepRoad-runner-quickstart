@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Constants {
-    public static final double JAW_SERVO_DROP_POSITION = 0.4;
-    public static final double JAW_SERVO_GRAB_POSITION = 0.835;
+    public static final double JAW_SERVO_DROP_POSITION = 0.38;
+    public static final double JAW_SERVO_GRAB_POSITION = 0.84;
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = 1;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = .052;
     public static final double JAW_SERVO_WALL_COLLECTION = .55;
@@ -11,10 +11,11 @@ public class Constants {
     public static final double TILT_SERVO_90_DEGREES_UP = 0.178;
     public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.441;
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.712;
-    public static final double TILT_SERVO_BASKET_DELIVERY = 0.72;
+       public static final double TILT_SERVO_BASKET_DELIVERY = 0.72;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.74;
     public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -55;
     public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -15;
+    public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
     public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.461;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.344;
     public static final double TWIST_SERVO_WALL_COLLECTION_POSITION = 0.068;
