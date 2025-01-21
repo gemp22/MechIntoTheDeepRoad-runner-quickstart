@@ -125,6 +125,7 @@ public class ATeleop extends Robot {
     private long hangAutomationStartTime = 0;
 
     private int state = 0;
+    private int hangButton = 0;
 
     private boolean liftIsDown = false;
     private long liftIsDownTime = 0;
@@ -277,7 +278,7 @@ public class ATeleop extends Robot {
         }
 
         if (ButtonPress.isGamepad1_a_pressed()) {
-            superstructure.liftWantedHeight = 16;
+            //superstructure.liftWantedHeight = 16;
             superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
         }
 
@@ -285,6 +286,23 @@ public class ATeleop extends Robot {
             superstructure.liftWantedHeight = 0;
             superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
         }
+
+        if (ButtonPress.isGamepad1_right_bumper_pressed()) {
+            hangButton++;
+            if (hangButton == 1) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
+            } else if (hangButton == 2) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
+            } else if (hangButton == 3) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
+            } else if (hangButton == 4) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
+            } else if (hangButton == 5) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
+            }
+        }
+
+
 
 //        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
 //            superstructure.liftWantedHeight += 0.5;
@@ -350,7 +368,7 @@ public class ATeleop extends Robot {
         }
         */
 
-        if( gamepad1.left_bumper){
+        if(ButtonPress.isGamepad1_left_bumper_pressed()){
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
         }
 

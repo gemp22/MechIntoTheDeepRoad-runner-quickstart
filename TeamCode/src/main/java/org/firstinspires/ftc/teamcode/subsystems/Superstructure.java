@@ -189,33 +189,27 @@ public class Superstructure {
 //                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 //                armPivot.armPivotLeft.setPower(0);
 //                armPivot.armPivotRight.setPower(0);
-//                armPivot.armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                armPivot.armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                armPivot.armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                armPivot.armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                armPivot.armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                armPivot.armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            }
+//                //            }
 
 
-//            if ((gamepad2.right_stick_y) < -0.01  // this is out
-//                    && lift.getLiftExtension() < Constants.LIFT_MAX_HORIZONTAL_POSITION_IN) {
-//                lift.setLiftPower(-gamepad2.right_stick_y);
-//                liftWantedHeight = lift.getLiftExtension();
-//                //liftWantedHeight = lift.getLiftExtension();
-//
-//            } else if (gamepad2.right_stick_y > 0.01 && lift.getLiftExtension() > 0) { //this is in
-//                lift.setLiftPower(-gamepad2.right_stick_y);
-//                liftWantedHeight = lift.getLiftExtension();
-//                //liftWantedHeight = lift.getLiftExtension();
-//
-//            } else {
-//                lift.setSetPoint(liftWantedHeight);
-//                lift.updateLiftPosition();
-//            }
+            if ((gamepad2.right_stick_y) < -0.01  // this is out
+                    && lift.getLiftExtension() < Constants.LIFT_MAX_HORIZONTAL_POSITION_IN) {
+                lift.setLiftPower(-gamepad2.right_stick_y);
+                liftWantedHeight = lift.getLiftExtension();
+                //liftWantedHeight = lift.getLiftExtension();
 
-            lift.setSetPoint(liftWantedHeight);
-            lift.updateLiftPosition();
+            } else if (gamepad2.right_stick_y > 0.01 && lift.getLiftExtension() > 0) { //this is in
+                lift.setLiftPower(-gamepad2.right_stick_y);
+                liftWantedHeight = lift.getLiftExtension();
+                //liftWantedHeight = lift.getLiftExtension();
+
+            } else {
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+            }
+
+//            lift.setSetPoint(liftWantedHeight);
+//            lift.updateLiftPosition();
 
             if (ButtonPress.isGamepad2_left_stick_button_pressed() && lift.getLiftExtension() > 4.0) {
                 if (!collectionMode) {
@@ -353,6 +347,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.HANG_BAR_1_PREP.ordinal()) {
             if (stateFinished) {
+                liftWantedHeight = 16;
                 initializeStateVariables();
             }
             System.out.println("HANG_BAR_1PREP DEBUG Arm Angle: " + armPivot.getArmAngle());
@@ -412,7 +407,6 @@ public class Superstructure {
             double pitchVelocity = AngleWrap(currentPitchAngle-lastPitchAngle) / elapsedTime;
 
 
-
             armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
             armPivot.setIntakeTiltAngle(90);
 
@@ -426,7 +420,7 @@ public class Superstructure {
                 liftIsReadyForBar2Pivot = true;
             }
             if (liftIsReadyForBar2Pivot) {
-                /*if (armPivot.getArmAngle() > 18) {
+                if (armPivot.getArmAngle() > 18) {
                     lift.setSetPoint(21.5);
                     lift.updateLiftPosition();
                     if (lift.getLiftExtension() > 18) {
@@ -437,7 +431,7 @@ public class Superstructure {
                     //nextState(SuperstructureStates.HANG_BAR_2.ordinal());
                 } else {
 
-                }*/
+                }
                 System.out.println("HANG DEBUG BAR 2 PREP Drive Pitch Angle Vel: " + pitchVelocity);
                 System.out.println("HANG DEBUG BAR 2 PREP Drive Pitch Delta Angle: " + AngleWrap(currentPitchAngle-lastPitchAngle));
                 lift.setSetPoint(8);
@@ -451,6 +445,7 @@ public class Superstructure {
             }
             lastPitchAngle = currentPitchAngle;
         }
+
         if (currentState == SuperstructureStates.HANG_BAR_2.ordinal()) {
             if (stateFinished) {
                 liftSwitchPressedOnce = false;
@@ -471,7 +466,7 @@ public class Superstructure {
                 lift.updateLiftPosition();
                 armPivot.update(20, 1, 10, 0.3, telemetry);
                 if (armPivot.getArmAngle() < 40) {
-                    nextState(SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
+                    //nextState(SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
                 }
             }
         }
