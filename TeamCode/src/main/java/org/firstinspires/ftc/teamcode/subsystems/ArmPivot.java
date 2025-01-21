@@ -183,6 +183,8 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         double velocityAdjustedRelativePointAngle = relativePointAngle-currSlipAngle();
 
         telemetry.addData("Relative Point Angle", relativePointAngle);
+        telemetry.addData("Arm Angle", armAngle);
+
 
         //Scale down the relative angle by 40 and multiply by point speed
         double turnSpeed = (velocityAdjustedRelativePointAngle/Math.toRadians(slowDown))*power;
@@ -191,13 +193,130 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         double powerOut = Range.clip(turnSpeed, -power, power);
 
         armMotorPower = Movement.minPower(powerOut, slowDownPower);
-
+        telemetry.addData("Output Power raw", armMotorPower);
         //smooths down the last bit to finally settle on an angle
-        armMotorPower *= Range.clip(Math.abs(relativePointAngle)/Math.toRadians(2),0,1); // was 3
+        armMotorPower *= Range.clip(Math.abs(relativePointAngle)/Math.toRadians(3),0,1); // was 3
 
         telemetry.addData("Output Power", armMotorPower);
 
         setArmPivotPower(armMotorPower);
+    }
+
+    public void update2(double targetAngle, double power, double slowDown, double slowDownPower, Telemetry telemetry) {
+        long currentTime = SystemClock.uptimeMillis();
+        double elapsedTime = (double) (currentTime - lastUpdateStartTime) / 1000.0;
+        lastUpdateStartTime = currentTime;
+
+        // Read encoder positions and calculate current arm angle
+        armPivotLeftPosition = armPivotLeft.getCurrentPosition();
+        armPivotRightPosition = armPivotRight.getCurrentPosition();
+        double averageArmPosition = (armPivotLeftPosition + armPivotRightPosition) / 2.0;
+        double armAngle = (averageArmPosition / 10.390208333) - 8;
+
+        // Calculate angular velocity
+        angularVelocity = AngleWrap(Math.toRadians(armAngle) - lastAngle) / elapsedTime;
+        lastAngle = Math.toRadians(armAngle);
+
+        // Calculate the error and relative target angle
+        double relativePointAngle = Math.toRadians(targetAngle) - Math.toRadians(armAngle);
+        double velocityAdjustedRelativePointAngle = relativePointAngle - currSlipAngle();
+
+        telemetry.addData("Relative Point Angle", relativePointAngle);
+        telemetry.addData("Arm Angle", armAngle);
+
+        // PID-like adjustments
+        double proportional = velocityAdjustedRelativePointAngle / Math.toRadians(slowDown);
+        double derivative = -angularVelocity; // Negative to counter overshooting
+        double smoothingFactor = Math.abs(relativePointAngle) / Math.toRadians(3);
+
+        // Combine components with weights
+        double turnSpeed = proportional * power + derivative * 0.00001; // Tweak the 0.5 weight as needed
+        double powerOut = Range.clip(turnSpeed, -power, power);
+
+        // Apply smoothing for final output
+        //armMotorPower = Movement.minPower(powerOut, slowDownPower) * Range.clip(smoothingFactor, 0, 1);
+        armMotorPower = Movement.minPower(powerOut, slowDownPower);
+
+
+        armMotorPower *= Range.clip(Math.abs(relativePointAngle)/Math.toRadians(3),0,1); // was 3
+
+        telemetry.addData("Output Power Raw", powerOut);
+        telemetry.addData("Output Power Smoothed", armMotorPower);
+
+        // Set motor power
+        setArmPivotPower(armMotorPower);
+    }
+
+    // Class-level variables (ensure these are declared in your class)
+
+    private double integralError = 0; // Cumulative integral error
+    private static final double INTEGRAL_MAX = 10; // Anti-windup limit for the integral term
+
+    public void update3 (double targetAngle, double maxPower, double slowDownRadius, double slowDownPower, Telemetry telemetry) {
+        // Record current time and calculate elapsed time
+        long currentTime = SystemClock.uptimeMillis();
+        double elapsedTime = (currentTime - lastUpdateStartTime) / 1000.0;
+        lastUpdateStartTime = currentTime;
+
+        // Calculate the current arm angle based on encoder positions
+        armPivotLeftPosition = armPivotLeft.getCurrentPosition();
+        armPivotRightPosition = armPivotRight.getCurrentPosition();
+        double averageArmPosition = (armPivotLeftPosition + armPivotRightPosition) / 2.0;
+        double armAngle = (averageArmPosition / 10.390208333) - 8;
+
+        // Calculate angular velocity
+        angularVelocity = (AngleWrap(Math.toRadians(armAngle) - lastAngle)) / elapsedTime;
+        lastAngle = Math.toRadians(armAngle);
+
+        // Calculate the error to the target angle
+        double relativeError = Math.toRadians(targetAngle) - Math.toRadians(armAngle);
+        double velocityAdjustedError = relativeError - currSlipAngle();
+
+        // Update integral term (sum of errors over time)
+        integralError += relativeError * elapsedTime;
+
+        // Apply anti-windup to prevent integral error from growing excessively
+        //integralError = Range.clip(integralError, -INTEGRAL_MAX, INTEGRAL_MAX);
+
+        // Add telemetry data for debugging
+        telemetry.addData("Arm Angle", armAngle);
+        telemetry.addData("Target Angle", targetAngle);
+        telemetry.addData("Relative Error (Rad)", relativeError);
+        telemetry.addData("Angular Velocity (Rad/s)", angularVelocity);
+        telemetry.addData("Integral Error", integralError);
+
+        // PID calculations
+        double proportional = (velocityAdjustedError / Math.toRadians(slowDownRadius));
+        double derivative = -angularVelocity; // Negative to counteract overshooting
+        double integral = integralError * 0.00001; // Integral gain, tweak as necessary
+
+        // Weight smoothing factor based on proximity to target
+        //double smoothingFactor = Math.min(1.0, Math.abs(relativeError) / Math.toRadians(3));
+
+        // Combine PID components for power calculation
+        double rawPower = proportional * maxPower + integral + derivative * 0.000001; // Adjust weights as needed
+        double clampedPower = Range.clip(rawPower, -maxPower, maxPower);
+
+        // Apply smoothing and slow-down power constraints near the target
+        //double smoothedPower = Movement.minPower(clampedPower, slowDownPower) * smoothingFactor;
+
+        armMotorPower = Movement.minPower(clampedPower, slowDownPower);
+        telemetry.addData("Output Power raw", armMotorPower);
+        //smooths down the last bit to finally settle on an angle
+        armMotorPower *= Range.clip(Math.abs(relativeError)/Math.toRadians(3),0,1); // was 3
+
+        // Set motor power
+        if(Math.abs(relativeError) <= Math.toRadians(5)){
+            setArmPivotPower(Math.signum(armMotorPower)*.05);
+        } else {
+        setArmPivotPower(armMotorPower);
+        }
+
+        // Additional telemetry for debugging
+        telemetry.addData("Raw Power", rawPower);
+        telemetry.addData("Clamped Power", clampedPower);
+        telemetry.addData("Smoothed Power", armMotorPower);
+
     }
 
     public double getArmAngle() {
@@ -206,7 +325,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
         double averageArmPosition = (armPivotLeftPosition+armPivotRightPosition)/2.0;
 
-        return (averageArmPosition / 10.390208333) - 5;
+        return (averageArmPosition / 10.390208333) - 8;
     }
 
     public double getRadPerSecond() {

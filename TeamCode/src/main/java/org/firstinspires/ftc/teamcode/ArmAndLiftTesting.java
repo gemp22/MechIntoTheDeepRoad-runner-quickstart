@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -51,6 +52,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
  */
 
 @TeleOp(name="armAndLiftTesting", group="Iterative OpMode")
+@Disabled
 public class ArmAndLiftTesting extends OpMode
 {
 

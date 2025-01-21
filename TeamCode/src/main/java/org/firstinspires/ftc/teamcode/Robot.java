@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public abstract class Robot extends OpMode {
-    MecanumDrive drive = null;
+    public MecanumDrive drive = null;
     GoBildaOdo GoBildaOdo; // Declare OpMode member for the Odometry Computer
     ArmPivot armPivot;
     Lift lift;

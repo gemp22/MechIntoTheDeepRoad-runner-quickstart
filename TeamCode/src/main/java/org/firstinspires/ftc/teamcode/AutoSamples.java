@@ -63,6 +63,7 @@ public class AutoSamples extends Robot {
 
     private int timeDelay = 0;
 
+
     @Override
     public void init_loop() {
         super.init_loop();
@@ -97,16 +98,12 @@ public class AutoSamples extends Robot {
     private boolean hasGrabbedPixels = false;
 
     private double cutOffTime = 22.5;
-    private int currentState = AutoSamples.programStage;
 
     private boolean past5In = false;
 
     @Override
     public void mainLoop() {
         telemetry.addData("pixels", pixelsCounted);
-        boolean jamDetected = false;//pixelJamAndCounting();
-        telemetry.addData("Superstructure State", currentState);
-        System.out.println("Superstructure State: " + currentState);
 
         if (programStage == progStates.driveToBaskets.ordinal()) {
             if (stageFinished) {
@@ -136,11 +133,12 @@ public class AutoSamples extends Robot {
                 if (completed && Math.abs(r.turnDelta_rad) < Math.toRadians(3)) {
                     drive.stopAllMovementDirectionBased();
 
+                    System.out.println("lift extension in delivery state: " + lift.getLiftExtension());
+
                     if(lift.getLiftExtension()>23){
                         superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
 
-                            nextStage(progStates.driveToOurSamples.ordinal());
-
+                        nextStage(progStates.driveToOurSamples.ordinal());
                     }
                 }
             }
@@ -150,6 +148,9 @@ public class AutoSamples extends Robot {
         if (programStage == progStates.driveToOurSamples.ordinal()) {
             if (stageFinished) {
                 past5In = false;
+
+                System.out.println("world X" + worldXPosition);
+                System.out.println("world y" + worldYPosition);
                 initializeStateVariables();
             }
             /*ArrayList<CurvePoint> points = new ArrayList<>();
@@ -180,20 +181,34 @@ public class AutoSamples extends Robot {
                     }
                 }
             }*/
-            if (SystemClock.uptimeMillis()-stateStartTime > 1500) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 500) {
                 if (!past5In) {
                     superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
                     past5In = true;
                 }
 
+                ArrayList<CurvePoint> points = new ArrayList<>();
+                points.add(new CurvePoint(stateStartingX, stateStartingY,
+                        0, 0, 0, 0, 0, 0));
+
+                points.add(new CurvePoint(17, 18,
+                        0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
+                        Math.toRadians(60), 0.6));
+
+                boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
+
+                double pickupXPosition = (cycle * 11.5) + 4;
                 Movement.movementResult r = Movement.pointAngle(
-                        Math.atan2(11 - stateStartingY, 37 - stateStartingX),
+                        Math.atan2(pickupXPosition - stateStartingY, 34 - stateStartingX),
                         0.7,
                         Math.toRadians(30));
 
-                if (Math.abs(r.turnDelta_rad) < Math.toRadians(3)) {
+                if (completed &&
+                        Math.abs(r.turnDelta_rad) < Math.toRadians(3) &&
+                        lift.getLiftExtension()<1 && armPivot.getArmAngle()<-3) {
+                    superstructure.sampleCollected = false;
                     superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
-                    //nextStage(progStates.endBehavior.ordinal());
+                    nextStage(progStates.endBehavior.ordinal());
                 }
 
                 drive.applyMovementDirectionBased(); // always put at end of state
@@ -203,7 +218,11 @@ public class AutoSamples extends Robot {
         if (programStage == progStates.endBehavior.ordinal()) {
             if (stageFinished) {
                 past5In = false;
+                cycle++;
                 initializeStateVariables();
+            }
+            if (superstructure.sampleCollected && lift.getLiftExtension() < 1) {
+                nextStage(progStates.driveToBaskets.ordinal());
             }
             drive.stopAllMovementDirectionBased();
 

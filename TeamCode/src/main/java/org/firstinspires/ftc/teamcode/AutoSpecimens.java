@@ -232,13 +232,6 @@ public class AutoSpecimens extends Robot {
                     past5In = true;
                 }
 
-                /*ArrayList<CurvePoint> points = new ArrayList<>();
-                points.add(new CurvePoint(10, -45,
-                        0, 0, 0, 0, 0, 0));
-
-                points.add(new CurvePoint(6, -45,
-                        0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 10, 10,
-                        Math.toRadians(60), 0.6));*/
 
                 movement_y = 0.20;
 
@@ -290,7 +283,6 @@ public class AutoSpecimens extends Robot {
                         past5In = true;
                     }
                 }
-
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
 
                 if (Movement.followCurve(points, Math.toRadians(-90)) && Math.abs(relativePointAngle) < Math.toRadians(4)) {
@@ -299,7 +291,6 @@ public class AutoSpecimens extends Robot {
                     nextStage(progStates.hangSpecimen.ordinal());
                     //nextStage(progStates.endBehavior.ordinal());
                 }
-
                 drive.applyMovementDirectionBased();
             }
         }
@@ -310,7 +301,6 @@ public class AutoSpecimens extends Robot {
                 initializeStateVariables();
             }
             drive.stopAllMovementDirectionBased();
-
         }
 
         superstructure.update(telemetry, gamepad1, gamepad2);

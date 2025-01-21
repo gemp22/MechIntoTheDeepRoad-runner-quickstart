@@ -35,6 +35,7 @@ import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
@@ -45,10 +46,12 @@ import java.util.HashMap;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name = "NewTeleop", group = "Mechbot")
-public class NewTeleop extends Robot {
+@TeleOp(name = "ATeleop", group = "Mechbot")
+public class ATeleop extends Robot {
 
     boolean justDidAReapproach = false;
+    boolean gamepad2Trigger = false;
+    boolean gamepad2TriggerPreVal = false;
 
     double robotLiftMaxTicks = 10573;
 
@@ -178,7 +181,7 @@ public class NewTeleop extends Robot {
     @Override
     public void mainLoop() {
         super.mainLoop();
-
+        telemetry.addData("arm pivot current angle", armPivot.getArmAngle());
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
                 gamepad1.left_bumper, gamepad1.left_stick_button, gamepad1.right_stick_button,
@@ -229,31 +232,32 @@ public class NewTeleop extends Robot {
        // }
 
 
-        System.out.println("TESTING!!! Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
+        //System.out.println("Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
         // Basket Delivery State Machines
         if (ButtonPress.isGamepad2_y_pressed()) {
             System.out.println("gp2 Y is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
 
         } else if (ButtonPress.isGamepad2_x_pressed()) {
-            System.out.println("gp2 X is Pressed");
+            System.out.println("gp2 X/ is Pressed");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
 
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
-            System.out.println("gp2 A is Pressed");
+            System.out.println("gp2 A/Xis Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
-            liftRestingStartTime = System.currentTimeMillis();
+            //liftRestingStartTime = System.currentTimeMillis();
 
         } else if (ButtonPress.isGamepad2_b_pressed()) {
             //scoringState = ScoringStates.PICKUP;
-            System.out.println("gp2 B is Pressed");
-            superstructure.nextState(Superstructure.SuperstructureStates.PICKUP.ordinal());
-        }
+            System.out.println("gp2 B/O is Pressed");
+            superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_FRONT_PREP.ordinal());
 
-        // Specimens pick up and drop off
-        if (ButtonPress.isGamepad2_dpad_left_pressed()) {
+        } else if (gamepad2.right_trigger > 0.05 && armPivot.getArmAngle()>30&& !gamepad2TriggerPreVal) { //this is in
+            superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_FRONT_CHAMBER.ordinal());
+
+        }else if (ButtonPress.isGamepad2_dpad_left_pressed()) { //// Specimens pick up and dro
             System.out.println("gp2 Dpad left");
             superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
 
@@ -262,8 +266,7 @@ public class NewTeleop extends Robot {
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
 
-        }
-        if (ButtonPress.isGamepad2_left_bumper_pressed()) {
+        } else if (ButtonPress.isGamepad2_left_bumper_pressed()) {
             System.out.println("gp2 Dpad left bumper");
             superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
 
@@ -302,6 +305,12 @@ public class NewTeleop extends Robot {
         if (ButtonPress.isGamepad1_x_pressed()) {
 
             superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
+        }
+
+        if(gamepad2.right_trigger > 0.05){
+            gamepad2TriggerPreVal = true;
+        }else {
+            gamepad2TriggerPreVal = false;
         }
 
 
