@@ -22,8 +22,8 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     // for lift pController input
     public final double minPowerLiftLeft = .001;
     public final double minPowerLiftRight = .001;
-    public final double maxPowerLiftLeft = 0.99;
-    public final double maxPowerLiftRight = 0.99;
+    public final double maxPowerLiftLeft = 1;
+    public final double maxPowerLiftRight = 1;
     private double liftLeftActionPosition;
     private double liftRightActionPosition;
 
@@ -31,6 +31,8 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     //private double pixelLiftPosition; // variable for regular use like on init.. humm may not need since its defined in the method?
     private boolean exitLiftLeftPControllerLoop = false;
     private boolean exitLiftRightPControllerLoop = false;
+
+    public boolean dontResetEncoder= false;
     public PController pControllerLiftLeft = new PController(0.005);
     public PController pControllerLiftRight = new PController(0.005);
 
@@ -44,9 +46,12 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftLeft.setPower(0);
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
         //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(dontResetEncoder) {
+            liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         liftRight = hardwareMap.get(DcMotorEx.class, "rightLift");
         liftRight.setDirection(DcMotor.Direction.FORWARD);

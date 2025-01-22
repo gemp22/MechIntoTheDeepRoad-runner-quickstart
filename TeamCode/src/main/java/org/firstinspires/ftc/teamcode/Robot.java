@@ -36,6 +36,7 @@ public abstract class Robot extends OpMode {
     Superstructure superstructure;
     HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
     public boolean isAuto = false;
+    public boolean initTeleOpp = false;
     double startingTiltPos = 0;
     double startingJawPos = 0;
     double startingTwistPos = 0;

@@ -211,7 +211,7 @@ public class Superstructure {
 //            lift.setSetPoint(liftWantedHeight);
 //            lift.updateLiftPosition();
 
-            if (ButtonPress.isGamepad2_left_stick_button_pressed() && lift.getLiftExtension() > 4.0) {
+            if (ButtonPress.isGamepad2_left_stick_button_pressed() && lift.getLiftExtension() > 3.1 ) {
                 if (!collectionMode) {
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
                     armPivot.vexIntake.setPower(-.91);
@@ -228,7 +228,7 @@ public class Superstructure {
                 armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
             }
 
-            if (lift.getLiftExtension() < 4.5 && !outTakeMode && armPivot.getArmAngle()<10) {
+            if (lift.getLiftExtension() < 3.1 && !outTakeMode && armPivot.getArmAngle()<10) {
                 collectionMode = false;
                 armPivot.setIntakeTiltAngle(90);
             }
@@ -239,11 +239,17 @@ public class Superstructure {
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_WALL_COLLECTION);
                     armPivot.vexIntake.setPower(.5);
                     outTakeMode = true;
+                    collectionMode=false;
                 } else {
                     armPivot.vexIntake.setPower(0);
                     outTakeMode = false;
+                    collectionMode=false;
                 }
             }
+
+
+
+
             outTakePreValue = gamepad2.guide;
         }
 
@@ -326,7 +332,7 @@ public class Superstructure {
             if (stateFinished) {
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION);
                 armPivot.vexIntake.setPower(.2);
-                armPivot.setIntakeTiltAngle(-63);
+                armPivot.setIntakeTiltAngle(-64);
                 restingStateStartingAngle = armPivot.getArmAngle();
                 initializeStateVariables();
             }
@@ -372,7 +378,7 @@ public class Superstructure {
             if (lift.getLiftExtension() < 2.25 && armPivot.getArmAngle() < 5) {
                 lift.setLiftPower(0);
                 armPivot.setArmPivotPower(0);
-                nextState(SuperstructureStates.HANG_BAR_2_PREP.ordinal());
+                //nextState(SuperstructureStates.HANG_BAR_2_PREP.ordinal());
             } else {
                 if (lift.getLiftExtension() > 2) {
                     lift.setLiftPower(-1);

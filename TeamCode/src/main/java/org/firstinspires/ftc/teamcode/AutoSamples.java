@@ -36,6 +36,7 @@ public class AutoSamples extends Robot {
         deliverBaskets,
         driveToOpponentsSamples,
         driveBackToBaskets,
+        park,
         endBehavior
     }
 
@@ -115,7 +116,7 @@ public class AutoSamples extends Robot {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(13, 13,
+            points.add(new CurvePoint(12.5, 12.0,
                     0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
@@ -191,7 +192,7 @@ public class AutoSamples extends Robot {
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
-                points.add(new CurvePoint(17, 18,
+                points.add(new CurvePoint(18, 18,
                         0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
@@ -207,7 +208,9 @@ public class AutoSamples extends Robot {
                         Math.abs(r.turnDelta_rad) < Math.toRadians(3) &&
                         lift.getLiftExtension()<1 && armPivot.getArmAngle()<-3) {
                     superstructure.sampleCollected = false;
-                    superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                    if(cycle<3) {
+                        superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                    }
                     nextStage(progStates.endBehavior.ordinal());
                 }
 
@@ -216,6 +219,19 @@ public class AutoSamples extends Robot {
         }
 
         if (programStage == progStates.endBehavior.ordinal()) {
+            if (stageFinished) {
+                past5In = false;
+                cycle++;
+                initializeStateVariables();
+            }
+            if (superstructure.sampleCollected && lift.getLiftExtension() < 1 ) {
+                nextStage(progStates.driveToBaskets.ordinal());
+            }
+            drive.stopAllMovementDirectionBased();
+
+        }
+
+        if (programStage == progStates.park.ordinal()) {
             if (stageFinished) {
                 past5In = false;
                 cycle++;

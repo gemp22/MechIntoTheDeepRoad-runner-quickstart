@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Movement;
 import org.firstinspires.ftc.teamcode.PController;
 import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.Robot;
 
 import java.util.HashMap;
 
@@ -83,9 +84,13 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeft.setDirection(DcMotor.Direction.FORWARD);
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
+
+
         armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
         armPivotRight = hardwareMap.get(DcMotorEx.class, "rightPivot");
         armPivotRight.setDirection(DcMotor.Direction.REVERSE);

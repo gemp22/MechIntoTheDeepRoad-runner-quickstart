@@ -287,20 +287,20 @@ public class ATeleop extends Robot {
             superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
         }
 
-        if (ButtonPress.isGamepad1_right_bumper_pressed()) {
-            hangButton++;
-            if (hangButton == 1) {
-                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
-            } else if (hangButton == 2) {
-                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
-            } else if (hangButton == 3) {
-                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
-            } else if (hangButton == 4) {
-                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
-            } else if (hangButton == 5) {
-                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
-            }
-        }
+//        if (ButtonPress.isGamepad1_right_bumper_pressed()) {
+//            hangButton++;
+//            if (hangButton == 1) {
+//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
+//            } else if (hangButton == 2) {
+//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
+//            } else if (hangButton == 3) {
+//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
+//            } else if (hangButton == 4) {
+//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
+//            } else if (hangButton == 5) {
+//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
+//            }
+//        }
 
 
 
