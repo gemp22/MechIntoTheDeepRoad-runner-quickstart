@@ -198,14 +198,14 @@ public class AutoSamples extends Robot {
 
                 boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
 
-                double pickupXPosition = (cycle * 11.5) + 4;
+                double pickupXPosition = (cycle * 11.5) + 3;
                 Movement.movementResult r = Movement.pointAngle(
                         Math.atan2(pickupXPosition - stateStartingY, 34 - stateStartingX),
                         0.7,
                         Math.toRadians(30));
 
                 if (completed &&
-                        Math.abs(r.turnDelta_rad) < Math.toRadians(3) &&
+                    Math.abs(r.turnDelta_rad) < Math.toRadians(3) &&
                         lift.getLiftExtension()<1 && armPivot.getArmAngle()<-3) {
                     superstructure.sampleCollected = false;
                     if(cycle<3) {
@@ -244,7 +244,14 @@ public class AutoSamples extends Robot {
 
         }
 
+        tp4.markStart();
+
         superstructure.update(telemetry, gamepad1, gamepad2);
+
+        tp4.markEnd();
+
+        System.out.println("Time Profiler 4 Average Time: " + tp4.getAverageTimePerUpdateMillis());
+
     }
 }
 

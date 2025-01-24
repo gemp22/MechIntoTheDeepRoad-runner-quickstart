@@ -53,11 +53,17 @@ public class ATeleop extends Robot {
     boolean gamepad2Trigger = false;
     boolean gamepad2TriggerPreVal = false;
 
+
+    boolean intakeUnJamPreValue = false;
+
     double robotLiftMaxTicks = 10573;
 
 
     @Override
     public void init() {
+        isAuto = false;
+        dontResetEncoder=true;
+        AutoSpecimens.pickupOffWall = false;
         super.init();      //Ask Miles what this is?
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(17.75 / 2, 23.75, Math.PI));  // this initilizes the Odo?
@@ -277,30 +283,28 @@ public class ATeleop extends Robot {
             superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal());
         }
 
-        if (ButtonPress.isGamepad1_a_pressed()) {
-            //superstructure.liftWantedHeight = 16;
-            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
-        }
-
-        if (ButtonPress.isGamepad1_b_pressed()) {
-            superstructure.liftWantedHeight = 0;
-            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
-        }
-
-//        if (ButtonPress.isGamepad1_right_bumper_pressed()) {
-//            hangButton++;
-//            if (hangButton == 1) {
-//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
-//            } else if (hangButton == 2) {
-//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
-//            } else if (hangButton == 3) {
-//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
-//            } else if (hangButton == 4) {
-//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
-//            } else if (hangButton == 5) {
-//                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
-//            }
+//        if (ButtonPress.isGamepad1_a_pressed()) {
+//            //superstructure.liftWantedHeight = 16;
+//            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
 //        }
+
+//        if (ButtonPress.isGamepad1_b_pressed()) {
+//            superstructure.liftWantedHeight = 0;
+//            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
+//        }
+
+        if (ButtonPress.isGamepad1_a_pressed()) {
+            hangButton++;
+            if (hangButton == 1) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
+            } else if (hangButton == 2) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
+            } else if (hangButton == 3) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
+            } else if (hangButton == 4) {
+                superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
+            }
+        }
 
 
 
@@ -320,10 +324,10 @@ public class ATeleop extends Robot {
 
             superstructure.nextState(Superstructure.SuperstructureStates.HOLD_EVERYTHING.ordinal());
         }
-        if (ButtonPress.isGamepad1_x_pressed()) {
-
-            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
-        }
+//        if (ButtonPress.isGamepad1_x_pressed()) {
+//
+//            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
+//        }
 
         if(gamepad2.right_trigger > 0.05){
             gamepad2TriggerPreVal = true;
@@ -372,6 +376,13 @@ public class ATeleop extends Robot {
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
         }
 
+
+        if (gamepad1.guide && !intakeUnJamPreValue) {
+            if (!superstructure.intakeUnJam) {
+                superstructure.nextState(Superstructure.SuperstructureStates.UNJAM_INTAKE.ordinal());
+            }
+        }
+        intakeUnJamPreValue = gamepad1.guide;
 
         /*
         if (gamepad1.y) {

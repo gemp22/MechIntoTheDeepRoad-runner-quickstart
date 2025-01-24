@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.PController;
 import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.Robot;
 
 public class Lift {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx liftLeft;
@@ -32,10 +33,8 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     private boolean exitLiftLeftPControllerLoop = false;
     private boolean exitLiftRightPControllerLoop = false;
 
-    public boolean dontResetEncoder= false;
     public PController pControllerLiftLeft = new PController(0.005);
     public PController pControllerLiftRight = new PController(0.005);
-
     public PIDController pidControllerLiftLeft = new PIDController(0.005,.00007,0);
     public PIDController pidControllerLiftRight = new PIDController(0.005,0.00007,0);
 
@@ -47,7 +46,7 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
         //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        if(dontResetEncoder) {
+        if(Robot.dontResetEncoder) {
             liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -57,11 +56,12 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftRight.setDirection(DcMotor.Direction.FORWARD);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setPower(0);
-        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
+        if(Robot.dontResetEncoder) {
+            liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
     }
     public void initLiftPController(){
 
@@ -184,99 +184,8 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
     }
 
 
-
     /////////////////////////   Lift   /////////////////////////////////////
-    public class LiftElevationMaintainer implements Action {
 
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-
-
-                liftLeftPosition=liftLeft.getCurrentPosition();
-
-                if (liftLeftPosition < pControllerLiftLeft.setPoint) {
-
-                    liftLeft.setPower(minPowerLiftLeft +
-                            pControllerLiftLeft.getComputedOutput(liftLeftPosition));
-                } else {
-                    liftLeft.setPower(minPowerLiftLeft -
-                            pControllerLiftLeft.getComputedOutput(liftLeftPosition));
-                }
-
-            if (liftRightPosition < pControllerLiftRight.setPoint) {
-
-                liftRight.setPower(minPowerLiftRight +
-                        pControllerLiftRight.getComputedOutput(liftRightPosition));
-            } else {
-                liftRight.setPower(minPowerLiftRight -
-                        pControllerLiftRight.getComputedOutput(liftRightPosition));
-            }
-            return true;
-
-        }
-    }
-    public Action LiftElevationMaintainer() {  // this method is for use in RR trajectories
-        return new LiftElevationMaintainer();
-    }
-
-    public Action SetLiftPosition(int liftSetPosition) {  // this method is for use in RR trajectories
-        liftLeftActionPosition = liftSetPosition;
-        liftRightPosition = liftSetPosition;
-        return new LiftActionSet();
-    }
-
-    public class LiftActionSet implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-
-            pControllerLiftLeft.setSetPoint(liftLeftActionPosition);
-            pControllerLiftRight.setSetPoint(liftRightActionPosition);
-            return false;
-
-        }
-    }
-    public class LiftActionHome implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-
-            pControllerLiftLeft.setSetPoint(0);
-            pControllerLiftRight.setSetPoint(0);
-            return false;
-
-        }
-    }
-    public Action setLiftActionHome() {  // this method is for use in RR trajectories
-
-        return new LiftActionHome();
-    }
-        public class LiftActionLow implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-
-                pControllerLiftLeft.setSetPoint(600);
-                pControllerLiftRight.setSetPoint(600);
-                return false;
-
-            }
-    }
-    public Action setLiftActionLow() {  // this method is for use in RR trajectories
-
-        return new LiftActionLow();
-    }
-    public class LiftActionHigh implements Action {
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-
-            pControllerLiftLeft.setSetPoint(700);
-            pControllerLiftRight.setSetPoint(700);
-            return false;
-
-        }
-    }
-    public Action setLiftActionHigh() {  // this method is for use in RR trajectories
-
-        return new LiftActionHigh();
-    }
 
 
 

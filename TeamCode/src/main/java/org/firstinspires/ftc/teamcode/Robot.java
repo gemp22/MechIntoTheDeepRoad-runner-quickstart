@@ -9,6 +9,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -26,6 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public abstract class Robot extends OpMode {
@@ -36,7 +38,6 @@ public abstract class Robot extends OpMode {
     Superstructure superstructure;
     HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
     public boolean isAuto = false;
-    public boolean initTeleOpp = false;
     double startingTiltPos = 0;
     double startingJawPos = 0;
     double startingTwistPos = 0;
@@ -60,6 +61,8 @@ public abstract class Robot extends OpMode {
     public double stateStartingAngle_rad = 0;
     private final boolean DEBUGGING = false;
     private boolean inDebugState = false;
+
+    public static boolean dontResetEncoder= false;
 
     //holds the stage we are going to next
     int nextStage = 0;
@@ -106,8 +109,15 @@ public abstract class Robot extends OpMode {
         return newPoints;
     }
 
+    List<LynxModule> allHubs;
+
     @Override
     public void init() {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule module : allHubs) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
 
         armPivot = new ArmPivot(hardwareMap, servoMap);
         lift = new Lift(hardwareMap);
@@ -144,6 +154,10 @@ public abstract class Robot extends OpMode {
 
     @Override
     public void init_loop() {
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
                 gamepad1.left_bumper, gamepad1.left_stick_button, gamepad1.right_stick_button,
@@ -163,9 +177,21 @@ public abstract class Robot extends OpMode {
         programStage = 0;
     }
 
+    public TimeProfiler tp0 = new TimeProfiler(1000);
+
+    public TimeProfiler tp1 = new TimeProfiler(1000);
+    public TimeProfiler tp2 = new TimeProfiler(1000);
+    public TimeProfiler tp3 = new TimeProfiler(1000);
+    public TimeProfiler tp4 = new TimeProfiler(1000);
+
     @Override
     public void loop() {
+        tp0.markStart();
         double startLoopTime = SystemClock.uptimeMillis();
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+
         //PoseVelocity2d currentPoseVel = drive.updatePoseEstimate();
 
         telemetry.addLine("---------- GENERAL TELEMETRY BELOW ----------");
@@ -176,24 +202,44 @@ public abstract class Robot extends OpMode {
 
         //GoBildaPinPoint
 
-         Pair<Pose2D,Pose2D> goBildaPose = GoBildaOdo.GoBildaGetPose2D();
+        tp1.markStart();
+
+        Pair<Pose2D,Pose2D> goBildaPose = GoBildaOdo.GoBildaGetPose2D();
 
         worldXPosition = goBildaPose.first.getX(DistanceUnit.INCH);
         worldYPosition = goBildaPose.first.getY(DistanceUnit.INCH);
         worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
 
+        tp1.markEnd();
+
+        System.out.println("Time Profiler 1 Average Time: " + tp1.getAverageTimePerUpdateMillis());
+
 //        worldXPosition = goBildaPose.first.getY(DistanceUnit.INCH);
 //        worldYPosition = goBildaPose.first.getX(DistanceUnit.INCH);
 //        worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
         // DO NOT CHANGE THIS LINE
+
+        tp2.markStart();
+
         SpeedOmeter.update(
                 goBildaPose.second.getX(DistanceUnit.INCH),
                 goBildaPose.second.getY(DistanceUnit.INCH),
                 goBildaPose.second.getHeading(AngleUnit.RADIANS));
 
+        tp2.markEnd();
+
+        System.out.println("Time Profiler 2 Average Time: " + tp2.getAverageTimePerUpdateMillis());
+
         //superstructure.update(telemetry, gamepad1, gamepad2);
 
+        tp3.markStart();
+
         mainAutoLoop();
+
+        tp3.markEnd();
+
+        System.out.println("Time Profiler 3 Average Time: " + tp3.getAverageTimePerUpdateMillis());
+
 
         telemetry.addData("Loop Time", SystemClock.uptimeMillis() - startLoopTime);
         telemetry.addData("World X", worldXPosition);
@@ -214,6 +260,9 @@ public abstract class Robot extends OpMode {
 
         Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
        // System.out.println("Loop Time: " + (SystemClock.uptimeMillis() - startLoopTime));
+        tp0.markEnd();
+
+        System.out.println("Time Profiler 0 Average Time: " + tp0.getAverageTimePerUpdateMillis());
 
     }
 
