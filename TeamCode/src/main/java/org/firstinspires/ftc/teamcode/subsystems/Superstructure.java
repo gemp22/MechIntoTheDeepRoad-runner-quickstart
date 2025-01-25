@@ -850,6 +850,7 @@ public class Superstructure {
             if (SystemClock.uptimeMillis() - stateStartTime > 250 && armPivot.getArmAngle() > 25 && !intakeUnJamTwist) {
                 intakeUnJamTwist = true;
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
+
                 if (!armPivot.getLiftLimitState()) { //this resets lift encoders
                     if(!intakeUnJamLimitSwitchPressed){   // did this to not spam hub with motor sets
                         intakeUnJamLimitSwitchPressed = true;
@@ -864,7 +865,7 @@ public class Superstructure {
                 }
             }
 
-            if (SystemClock.uptimeMillis() - stateStartTime > 250 && armPivot.getArmAngle() > 55) {
+            if (SystemClock.uptimeMillis() - stateStartTime > 500 && armPivot.getArmAngle() > 55) {
                 intakeUnJam = false; // this lets us use teleOpp button press again
                 nextState(SuperstructureStates.RESTING.ordinal());
             }
