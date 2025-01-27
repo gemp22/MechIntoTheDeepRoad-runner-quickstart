@@ -244,17 +244,17 @@ public class ATeleop extends Robot {
         //System.out.println("Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
         // Basket Delivery State Machines
         if (ButtonPress.isGamepad2_y_pressed()) {
-            System.out.println("gp2 Y is Pressed");
+            System.out.println("gp2 Y Triangle is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
 
         } else if (ButtonPress.isGamepad2_x_pressed()) {
-            System.out.println("gp2 X/ is Pressed");
+            System.out.println("gp2 X/ square is Pressed");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
 
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
-            System.out.println("gp2 A/Xis Pressed");
+            System.out.println("gp2 A/X is Pressed");
             superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
             //liftRestingStartTime = System.currentTimeMillis();
 
