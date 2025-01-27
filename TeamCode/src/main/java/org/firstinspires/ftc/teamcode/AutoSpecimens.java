@@ -66,6 +66,7 @@ public class AutoSpecimens extends Robot {
 
     @Override
     public void init() {
+        Robot.resetEncoders = true;
         super.init();
 
         isAuto = true;

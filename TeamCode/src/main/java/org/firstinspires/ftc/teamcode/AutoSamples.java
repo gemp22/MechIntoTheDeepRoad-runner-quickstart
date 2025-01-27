@@ -55,11 +55,14 @@ public class AutoSamples extends Robot {
 
     @Override
     public void init() {
+        Robot.resetEncoders = true;
         super.init();
 
+        isAuto = true;
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
         armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+
     }
 
     private int timeDelay = 0;

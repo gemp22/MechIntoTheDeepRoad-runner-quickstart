@@ -21,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 @Autonomous(name = "MeasureSlipDT", group = "auto1")
-@Disabled
 public class MeasureSlipDT extends Robot {
 
     //speed the robot will go before the slide

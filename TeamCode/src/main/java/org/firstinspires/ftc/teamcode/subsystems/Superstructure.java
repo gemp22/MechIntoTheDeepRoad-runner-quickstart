@@ -553,7 +553,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal()) {
             if (stateFinished) {
-                targetPivotAngle = 9.0;   // adjust this for optimal specimen on the wall height
+                targetPivotAngle = 9.5;   // adjust this for optimal specimen on the wall height
                 liftWantedHeight = 5;
                 armPivot.setIntakeTiltAngle(0);
                 initializeStateVariables();
@@ -706,7 +706,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {
             if (stateFinished) {
-                liftWantedHeight = 1.9;
+                liftWantedHeight = 1.9;// change here if problesm
                 lift.setSetPoint(liftWantedHeight);
                 initializeStateVariables();
             }
@@ -816,7 +816,7 @@ public class Superstructure {
                     taskReStartTime =true;
                 }
 
-                if(SystemClock.uptimeMillis()-taskStartTime > 750){
+                if(SystemClock.uptimeMillis()-taskStartTime > 1000){
                     //collectionMode = false;
                     sampleCollected = true;
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
@@ -851,21 +851,25 @@ public class Superstructure {
                 intakeUnJamTwist = true;
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
 
-                if (!armPivot.getLiftLimitState()) { //this resets lift encoders
-                    if(!intakeUnJamLimitSwitchPressed){   // did this to not spam hub with motor sets
-                        intakeUnJamLimitSwitchPressed = true;
-                        lift.setLiftPower(0.25);
-                    }
+                if (!armPivot.getLiftLimitState()) {
+                    lift.setLiftPower(-0.25);
+                    //this resets lift encoders
+//                    if(!intakeUnJamLimitSwitchPressed){   // did this to not spam hub with motor sets
+//                        intakeUnJamLimitSwitchPressed = true;
+//                        lift.setLiftPower(0.25);
+//                    }
                 } else {
-                    if(intakeUnJamLimitSwitchPressed){
-                        intakeUnJamLimitSwitchPressed = false;
-                        lift.setLiftPower(0.0);
-                        lift.resetLiftEncoders();
-                    }
+                    lift.setLiftPower(0.0);
+                    lift.resetLiftEncoders();
+//                    if(intakeUnJamLimitSwitchPressed){
+//                        intakeUnJamLimitSwitchPressed = false;
+//                        lift.setLiftPower(0.0);
+//                        lift.resetLiftEncoders();
+//                    }
                 }
             }
 
-            if (SystemClock.uptimeMillis() - stateStartTime > 500 && armPivot.getArmAngle() > 55) {
+            if (SystemClock.uptimeMillis() - stateStartTime > 1000 && armPivot.getArmAngle() > 55 && armPivot.getLiftLimitState()) {
                 intakeUnJam = false; // this lets us use teleOpp button press again
                 nextState(SuperstructureStates.RESTING.ordinal());
             }

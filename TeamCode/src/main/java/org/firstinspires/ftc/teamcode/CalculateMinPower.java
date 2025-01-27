@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 @Autonomous(name = "CalculateMinPower")
-@Disabled
+//@Disabled
 public class CalculateMinPower extends Robot {
 
     public enum progStates{

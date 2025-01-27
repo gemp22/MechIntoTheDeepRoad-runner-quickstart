@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Movement;
@@ -85,20 +84,23 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotLeft.setPower(0);
 
-
-        armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        if(Robot.resetEncoders) {
+            armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
 
         armPivotRight = hardwareMap.get(DcMotorEx.class, "rightPivot");
         armPivotRight.setDirection(DcMotor.Direction.REVERSE);
         armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivotRight.setPower(0);
-        armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(Robot.resetEncoders) {
+            armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
         servoMap.put("Twist Servo", new Pair<>(twist, Constants.TWIST_SERVO_HORIZONTAL_POSITION));

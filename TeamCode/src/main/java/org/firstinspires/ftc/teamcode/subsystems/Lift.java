@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -46,7 +42,7 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
         //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        if(Robot.dontResetEncoder) {
+        if(Robot.resetEncoders) {
             liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -57,7 +53,7 @@ public class Lift {  //this is a subsystem Class used in Auto. its based on exam
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setPower(0);
 
-        if(Robot.dontResetEncoder) {
+        if(Robot.resetEncoders) {
             liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

@@ -35,7 +35,6 @@ import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
@@ -62,7 +61,7 @@ public class ATeleop extends Robot {
     @Override
     public void init() {
         isAuto = false;
-        dontResetEncoder=true;
+        resetEncoders =false;
         AutoSpecimens.pickupOffWall = false;
         super.init();      //Ask Miles what this is?
 

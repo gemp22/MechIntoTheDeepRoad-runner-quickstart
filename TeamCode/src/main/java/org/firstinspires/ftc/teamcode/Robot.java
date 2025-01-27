@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -28,7 +27,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public abstract class Robot extends OpMode {
     public MecanumDrive drive = null;
@@ -62,7 +60,7 @@ public abstract class Robot extends OpMode {
     private final boolean DEBUGGING = false;
     private boolean inDebugState = false;
 
-    public static boolean dontResetEncoder= false;
+    public static boolean resetEncoders = false;
 
     //holds the stage we are going to next
     int nextStage = 0;
@@ -257,8 +255,14 @@ public abstract class Robot extends OpMode {
 
         telemetry.addData("button press ", ButtonPress.isGamepad2_left_stick_button_pressed());
         telemetry.addData("intake tilt linear interpolation output ", armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-
-        Log.i("Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+        if(isAuto)
+        {
+            Log.i("Auto Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+        }
+        else
+        {
+            Log.i("TeleOp Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+        }
        // System.out.println("Loop Time: " + (SystemClock.uptimeMillis() - startLoopTime));
         tp0.markEnd();
 
