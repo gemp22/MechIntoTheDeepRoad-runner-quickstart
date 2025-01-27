@@ -237,6 +237,9 @@ public class ATeleop extends Robot {
            // lift.setLiftPower(gamepad2.right_stick_y);
        // }
 
+        System.out.println("Lift Encoders: " + lift.getLiftExtension());
+        System.out.println("Lift Encoders RAW: " + lift.liftRight.getCurrentPosition());
+
 
         //System.out.println("Delivery Level Ordinal: " + Superstructure.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
         // Basket Delivery State Machines
