@@ -220,8 +220,8 @@ public abstract class Robot extends OpMode {
         tp2.markStart();
 
         SpeedOmeter.update(
-                goBildaPose.second.getX(DistanceUnit.INCH),
                 goBildaPose.second.getY(DistanceUnit.INCH),
+                goBildaPose.second.getX(DistanceUnit.INCH),
                 goBildaPose.second.getHeading(AngleUnit.RADIANS));
 
         tp2.markEnd();
@@ -262,6 +262,12 @@ public abstract class Robot extends OpMode {
         else
         {
             Log.i("TeleOp Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));
+            System.out.println("PP Velocity X  " + (SpeedOmeter.getSpeedX()));
+            System.out.println("PP Velocity y " + (SpeedOmeter.getSpeedY()));
+            System.out.println("PP Velocity heading " + (SpeedOmeter.getDegPerSecond()));
+            System.out.println("GB Velocity X  " + goBildaPose.second.getX(DistanceUnit.INCH));
+            System.out.println("GB Velocity y " + goBildaPose.second.getY(DistanceUnit.INCH));
+            System.out.println("GB Velocity heading " + goBildaPose.second.getHeading(AngleUnit.DEGREES));
         }
        // System.out.println("Loop Time: " + (SystemClock.uptimeMillis() - startLoopTime));
         tp0.markEnd();

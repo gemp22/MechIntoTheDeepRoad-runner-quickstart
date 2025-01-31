@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.MovementVars.movement_x;
 import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
 
 
@@ -25,7 +26,7 @@ import java.util.HashMap;
 @Autonomous
 public class AutoSpecimens extends Robot {
 
-    private final double SCALE_FACTOR = 1.6;
+    private final double SCALE_FACTOR = 1;
 
     private long startTime = 0;
 
@@ -62,6 +63,8 @@ public class AutoSpecimens extends Robot {
     private boolean turnOnJamAlgorithm = false;
 
     boolean justDidAReapproach = false;
+
+    boolean hasPushSamplesIn = false;
 
 
     @Override
@@ -130,27 +133,21 @@ public class AutoSpecimens extends Robot {
         if (programStage == progStates.driveBackwardToChamberAndHang.ordinal()) {
             if (stageFinished) {
                 past5In = false;
+                superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
                 initializeStateVariables();
-
             }
+
             ArrayList<CurvePoint> points = new ArrayList<>();
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(20, 0,
+            points.add(new CurvePoint(15, 0,
                     0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
             points.add(new CurvePoint(27.7, 0,
-                    0.15 * SCALE_FACTOR, 0.15 * SCALE_FACTOR, 15, 15,
+                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
-
-            if (Math.abs(Math.hypot(worldXPosition - 10, worldYPosition - 0)) < 5) {
-                if (!past5In) {
-                    superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
-                    past5In = true;
-                }
-            }
 
             if (Movement.followCurve(points, Math.toRadians(-90))) {
                 drive.stopAllMovementDirectionBased();
@@ -174,7 +171,7 @@ public class AutoSpecimens extends Robot {
                         0, 0, 0, 0, 0, 0));
 
                 points.add(new CurvePoint(stateStartingX-8, stateStartingY,
-                        0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 10, 15,
+                        0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
 
@@ -204,7 +201,6 @@ public class AutoSpecimens extends Robot {
                 } else {
                     superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
                 }
-
 
                 System.out.println("Starting X" + stateStartingX);
                 System.out.println("Starting Y" + stateStartingY);
@@ -304,33 +300,44 @@ public class AutoSpecimens extends Robot {
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
-                points.add(new CurvePoint(11, -45,
-                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
+                /*points.add(new CurvePoint(11, -45,
+                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
+                        Math.toRadians(60), 0.6));*/
+/*
+                points.add(new CurvePoint(10, -8 + (overallCycleToChamber * -8),
+                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
+                        Math.toRadians(60), 0.6));*/
+
+                double destinationX = Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 10 ? 27.7 : 20;
+
+                points.add(new CurvePoint(destinationX, -8 + (overallCycleToChamber * -8),
+                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                         Math.toRadians(60), 0.6));
 
-                points.add(new CurvePoint(13, -8 + (overallCycleToChamber * -8),
-                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
-                        Math.toRadians(60), 0.6));
-
-                points.add(new CurvePoint(29, -8 + (overallCycleToChamber * -8),
-                        0.32 * SCALE_FACTOR, 0.45 * SCALE_FACTOR, 10, 10,
-                        Math.toRadians(60), 0.6));
-
-                if (Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 10) {
-                    if (!past5In) {
-                        superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
-                        past5In = true;
-                    }
-                }
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
 
                 if (Movement.followCurve(points, Math.toRadians(-90)) && Math.abs(relativePointAngle) < Math.toRadians(4)) {
                     drive.stopAllMovementDirectionBased();
                     overallCycleToChamber++;
 
+                    System.out.println("WorldPosXHang: " + worldXPosition);
+                    System.out.println("WorldPosYHang: " + worldYPosition);
+
                     nextStage(progStates.hangSpecimen.ordinal());
 
                     //nextStage(progStates.endBehavior.ordinal());
+                }
+
+                if (Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 28) {
+                    if (!past5In) {
+                        superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
+                        past5In = true;
+                    }
+
+                    Movement.movementResult r = Movement.pointAngle(
+                            Math.toRadians(180),
+                            0.9,
+                            Math.toRadians(30));
                 }
                 drive.applyMovementDirectionBased();
             }
@@ -347,12 +354,12 @@ public class AutoSpecimens extends Robot {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(50, stateStartingY,
-                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
+            points.add(new CurvePoint(45, stateStartingY,
+                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                     Math.toRadians(60), 0.6));
 
 
-            if (Movement.followCurve(points, Math.toRadians(-90), 3)) {
+            if (Movement.followCurve(points, Math.toRadians(-90), 5)) {
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
@@ -367,15 +374,17 @@ public class AutoSpecimens extends Robot {
                 initializeStateVariables();
             }
 
-            ArrayList<CurvePoint> points = new ArrayList<>();
+            /*ArrayList<CurvePoint> points = new ArrayList<>();
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(stateStartingX, -57 + (driveToGetSampleCycle * -7),
-                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
-                    Math.toRadians(60), 0.6));
+            points.add(new CurvePoint(worldXPosition, -58 + (driveToGetSampleCycle * -9),
+                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                    Math.toRadians(60), 0.6));*/
 
-            if (Movement.followCurve(points, Math.toRadians(0),3)) {
+            movement_x = -0.7;
+
+            if (worldYPosition < -52 + (driveToGetSampleCycle * -9)) {
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
@@ -397,11 +406,11 @@ public class AutoSpecimens extends Robot {
             }
 
             ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
+            points.add(new CurvePoint(stateStartingX, -52 + (driveToGetSampleCycle * -9),
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(10, stateStartingY,
-                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 10, 10,
+            points.add(new CurvePoint(15, -52 + (driveToGetSampleCycle * -9),
+                    0.9, 0.9, 15, 10,
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(90),3)) {
@@ -428,7 +437,6 @@ public class AutoSpecimens extends Robot {
         if (programStage == progStates.pushSampleToPickUpSpecimen.ordinal()) {
             if (stageFinished) {
                 past5In = false;
-
                 initializeStateVariables();
             }
 
@@ -440,7 +448,7 @@ public class AutoSpecimens extends Robot {
                     0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                     Math.toRadians(60), 0.6));
 
-            if (Movement.followCurve(points, Math.toRadians(0), 3)) {
+            if (Movement.followCurve(points, Math.toRadians(0))) {
                 drive.stopAllMovementDirectionBased();
                 superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
 
@@ -465,11 +473,11 @@ public class AutoSpecimens extends Robot {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(15, -55,
+            points.add(new CurvePoint(12, -55,
                     0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                     Math.toRadians(60), 0.6));
 
-            if (Movement.followCurve(points, Math.toRadians(0), 3)) {
+            if (Movement.followCurve(points, Math.toRadians(90), 3)) {
                 drive.stopAllMovementDirectionBased();
             }
 

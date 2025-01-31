@@ -72,16 +72,16 @@ public class RobotPosition { // this is based on GF's code
 
     ////////////////////////////////////////////////////////////////////////////////
 
-/* // we have two of these from some reason? I commented this one out 8/1/23
-    public static float AngleWrap(float angle){
-        while (angle<-Math.PI){
-            angle += 2*Math.PI;
-        }
-        while (angle>Math.PI){
-            angle -= 2*Math.PI;
-        }
-        return angle;
-    }
+ // we have two of these from some reason? I commented this one out 8/1/23
+//    public static float AngleWrap(float angle){
+//        while (angle<-Math.PI){
+//            angle += 2*Math.PI;
+//        }
+//        while (angle>Math.PI){
+//            angle -= 2*Math.PI;
+//        }
+//        return angle;
+//    }
 
- */
+
 }
