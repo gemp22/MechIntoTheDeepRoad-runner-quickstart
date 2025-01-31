@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 public class Movement {
 
-    public static double movement_y_min = 0.1423; // .1382 before retuning at 1/25 qual
-    public static double movement_x_min = 0.2363 ; // was .2043 before 1/25 retuning
-    public static double movement_turn_min = 0.1881; //was 0.1881 0.1642 before 1/25 retuning
+    public static double movement_y_min = 0.1423; // .1382 before retuning at 1/25 qual //
+    public static double movement_x_min = 0.2363; // was .2043 before 1/25 retuning //
+    public static double movement_turn_min = 0.1881; //was 0.1881 0.1642 before 1/25 retuning //
 
 
     public enum profileStates {

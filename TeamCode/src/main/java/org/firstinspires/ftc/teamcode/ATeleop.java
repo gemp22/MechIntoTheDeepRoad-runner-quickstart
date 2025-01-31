@@ -282,7 +282,7 @@ public class ATeleop extends Robot {
         } else if (ButtonPress.isGamepad2_right_bumper_pressed()) {
             System.out.println("gp2 Dpad right bumper");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
-            superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal());
+            superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal());
         }
 
 //        if (ButtonPress.isGamepad1_a_pressed()) {

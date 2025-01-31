@@ -195,7 +195,7 @@ public class AutoSamples extends Robot {
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
-                points.add(new CurvePoint(18, 18,
+                points.add(new CurvePoint(18, 17.75,
                         0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -73,7 +74,7 @@ public class Superstructure {
         SPECIMEN_TRANSPORT,
         SPECIMEN_HANG_PREP,
         SPECIMEN_HANG_CHAMBER,
-
+        SPECIMEN_HANG_CHAMBER_TELE,
         SPECIMEN_HANG_FRONT_PREP,
         SPECIMEN_HANG_FRONT_CHAMBER,
 
@@ -126,6 +127,9 @@ public class Superstructure {
         telemetry.addData("is state finished? ", stateFinished);
         System.out.println("Superstructure State: " + currentState);
         System.out.println("Tilt Pos: " + armPivot.intakeTilt.getPosition());
+        System.out.println("lift extension" + lift.getLiftExtension());
+        System.out.println("pivot angle" + armPivot.getArmAngle());
+
 
         if (currentState == SuperstructureStates.RESTING.ordinal()) {
             if (stateFinished) {
@@ -136,6 +140,7 @@ public class Superstructure {
                 outTakeMode = false;
                 taskReStartTime = false;
                 taskReStartTime2 = false;
+                isLiftOrPivotSmall = false;
 //                liftStateStartExtension = lift.getLiftExtension();
 //                pivotStateStartAngle = armPivot.getArmAngle();
                 armPivot.vexIntake.setPower(0);
@@ -151,25 +156,28 @@ public class Superstructure {
             }
 
             if(isLiftOrPivotSmall){
+                System.out.println("lift/pivot is small");
 
                 if(!taskReStartTime){
                 taskStartTime = SystemClock.uptimeMillis();
                 taskReStartTime = true;
                 }
-
-                if(SystemClock.uptimeMillis() - taskStartTime > 1000){ //wait for jaw and tilt
+                System.out.println("arm safe timer" + (SystemClock.uptimeMillis() - taskStartTime));
+                if(SystemClock.uptimeMillis() - taskStartTime > 750){ //wait for jaw and tilt
                     armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
-                    if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && SystemClock.uptimeMillis() - taskStartTime > 1000) { //gives time for twist before Pivot goes down
+                    if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && (SystemClock.uptimeMillis() - taskStartTime) > 1500) { //gives time for twist before Pivot goes down
                         armPivot.setIntakeTiltAngle(90);
+                        System.out.println("in bad if statement at " + (SystemClock.uptimeMillis() - taskStartTime));
                         armPivot.update(-3, 0.3, 40, 0.05, telemetry);
-                    }else {
+                    }else if(armPivot.getArmAngle() < -3) {
                         //armPivot.setIntakeTiltAngle(90);
                         armPivot.armPivotLeft.setPower(0);
                         armPivot.armPivotRight.setPower(0);
                     }
                 }
-            }else if (lift.getLiftExtension() < 12 ) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
+            }else if (lift.getLiftExtension() < 12 && !isLiftOrPivotSmall) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
                 armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
+                System.out.println("lift extension is less than 12 ");
                 if (lift.getLiftExtension() < 3 && armPivot.getArmAngle() > -3) {
                     armPivot.setIntakeTiltAngle(90);
                     armPivot.update(-3, 0.3, 40, 0.05, telemetry);
@@ -244,7 +252,6 @@ public class Superstructure {
                     collectionMode=false;
                 }
             }
-
 
             outTakePreValue = gamepad2.guide;
         }
@@ -346,7 +353,7 @@ public class Superstructure {
         if (currentState == SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal()) {
             if (stateFinished) {
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION);
-                armPivot.vexIntake.setPower(.3);
+                armPivot.vexIntake.setPower(.2);
                 armPivot.setIntakeTiltAngle(-64);
                 restingStateStartingAngle = armPivot.getArmAngle();
                 initializeStateVariables();
@@ -451,7 +458,7 @@ public class Superstructure {
                 if (armPivot.getArmAngle() > 18) {
                     lift.setSetPoint(21.5);
                     lift.updateLiftPosition();
-                    armPivot.update(22, 0.4, 15, 0.3, telemetry);
+                    armPivot.update(20, 0.4, 15, 0.3, telemetry); // target angle was 22
 
                     if (lift.getLiftExtension() > 20) {
                         liftIsReadyToAttachToBar2 = true;
@@ -462,7 +469,7 @@ public class Superstructure {
                     System.out.println("HANG DEBUG BAR 2 PREP Drive Pitch Delta Angle: " + AngleWrap(currentPitchAngle-lastPitchAngle));
                     lift.setSetPoint(8);
                     lift.updateLiftPosition();
-                    armPivot.update(22, 0.4, 15, 0.3, telemetry);
+                    armPivot.update(20, 0.4, 15, 0.3, telemetry); // target angle was 22
                 }
 
             } else if (!liftIsReadyToAttachToBar2) {
@@ -640,7 +647,7 @@ public class Superstructure {
 //                servosGrabOffTheWall = true;
 //
 //            }
-            if ((SystemClock.uptimeMillis() - stateStartTime > 1000 &&
+            if ((SystemClock.uptimeMillis() - stateStartTime > 500 &&
                     !armPivotReadytoGrabOffTheWall) || (AutoSpecimens.pickupOffWall && !armPivotReadytoGrabOffTheWall)) {
                 //armPivot.update(14,    0.9, 15, 0.31, telemetry);
                 targetPivotAngle = 21;
@@ -738,6 +745,7 @@ public class Superstructure {
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {
             if (stateFinished) {
                 liftWantedHeight = 1.9;// change here if problesm
+                //TODO: add teleop boolean to change this lift wanted height
                 lift.setSetPoint(liftWantedHeight);
                 initializeStateVariables();
             }
@@ -747,7 +755,29 @@ public class Superstructure {
 
             if (lift.getLiftExtension() > 1.0 && SystemClock.uptimeMillis() - stateStartTime > 300) {
                 targetPivotAngle = 57;
-                if (armPivot.getArmAngle() < 75) {
+                if (armPivot.getArmAngle() < 73) {
+                    armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
+                }
+            }
+
+            lift.updateLiftPosition();
+            armPivot.update(targetPivotAngle, .5, 20, 0.25, telemetry);
+        }
+
+        if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal()) {
+            if (stateFinished) {
+                liftWantedHeight = lift.getLiftExtension();// change here if problesm
+                //TODO: add teleop boolean to change this lift wanted height
+                lift.setSetPoint(liftWantedHeight);
+                initializeStateVariables();
+            }
+            System.out.println("SPECIMEN HANG Lift Height: " + lift.getLiftExtension());
+            System.out.println("SPECIMEN HANG Lift Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("SPECIMEN HANG JAW: " + armPivot.intakeJawServo.getPosition());
+
+            if (lift.getLiftExtension() > 1.0 && SystemClock.uptimeMillis() - stateStartTime > 300) {
+                targetPivotAngle = 57;
+                if (armPivot.getArmAngle() < 73) {
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
                 }
             }
@@ -801,7 +831,7 @@ public class Superstructure {
 
             if (lift.getLiftExtension() > 1.0 && SystemClock.uptimeMillis() - stateStartTime > 300) {
                 targetPivotAngle = 35;
-                if (armPivot.getArmAngle() < 40) {
+                if (armPivot.getArmAngle() < 39) {
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
                 }
             }
