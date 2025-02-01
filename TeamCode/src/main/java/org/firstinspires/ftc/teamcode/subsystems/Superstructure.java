@@ -744,7 +744,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {
             if (stateFinished) {
-                liftWantedHeight = 1.9;// change here if problesm
+                liftWantedHeight = 1.85;// change here if problesm
                 //TODO: add teleop boolean to change this lift wanted height
                 lift.setSetPoint(liftWantedHeight);
                 initializeStateVariables();
@@ -831,7 +831,7 @@ public class Superstructure {
 
             if (lift.getLiftExtension() > 1.0 && SystemClock.uptimeMillis() - stateStartTime > 300) {
                 targetPivotAngle = 35;
-                if (armPivot.getArmAngle() < 39) {
+                if (armPivot.getArmAngle() < 38) {
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
                 }
             }
@@ -871,7 +871,7 @@ public class Superstructure {
                 armPivot.setIntakeTiltAngle(90);
             }
 
-            if (lift.getLiftExtension() > 10 ) { // captures task start time
+            if (lift.getLiftExtension() > 10) { // captures task start time
                 if(!taskReStartTime) {
                     taskStartTime = SystemClock.uptimeMillis();
                     taskReStartTime =true;

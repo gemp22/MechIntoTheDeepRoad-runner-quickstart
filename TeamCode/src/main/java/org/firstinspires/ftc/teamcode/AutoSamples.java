@@ -6,7 +6,9 @@ import static org.firstinspires.ftc.teamcode.RobotPosition.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldXPosition;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
 
+import android.graphics.Point;
 import android.os.SystemClock;
+import android.util.Pair;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -23,7 +25,7 @@ import java.util.HashMap;
 @Autonomous
 public class AutoSamples extends Robot {
 
-    private final double SCALE_FACTOR = 1.6;
+    private final double SCALE_FACTOR = 1;
 
     private long startTime = 0;
 
@@ -92,12 +94,12 @@ public class AutoSamples extends Robot {
 
     private int pixelDropLocation = 0;
 
-    private HashMap<Integer, PointDouble> purpleDrop = new HashMap<Integer, PointDouble>() {{
-        put(0, new PointDouble(105, 26));
-        put(1, new PointDouble(103.24, 35));
-        put(2, new PointDouble(109.62, 36.8));
+    private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
+        put(0, new Pair<>(new PointDouble(30.007, -8.1927), 71.305)); // -31.3774
+        put(1, new Pair<>(new PointDouble(25.7552,5.5614 ), 50.0452)); // 50.0452
+        put(2, new Pair<>(new PointDouble(25.7771, 11.4609), 55.3688)); //55.3688
+        put(3, new Pair<>(new PointDouble(18, 18), 0.0));
     }};
-
 
     private boolean hasGrabbedPixels = false;
 
@@ -119,7 +121,7 @@ public class AutoSamples extends Robot {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(12.5, 12.0,
+            points.add(new CurvePoint(12.7, 12.1,
                     0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
@@ -129,7 +131,7 @@ public class AutoSamples extends Robot {
                     past5In = true;
                 }
             }
-            boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
+            boolean completed = Movement.followCurve(points, Math.toRadians(-90), 1.5);
 
             if (worldYPosition > 5) {
                 Movement.movementResult r = Movement.pointAngle(Math.toRadians(-45), 0.7, Math.toRadians(20));
@@ -195,15 +197,17 @@ public class AutoSamples extends Robot {
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
-                points.add(new CurvePoint(18, 17.75,
+                Pair<PointDouble, Double> wantedPos = pickupPoints.get(cycle);
+
+                points.add(new CurvePoint(wantedPos.first.x, wantedPos.first.y,
                         0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
                 boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
 
-                double pickupXPosition = (cycle * 11.5) + 3;
+                double pickupYPosition = (cycle * 12) + 2.5; //11.5
                 Movement.movementResult r = Movement.pointAngle(
-                        Math.atan2(pickupXPosition - stateStartingY, 34 - stateStartingX),
+                        Math.toRadians(wantedPos.second), //Math.atan2(pickupYPosition - stateStartingY, 34 - stateStartingX),
                         0.7,
                         Math.toRadians(30));
 

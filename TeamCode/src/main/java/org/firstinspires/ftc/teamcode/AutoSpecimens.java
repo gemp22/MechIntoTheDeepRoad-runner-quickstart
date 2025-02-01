@@ -142,11 +142,11 @@ public class AutoSpecimens extends Robot {
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(15, 0,
-                    0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
+                    0.35 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
             points.add(new CurvePoint(27.7, 0,
-                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 15, 15,
+                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(-90))) {
@@ -171,11 +171,10 @@ public class AutoSpecimens extends Robot {
                         0, 0, 0, 0, 0, 0));
 
                 points.add(new CurvePoint(stateStartingX-8, stateStartingY,
-                        0.3 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 15, 15,
+                        0.4 * SCALE_FACTOR, 0.4 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
-
-                if (Movement.followCurve(points, Math.toRadians(90), 2)) {
+                if (Movement.followCurve(points, Math.toRadians(90), 3)) {
                     drive.stopAllMovementDirectionBased();
 
                     if (overallCycleToChamber == 2) {
@@ -212,7 +211,7 @@ public class AutoSpecimens extends Robot {
                         0, 0, 0, 0, 0, 0));
 
                 points.add(new CurvePoint(20, -45,
-                        0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
+                        1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
                 /*points.add(new CurvePoint(15, -45,
@@ -222,7 +221,7 @@ public class AutoSpecimens extends Robot {
                 double wantedX = cycle == 1 ? 26 : 15;
 
                 points.add(new CurvePoint(wantedX, -45,
-                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                        0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                         Math.toRadians(60), 0.6));
 
                 boolean completed = Movement.followCurve(points, Math.toRadians(90), 2);
@@ -308,10 +307,10 @@ public class AutoSpecimens extends Robot {
                         0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));*/
 
-                double destinationX = Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 10 ? 27.7 : 20;
+                double destinationX = Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 10 ? 28 : 20;
 
                 points.add(new CurvePoint(destinationX, -8 + (overallCycleToChamber * -8),
-                        0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                        1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 10,
                         Math.toRadians(60), 0.6));
 
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
@@ -355,11 +354,10 @@ public class AutoSpecimens extends Robot {
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(45, stateStartingY,
-                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 20, 20,
                     Math.toRadians(60), 0.6));
 
-
-            if (Movement.followCurve(points, Math.toRadians(-90), 5)) {
+            if (Movement.followCurve(points, Math.toRadians(-90), 3)) {
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
@@ -410,7 +408,7 @@ public class AutoSpecimens extends Robot {
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(15, -52 + (driveToGetSampleCycle * -9),
-                    0.9, 0.9, 15, 10,
+                    0.9, 0.9, 20, 20,
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(90),3)) {
@@ -445,7 +443,7 @@ public class AutoSpecimens extends Robot {
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(15, -45,
-                    0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(0))) {
@@ -474,7 +472,7 @@ public class AutoSpecimens extends Robot {
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(12, -55,
-                    0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                    1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(90), 3)) {
