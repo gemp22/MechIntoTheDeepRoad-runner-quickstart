@@ -830,8 +830,8 @@ public class Superstructure {
             }
 
             if (lift.getLiftExtension() > 1.0 && SystemClock.uptimeMillis() - stateStartTime > 300) {
-                targetPivotAngle = 35;
-                if (armPivot.getArmAngle() < 38) {
+                targetPivotAngle = 34;
+                if (armPivot.getArmAngle() < 37) {
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
                 }
             }

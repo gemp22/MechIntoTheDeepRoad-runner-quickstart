@@ -307,9 +307,11 @@ public class AutoSpecimens extends Robot {
                         0.7 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));*/
 
-                double destinationX = Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 10 ? 28 : 20;
+                //-7's were -8's at Northern Tourny
 
-                points.add(new CurvePoint(destinationX, -8 + (overallCycleToChamber * -8),
+                double destinationX = Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-7 + (overallCycleToChamber * -7)))) < 10 ? 28 : 20;
+
+                points.add(new CurvePoint(destinationX, -7 + (overallCycleToChamber * -7),
                         1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 10,
                         Math.toRadians(60), 0.6));
 
@@ -327,7 +329,7 @@ public class AutoSpecimens extends Robot {
                     //nextStage(progStates.endBehavior.ordinal());
                 }
 
-                if (Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-8 + (overallCycleToChamber * -8)))) < 28) {
+                if (Math.abs(Math.hypot(worldXPosition - 29, worldYPosition - (-7 + (overallCycleToChamber * -7)))) < 28) {
                     if (!past5In) {
                         superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
                         past5In = true;
@@ -402,7 +404,7 @@ public class AutoSpecimens extends Robot {
 
             movement_x = -0.7;
 
-            if (worldYPosition < -52 + (driveToGetSampleCycle * -9)) {
+            if (worldYPosition < -51 + (driveToGetSampleCycle * -9)) { // 51 was 52 for northern
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
