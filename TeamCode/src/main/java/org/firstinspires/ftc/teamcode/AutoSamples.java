@@ -97,7 +97,7 @@ public class AutoSamples extends Robot {
     private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
         put(0, new Pair<>(new PointDouble(30.007, -8.1927), 71.305)); // -31.3774
         put(1, new Pair<>(new PointDouble(25.7552,5.5614 ), 50.0452)); // 50.0452
-        put(2, new Pair<>(new PointDouble(25.7771, 11.4609), 55.3688)); //55.3688
+        put(2, new Pair<>(new PointDouble(25.7771, 11.4609), 58.00)); //55.3688
         put(3, new Pair<>(new PointDouble(18, 18), 0.0));
     }};
 
@@ -121,7 +121,7 @@ public class AutoSamples extends Robot {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(12.7, 12.1,
+            points.add(new CurvePoint(12.1, 12.6,
                     0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
@@ -141,7 +141,7 @@ public class AutoSamples extends Robot {
 
                     System.out.println("lift extension in delivery state: " + lift.getLiftExtension());
 
-                    if(lift.getLiftExtension()>23){
+                    if(lift.getLiftExtension()>22){
                         superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
 
                         nextStage(progStates.driveToOurSamples.ordinal());
@@ -187,41 +187,46 @@ public class AutoSamples extends Robot {
                     }
                 }
             }*/
-            if (SystemClock.uptimeMillis()-stateStartTime > 500) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 650) {
                 if (!past5In) {
                     superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
                     past5In = true;
                 }
+                if(SystemClock.uptimeMillis() - stateStartTime > 1250)
+                {
+                    ArrayList<CurvePoint> points = new ArrayList<>();
+                    points.add(new CurvePoint(stateStartingX, stateStartingY,
+                            0, 0, 0, 0, 0, 0));
 
-                ArrayList<CurvePoint> points = new ArrayList<>();
-                points.add(new CurvePoint(stateStartingX, stateStartingY,
-                        0, 0, 0, 0, 0, 0));
+                    Pair<PointDouble, Double> wantedPos = pickupPoints.get(cycle);
 
-                Pair<PointDouble, Double> wantedPos = pickupPoints.get(cycle);
+                    points.add(new CurvePoint(wantedPos.first.x, wantedPos.first.y,
+                            0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
+                            Math.toRadians(60), 0.6));
 
-                points.add(new CurvePoint(wantedPos.first.x, wantedPos.first.y,
-                        0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
-                        Math.toRadians(60), 0.6));
+                    boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
 
-                boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
+                    double pickupYPosition = (cycle * 12) + 2.5; //11.5
 
-                double pickupYPosition = (cycle * 12) + 2.5; //11.5
-                Movement.movementResult r = Movement.pointAngle(
-                        Math.toRadians(wantedPos.second), //Math.atan2(pickupYPosition - stateStartingY, 34 - stateStartingX),
-                        0.7,
-                        Math.toRadians(30));
 
-                if (completed &&
-                    Math.abs(r.turnDelta_rad) < Math.toRadians(3) &&
-                        lift.getLiftExtension()<1 && armPivot.getArmAngle()<-3) {
-                    superstructure.sampleCollected = false;
-                    if(cycle<3) {
-                        superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                    Movement.movementResult r = Movement.pointAngle(
+                            Math.toRadians(wantedPos.second), //Math.atan2(pickupYPosition - stateStartingY, 34 - stateStartingX),
+                            0.7,
+                            Math.toRadians(30));
+                    if (completed &&
+                            Math.abs(r.turnDelta_rad) < Math.toRadians(3) &&
+                            lift.getLiftExtension()<1 && armPivot.getArmAngle()<-3) {
+                        superstructure.sampleCollected = false;
+                        if(cycle<3) {
+                            superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                        }
+                        nextStage(progStates.endBehavior.ordinal());
                     }
-                    nextStage(progStates.endBehavior.ordinal());
+
+                    drive.applyMovementDirectionBased(); // always put at end of state
                 }
 
-                drive.applyMovementDirectionBased(); // always put at end of state
+
             }
         }
 

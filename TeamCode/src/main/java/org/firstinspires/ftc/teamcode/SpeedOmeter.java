@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
+import static org.firstinspires.ftc.teamcode.RobotPosition.worldAngle_rad;
+
 import android.os.SystemClock;
 
 public class SpeedOmeter {
@@ -34,6 +37,19 @@ public class SpeedOmeter {
 
             lastUpdateStartTime = currTime;
         }
+//        if (currTime - lastUpdateStartTime > timeBetweenUpdates) {
+//            double elapsedTime = (double) (currTime - lastUpdateStartTime)/1000.0;
+//
+//            currSpeedX = xVel;
+//            currSpeedY = yVel;
+//
+//            //angularVelocity = angVel;
+//
+//            angularVelocity = AngleWrap(worldAngle_rad-lastAngle) / elapsedTime;
+//            lastAngle = worldAngle_rad;
+//
+//            lastUpdateStartTime = currTime;
+//        }
     }
 
     /**
@@ -60,10 +76,10 @@ public class SpeedOmeter {
 
     public static double scalePrediction = 1.0;
     //amount robot slips (cm) while going forwards 1 centimeter per second
-    public static double ySlipDistanceFor1CMPS = 0.2146 * scalePrediction;// was
-    public static double xSlipDistanceFor1CMPS = 0.1372 * scalePrediction;// neg // was 0.
+    public static double ySlipDistanceFor1CMPS = 0.2146 * scalePrediction;// was 0.2146
+    public static double xSlipDistanceFor1CMPS = 0.1372  * scalePrediction;// neg // was 0.1372
     //radians the robot slips when going 1 radian per second
-    public static double turnSlipAmountFor1RPS = 0.3565 * scalePrediction;// neg //was 0.
+    public static double turnSlipAmountFor1RPS = 0.3565 * scalePrediction;// neg //was 0.3565
 
     /**
      * Gives the current distance (cm) the robot would slip if power is set to 0

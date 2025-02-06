@@ -380,6 +380,26 @@ public class AutoSpecimens extends Robot {
                     0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
                     Math.toRadians(60), 0.6));*/
 
+
+//            if(SystemClock.uptimeMillis() - stateStartTime > 150)
+//            {
+//                movement_x = -0.45;
+//
+//                if (worldYPosition < -52 + (driveToGetSampleCycle * -9)) {
+//                    drive.stopAllMovementDirectionBased();
+//
+//                    //nextStage(progStates.hangSpecimen.ordinal());
+//                    nextStage(progStates.pushSamplesToPlayerStation.ordinal());
+//                }
+//
+//                Movement.movementResult r = Movement.pointAngle(
+//                        Math.toRadians(180),
+//                        0.9,
+//                        Math.toRadians(30));
+//
+//                drive.applyMovementDirectionBased();
+//            }
+
             movement_x = -0.7;
 
             if (worldYPosition < -52 + (driveToGetSampleCycle * -9)) {
@@ -395,6 +415,7 @@ public class AutoSpecimens extends Robot {
                     Math.toRadians(30));
 
             drive.applyMovementDirectionBased();
+
 
         }
         if (programStage == progStates.pushSamplesToPlayerStation.ordinal()) {

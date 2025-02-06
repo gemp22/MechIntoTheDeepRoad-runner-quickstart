@@ -295,7 +295,7 @@ public class Superstructure {
             }
 
             armPivot.setIntakeTiltAngle(0);
-            armPivot.update2(94, 0.75, 30, 0.25, telemetry);
+            armPivot.update2(94, 0.65, 30, 0.20, telemetry);
             armPivot.setLeftArmMotorSetPoint(armPivot.armPivotLeft.getCurrentPosition());
             armPivot.setRightArmMotorSetPoint(armPivot.armPivotRight.getCurrentPosition());
 
@@ -345,7 +345,7 @@ public class Superstructure {
             }
 
                 armPivot.setIntakeTiltAngle(0);
-                armPivot.update2(94, 0.75, 30, 0.25, telemetry);
+                armPivot.update2(94, 0.65, 30, 0.20, telemetry);
                 armPivot.setLeftArmMotorSetPoint(armPivot.armPivotLeft.getCurrentPosition());
                 armPivot.setRightArmMotorSetPoint(armPivot.armPivotRight.getCurrentPosition());
 
@@ -353,7 +353,7 @@ public class Superstructure {
         if (currentState == SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal()) {
             if (stateFinished) {
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION);
-                armPivot.vexIntake.setPower(.2);
+                armPivot.vexIntake.setPower(.25);
                 armPivot.setIntakeTiltAngle(-64);
                 restingStateStartingAngle = armPivot.getArmAngle();
                 initializeStateVariables();
