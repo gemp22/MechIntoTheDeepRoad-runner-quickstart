@@ -62,8 +62,10 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
     private long lastUpdateStartTime = 0;
 
     public static double turnSlipAmountFor1RPS = 0.05;
+    public static double armOffset = 0.0;
 
     public ArmPivot(HardwareMap hardwareMap, HashMap<String, Pair<Servo, Double>> servoMap) {
+        armOffset = -8;
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
         //intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
@@ -180,7 +182,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
 
         double averageArmPosition = (armPivotLeftPosition+armPivotRightPosition)/2.0;
 
-        double armAngle = (averageArmPosition / 10.390208333) - 8; // degrees
+        double armAngle = (averageArmPosition / 10.390208333) + armOffset; // degrees
 
         angularVelocity = AngleWrap(Math.toRadians(armAngle)-lastAngle) / elapsedTime;
 
@@ -218,7 +220,7 @@ public class ArmPivot {  //this is a subsystem Class used in Auto. its based on 
         armPivotLeftPosition = armPivotLeft.getCurrentPosition();
         armPivotRightPosition = armPivotRight.getCurrentPosition();
         double averageArmPosition = (armPivotLeftPosition + armPivotRightPosition) / 2.0;
-        double armAngle = (averageArmPosition / 10.390208333) - 8;
+        double armAngle = (averageArmPosition / 10.390208333) + armOffset;
 
         // Calculate angular velocity
         angularVelocity = AngleWrap(Math.toRadians(armAngle) - lastAngle) / elapsedTime;

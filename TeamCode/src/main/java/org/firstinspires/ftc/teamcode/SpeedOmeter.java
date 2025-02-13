@@ -24,6 +24,10 @@ public class SpeedOmeter {
     public static void update(double xVel, double yVel, double angVel) {
         long currTime = SystemClock.uptimeMillis();
 
+        currSpeedX = xVel;
+        currSpeedY = yVel;
+        angularVelocity = angVel;
+
         //return if no change in telemetry
         /*if(Math.abs(yDistTraveled) < 0.000000001 && Math.abs(xDistTraveled) < 0.000000001 &&
                 Math.abs(angularVelocity) < 0.000001){
@@ -31,9 +35,7 @@ public class SpeedOmeter {
         }*/
 
         if (currTime - lastUpdateStartTime > timeBetweenUpdates) {
-            currSpeedX = xVel;
-            currSpeedY = yVel;
-            angularVelocity = angVel;
+
 
             lastUpdateStartTime = currTime;
         }
@@ -76,8 +78,8 @@ public class SpeedOmeter {
 
     public static double scalePrediction = 1.0;
     //amount robot slips (cm) while going forwards 1 centimeter per second
-    public static double ySlipDistanceFor1CMPS = 0.2146 * scalePrediction;// was 0.2146
-    public static double xSlipDistanceFor1CMPS = 0.1372  * scalePrediction;// neg // was 0.1372
+    public static double ySlipDistanceFor1CMPS = 0.1895 * scalePrediction;// was 0.2146
+    public static double xSlipDistanceFor1CMPS = 0.1308  * scalePrediction;// neg // was 0.1372
     //radians the robot slips when going 1 radian per second
     public static double turnSlipAmountFor1RPS = 0.3565 * scalePrediction;// neg //was 0.3565
 

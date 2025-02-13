@@ -252,6 +252,7 @@ public abstract class Robot extends OpMode {
         telemetry.addData("lift extension", lift.getLiftExtension());
         telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("pivot limit switch", armPivot.getPivotLimitState());
 
         telemetry.addData("button press ", ButtonPress.isGamepad2_left_stick_button_pressed());
         telemetry.addData("intake tilt linear interpolation output ", armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));

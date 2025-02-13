@@ -49,6 +49,13 @@ public class Superstructure {
     int armRightPivotTicks;
     private long lastHangRestTime = 0;
      boolean isManualControlActive = false;
+    public static boolean disableTelopGamepad1A = false;
+     private boolean okToExtendLiftToBar2 = false;
+     private double hangPivotAngleToBarTwoPrep = 0.0;
+
+     private double hangPivotAngleBarTwoAttachAdjustment = 0;
+
+     private int hangCounter = 0;
     public enum SuperstructureStates {
         //basket delivery////
         RESTING,
@@ -64,6 +71,7 @@ public class Superstructure {
         HANG_BAR_2_PREP,
         HANG_BAR_TWO_PREP_RESTING,
         HANG_BAR_2,
+        HANG_BAR_2_DONE_DONE_DONE,
         HANG_BAR_2_FINISH,
         ROBOT_RESTING_ON_BAR_2,
         HOLD_EVERYTHING,
@@ -81,12 +89,31 @@ public class Superstructure {
         //SAMPLE COLLECTION //////
         SAMPLE_COLLECTION_EXTENSTION,
         SAMPLE_COLLECTION_INTAKE,
-        UNJAM_INTAKE;
+        UNJAM_INTAKE,
 
 
         //manual control
 
+
+
+        //auto front hang
+
+        SPECIMEN_HANG_FRONT_PREP_AUTO,
+        SPECIMEN_HANG_FRONT_CHAMBER_AUTO,
+        AUTO_PARK,
+
+
+
+
+
+
+
+        TELEOP_START,
+        RESET_PIVOT_ANGLE
+
     }
+
+    private boolean hangPastValidation = false;
 
     private int currentState = SuperstructureStates.RESTING.ordinal();
     private long stateStartTime = 0;
@@ -350,13 +377,18 @@ public class Superstructure {
                 armPivot.setRightArmMotorSetPoint(armPivot.armPivotRight.getCurrentPosition());
 
         }
+
         if (currentState == SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal()) {
             if (stateFinished) {
-                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION);
-                armPivot.vexIntake.setPower(.25);
+                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_DROP_POSITION-0.15);
+                armPivot.vexIntake.setPower(.5);
+
                 armPivot.setIntakeTiltAngle(-64);
                 restingStateStartingAngle = armPivot.getArmAngle();
                 initializeStateVariables();
+            }
+
+            if (SystemClock.uptimeMillis()-stateStartTime > 100) {
             }
 
             armPivot.update(restingStateStartingAngle,.75,15,0.15, telemetry);
@@ -432,15 +464,11 @@ public class Superstructure {
                 lastPitchAngle =  robot.drive.lazyImu.get().getRobotYawPitchRollAngles().getPitch();
                 liftIsReadyToAttachToBar2 = false;
                 liftIsReadyForBar2Pivot = false;
+                okToExtendLiftToBar2 = false;
+                hangPivotAngleToBarTwoPrep = 20.0;
+                disableTelopGamepad1A = true;
                 initializeStateVariables();
             }
-            double elapsedTime = (double) (currentTimeMillis - lastUpdateTime)/1000.0;
-
-            lastUpdateTime = currentTimeMillis;
-
-            double currentPitchAngle =  robot.drive.lazyImu.get().getRobotYawPitchRollAngles().getPitch();
-            double pitchVelocity = AngleWrap(currentPitchAngle-lastPitchAngle) / elapsedTime;
-
 
             armPivot.twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
             armPivot.setIntakeTiltAngle(90);
@@ -455,21 +483,31 @@ public class Superstructure {
                 liftIsReadyForBar2Pivot = true;
             }
             if (liftIsReadyForBar2Pivot && !liftIsReadyToAttachToBar2) {
-                if (armPivot.getArmAngle() > 18) {
+                if(ButtonPress.isGamepad1_a_pressed())
+                {
+                 okToExtendLiftToBar2 = true;
+                }
+                if(ButtonPress.isGamepad1_dpad_left_pressed())
+                {
+                    hangPivotAngleToBarTwoPrep += 1;
+                }
+                if(ButtonPress.isGamepad1_dpad_right_pressed())
+                {
+                    hangPivotAngleToBarTwoPrep -= 1;
+                }
+                if (armPivot.getArmAngle() > 18 && okToExtendLiftToBar2) {
                     lift.setSetPoint(21.5);
                     lift.updateLiftPosition();
-                    armPivot.update(20, 0.4, 15, 0.3, telemetry); // target angle was 22
+                    armPivot.update(hangPivotAngleToBarTwoPrep, 0.4, 15, 0.3, telemetry); // target angle was 22
 
                     if (lift.getLiftExtension() > 20) {
                         liftIsReadyToAttachToBar2 = true;
                     }
                     //nextState(SuperstructureStates.HANG_BAR_2.ordinal());
                 } else {
-                    System.out.println("HANG DEBUG BAR 2 PREP Drive Pitch Angle Vel: " + pitchVelocity);
-                    System.out.println("HANG DEBUG BAR 2 PREP Drive Pitch Delta Angle: " + AngleWrap(currentPitchAngle-lastPitchAngle));
                     lift.setSetPoint(8);
                     lift.updateLiftPosition();
-                    armPivot.update(20, 0.4, 15, 0.3, telemetry); // target angle was 22
+                    armPivot.update(hangPivotAngleToBarTwoPrep, 0.4, 15, 0.3, telemetry); // target angle was 22
                 }
 
             } else if (!liftIsReadyToAttachToBar2) {
@@ -484,17 +522,25 @@ public class Superstructure {
                 lift.updateLiftPosition();
                 armPivot.update(14, 0.8, 15, 0.5, telemetry);
                 if(armPivot.getArmAngle()<17){
+                    disableTelopGamepad1A = false;
                     nextState(SuperstructureStates.HANG_BAR_TWO_PREP_RESTING.ordinal());
                 }
             }
-
-            lastPitchAngle = currentPitchAngle;
         }
         if (currentState == SuperstructureStates.HANG_BAR_TWO_PREP_RESTING.ordinal()) {
             if (stateFinished) {
+                hangPivotAngleBarTwoAttachAdjustment = 14;
                 initializeStateVariables();
             }
-            armPivot.update(14, 0.5, 15, 0.3, telemetry);
+            if(ButtonPress.isGamepad1_dpad_left_pressed())
+            {
+                hangPivotAngleBarTwoAttachAdjustment += 1;
+            }
+            if(ButtonPress.isGamepad1_dpad_right_pressed())
+            {
+                hangPivotAngleBarTwoAttachAdjustment -= 1;
+            }
+            armPivot.update(hangPivotAngleBarTwoAttachAdjustment, 0.5, 15, 0.3, telemetry);
             lift.setSetPoint(21.5);
             lift.updateLiftPosition();
         }
@@ -504,6 +550,8 @@ public class Superstructure {
                 liftSwitchPressedOnce = false;
                 initializeStateVariables();
             }
+
+
 
             if (!armPivot.getLiftLimitState() && !liftSwitchPressedOnce) {
                 lift.setLiftPower(-1);
@@ -515,18 +563,34 @@ public class Superstructure {
             }
 
             if (liftSwitchPressedOnce) {
+                if (ButtonPress.isGamepad1_b_pressed()) {
+                    nextState(SuperstructureStates.HANG_BAR_2_DONE_DONE_DONE.ordinal());
+                }
                 lift.setSetPoint(0);
                 lift.updateLiftPosition();
-                armPivot.update(20, 1, 10, 0.3, telemetry);
-                if (armPivot.getArmAngle() < 40) {
+                armPivot.setArmPivotPower(-1);
+
+                //armPivot.update(-5, 1, 10, 0.5, telemetry);
+                /*if (armPivot.getArmAngle() < 40) {
                     nextState(SuperstructureStates.HANG_BAR_2_FINISH.ordinal());
-                }
+                }*/
             }
+        }
+
+        if (currentState == SuperstructureStates.HANG_BAR_2_DONE_DONE_DONE.ordinal()) {
+            if (stateFinished) {
+                initializeStateVariables();
+            }
+
+            lift.setLiftPower(0);
+            armPivot.setArmPivotPower(0);
         }
 
         if (currentState == SuperstructureStates.HANG_BAR_2_FINISH.ordinal()) {
             if (stateFinished) {
                 lastHangRestTime = SystemClock.uptimeMillis();
+                hangCounter = 0;
+                hangPastValidation = false;
                 initializeStateVariables();
             }
 
@@ -536,11 +600,15 @@ public class Superstructure {
             System.out.println("HANG DEBUG BAR 2 FINISH Arm Angle: " + armPivot.getArmAngle());
             System.out.println("HANG DEBUG BAR 2 FINISH Lift Power: " + lift.liftLeft.getPower());
 
-            if (SystemClock.uptimeMillis() - stateStartTime > 3500) {
+            if (!hangPastValidation && lift.getLiftExtension() > 8 && armPivot.getArmAngle() < 30) {
+                hangPastValidation = true;
+            }
+
+            if (hangPastValidation) {
                 lift.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 lift.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                armPivot.update(-5, 1, 10, 0.5, telemetry);
-                if (armPivot.getArmAngle() < 1) {
+                armPivot.update(-7, 1, 5, 0.5, telemetry);
+                if (armPivot.getArmAngle() < -3) {
                     if (lift.getLiftExtension() < 1 && armPivot.getArmAngle() < 1) {
                         nextState(SuperstructureStates.ROBOT_RESTING_ON_BAR_2.ordinal());
                     } else {
@@ -552,19 +620,23 @@ public class Superstructure {
                     }
                 }
             } else {
-                if (SystemClock.uptimeMillis() - lastHangRestTime >= 10) {
-                    if (((SystemClock.uptimeMillis() / 10) % 2) == 0) {
-                        lift.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                        lift.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                    } else {
-                        lift.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                        lift.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                    }
+                /*if (hangCounter % 3 == 0) {
+                    lift.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    lift.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                } else {
+                    lift.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    lift.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                }*/
 
-                    lastHangRestTime = SystemClock.uptimeMillis();
+                hangCounter++;
+
+                if (armPivot.getArmAngle() < 30) {
+                    armPivot.setArmPivotPower(-0.15);
+                } else {
+                    armPivot.setArmPivotPower(-1);
                 }
-                armPivot.update(45, 1, 10, 0.3, telemetry);
-                lift.setLiftPower(0);
+                //armPivot.update(5, 1, 10, 0.85, telemetry);
+                lift.setLiftPower(0.05);
             }
         }
 
@@ -591,7 +663,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal()) {
             if (stateFinished) {
-                targetPivotAngle = 9.5;   // adjust this for optimal specimen on the wall height
+                targetPivotAngle = 6;   // adjust this for optimal specimen on the wall height
                 liftWantedHeight = 5;
                 armPivot.setIntakeTiltAngle(0);
                 initializeStateVariables();
@@ -610,18 +682,19 @@ public class Superstructure {
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_WALL_COLLECTION);
                 //armPivot.vexIntake.setPower(-.8);
                 lift.setSetPoint(liftWantedHeight);
-                lift.updateLiftPosition();
+
 
                 if (armPivot.getPivotLimitState()) {
                     armPivot.setArmPivotPower(0);
                 }
             }
+            lift.updateLiftPosition();
 //            else {
 //                armPivot.setIntakeTiltAngle(0);
 //                armPivot.update(9, 0.8, 2,0.6, telemetry);
 //            }
 
-            armPivot.update(targetPivotAngle, 0.8, 11, 0.3, telemetry);
+            armPivot.update(targetPivotAngle, 0.8, 10, 0.3, telemetry);
 
         }
 
@@ -630,6 +703,7 @@ public class Superstructure {
                 armPivotReadytoGrabOffTheWall = false;
                 servosGrabOffTheWall = false;
                 armPivot.vexIntake.setPower(-.91);
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_PIVOT);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
                 initializeStateVariables();
             }
@@ -707,11 +781,11 @@ public class Superstructure {
                 targetPivotAngle = 90;
                 //liftWantedHeight = 0;
                 lift.setSetPoint(0);
+                armPivot.vexIntake.setPower(0);
                 armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_PIVOT);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
                 initializeStateVariables();
             }
-
 
             System.out.println("SPECIMEN HANG PREP Lift Height: " + lift.getLiftExtension());
             System.out.println("SPECIMEN HANG PREP Lift Arm Angle: " + armPivot.getArmAngle());
@@ -744,7 +818,7 @@ public class Superstructure {
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {
             if (stateFinished) {
-                liftWantedHeight = 1.85;// change here if problesm
+                liftWantedHeight = 1.5;// change here if problesm
                 //TODO: add teleop boolean to change this lift wanted height
                 lift.setSetPoint(liftWantedHeight);
                 initializeStateVariables();
@@ -761,7 +835,7 @@ public class Superstructure {
             }
 
             lift.updateLiftPosition();
-            armPivot.update(targetPivotAngle, .5, 20, 0.25, telemetry);
+            armPivot.update(targetPivotAngle, .75, 20, 0.25, telemetry);
         }
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal()) {
@@ -795,7 +869,7 @@ public class Superstructure {
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
                 initializeStateVariables();
             }
-            System.out.println("SPECIMEN Entered If Statement in State 17");
+            System.out.println("SPECIMEN ccEntered If Statement in State 17");
 
             if (SystemClock.uptimeMillis() - stateStartTime > 250 && armPivot.getArmAngle() > 20) {
 
@@ -849,7 +923,7 @@ public class Superstructure {
                 taskReStartTime = false;
                 collectionMode = false;
                 sampleCollected = false;
-                liftWantedHeight = 11;
+                liftWantedHeight = 11.5;
                 armPivot.vexIntake.setPower(0);
                 armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
                 armPivot.setIntakeTiltAngle(90);
@@ -877,7 +951,7 @@ public class Superstructure {
                     taskReStartTime =true;
                 }
 
-                if(SystemClock.uptimeMillis()-taskStartTime > 1000){
+                if(SystemClock.uptimeMillis()-taskStartTime > 650){
                     //collectionMode = false;
                     sampleCollected = true;
                     armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
@@ -937,6 +1011,100 @@ public class Superstructure {
 
             armPivot.update(targetPivotAngle, .9, 20, 0.2, telemetry);
         }
+
+
+        if (currentState == SuperstructureStates.SPECIMEN_HANG_FRONT_PREP_AUTO.ordinal()) {
+            if (stateFinished) {
+                targetPivotAngle = 33.6;
+                liftWantedHeight = 14;
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_PIVOT);
+                armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+                initializeStateVariables();
+            }
+            System.out.println("SPECIMEN ccEntered If Statement in State 17");
+
+            if (SystemClock.uptimeMillis() - stateStartTime > 350 && armPivot.getArmAngle() > 20) {
+                armPivot.twist.setPosition(Constants.TWIST_SERVO_WALL_COLLECTION_POSITION);
+            }
+
+            if (SystemClock.uptimeMillis()-stateStartTime > 500) {
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_PIVOT+0.05);
+            }
+
+            lift.setSetPoint(liftWantedHeight);
+            lift.updateLiftPosition();
+
+            //lift.updateLiftPosition();
+            armPivot.update(targetPivotAngle, 0.8, 30, 0.45, telemetry);
+        }
+
+        if (currentState == SuperstructureStates.SPECIMEN_HANG_FRONT_CHAMBER_AUTO.ordinal()) {
+            if (stateFinished) {
+                //liftWantedHeight = 1.9;
+                //lift.setSetPoint(liftWantedHeight);
+                initializeStateVariables();
+            }
+
+            if (lift.getLiftExtension() > 1.0 && SystemClock.uptimeMillis() - stateStartTime > 300) {
+                targetPivotAngle = 26;
+                if (armPivot.getArmAngle() < 29) {
+                    armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
+                }
+            }
+
+            lift.updateLiftPosition();
+            armPivot.update(targetPivotAngle, .8, 20, 0.15, telemetry);
+        }
+
+        if (currentState == SuperstructureStates.AUTO_PARK.ordinal()) {
+            if (stateFinished) {
+                liftWantedHeight = 10;
+                targetPivotAngle = 45;
+                armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
+                lift.setSetPoint(liftWantedHeight);
+                initializeStateVariables();
+            }
+
+            lift.updateLiftPosition();
+            armPivot.update(targetPivotAngle, .8, 20, 0.15, telemetry);
+        }
+
+        if (currentState == SuperstructureStates.TELEOP_START.ordinal()) {
+            if (stateFinished) {
+                liftWantedHeight = lift.getLiftExtension();
+                targetPivotAngle = armPivot.getArmAngle();
+                lift.setSetPoint(liftWantedHeight);
+                initializeStateVariables();
+            }
+
+            lift.updateLiftPosition();
+            armPivot.update(targetPivotAngle, .8, 20, 0.15, telemetry);
+        }
+//        if (currentState == SuperstructureStates.RESET_PIVOT_ANGLE.ordinal()) {
+//            if (stateFinished) {
+//                liftWantedHeight = 0;
+//                lift.setSetPoint(liftWantedHeight);
+//                initializeStateVariables();
+//            }
+//
+//            lift.updateLiftPosition();
+//            if(!armPivot.getPivotLimitState())
+//            {
+//                armPivot.setArmPivotPower(.8);
+//            }
+//            else
+//            {
+//                armPivot.setArmPivotPower(0);
+//                armPivot.armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                armPivot.armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//                armPivot.armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                armPivot.armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//                armPivot.armOffset = 101;
+//            }
+//
+//
+//        }
 
         lastUpdateTime = currentTimeMillis;
     }

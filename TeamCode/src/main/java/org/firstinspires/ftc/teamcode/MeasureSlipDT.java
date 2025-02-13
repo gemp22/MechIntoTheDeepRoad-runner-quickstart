@@ -145,14 +145,14 @@ public class MeasureSlipDT extends Robot {
 //            System.out.println("Vel Y: " + SpeedOmeter.getSpeedY());
 //            System.out.println("Vel DEG: " + SpeedOmeter.getDegPerSecond());
 
-            drive.applyMovementDirectionBased();
+            //drive.applyMovementDirectionBased();
             Log.i("MOVEMENT SPEED Y BEFORE", String.valueOf(SpeedOmeter.getSpeedX()));
 
             if (currTimeMillis - stateStartTime > ACCELERATION_TIME) {
                 movement_speed_y = SpeedOmeter.getSpeedY();
                 Log.i("MOVEMENT SPEED Y", String.valueOf(movement_speed_y));
                 drive.stopAllMovementDirectionBased();
-                nextStage();
+                //nextStage();
             }
         }
         if (programStage == progStates.measuringForwardsSlip.ordinal()) {

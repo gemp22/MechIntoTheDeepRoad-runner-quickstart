@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Constants {
-    public static final double JAW_SERVO_DROP_POSITION = 0.33;
-    public static final double JAW_SERVO_GRAB_POSITION = 0.87; //.85
+    public static final double JAW_SERVO_DROP_POSITION = 0.33; //.33
+    public static final double JAW_SERVO_GRAB_POSITION = 0.89; //.85
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = 1;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = .052;
     public static final double JAW_SERVO_WALL_COLLECTION = .55;

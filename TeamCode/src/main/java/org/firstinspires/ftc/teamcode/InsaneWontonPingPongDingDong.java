@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
-import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
-import static org.firstinspires.ftc.teamcode.RobotPosition.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldXPosition;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
 
-import android.graphics.Point;
 import android.os.SystemClock;
 import android.util.Pair;
 
@@ -23,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Autonomous
-public class AutoSamples extends Robot {
+public class InsaneWontonPingPongDingDong extends Robot {
 
     private final double SCALE_FACTOR = 1;
 
@@ -31,13 +27,13 @@ public class AutoSamples extends Robot {
 
     private int cycle = 0;
 
-    private boolean autoParkSuperstruture = false;
-
     public enum progStates {
 
-        driveToBaskets,
+        driveToSpecDrop,
         driveToOurSamples,
         deliverBaskets,
+
+        pickupRemainingTwo,
         driveToOpponentsSamples,
         driveBackToBaskets,
         park,
@@ -96,10 +92,9 @@ public class AutoSamples extends Robot {
     private int pixelDropLocation = 0;
 
     private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
-        put(0, new Pair<>(new PointDouble(28.5487, -10.6718), 67.3253)); // -31.3774
-        put(1, new Pair<>(new PointDouble(25.7552,5.5614 ), 60.0452)); // 50.0452
-        put(2, new Pair<>(new PointDouble(25.7771, 11.4609), 62.00)); //55.3688
-        put(3, new Pair<>(new PointDouble(18, 18), 0.0));
+        put(0, new Pair<>(new PointDouble(31.0603, 24.9123), 70.422)); // -31.3774
+        put(1, new Pair<>(new PointDouble(31.422,32.45), 74.1515)); // 50.0452
+        put(2, new Pair<>(new PointDouble(18, 18), 0.0));
     }};
 
     private boolean hasGrabbedPixels = false;
@@ -112,46 +107,28 @@ public class AutoSamples extends Robot {
     public void mainLoop() {
         telemetry.addData("pixels", pixelsCounted);
 
-        if (programStage == progStates.driveToBaskets.ordinal()) {
+        if (programStage == progStates.driveToSpecDrop.ordinal()) {
             if (stageFinished) {
                 past5In = false;
-                superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
+                superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_FRONT_PREP_AUTO.ordinal());
                 initializeStateVariables();
             }
             ArrayList<CurvePoint> points = new ArrayList<>();
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(12, 14,
-                    0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 15, 15,
+            points.add(new CurvePoint(26, 0,
+                    0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
-            if (Math.abs(Math.hypot(worldXPosition - 13, worldYPosition - 13)) < 5) {
-                if (!past5In) {
+            boolean completed = Movement.followCurve(points, Math.toRadians(90), 3);
 
-                    past5In = true;
-                }
-            }
-            boolean completed = Movement.followCurve(points, Math.toRadians(-90), 1.5);
+            Movement.movementResult r = Movement.pointAngle(Math.toRadians(-28), 0.7, Math.toRadians(20));
 
-            if (worldYPosition > 5) {
-                Movement.movementResult r = Movement.pointAngle(Math.toRadians(-45), 0.7, Math.toRadians(20));
-
-                if (completed && Math.abs(r.turnDelta_rad) < Math.toRadians(5)) {
-                    drive.stopAllMovementDirectionBased();
-
-                    System.out.println("lift extension in delivery state: " + lift.getLiftExtension());
-
-                    if(lift.getLiftExtension()>22){
-                        superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
-
-                        if (cycle < 3) {
-                            nextStage(progStates.driveToOurSamples.ordinal());
-                        } else {
-                            nextStage(progStates.park.ordinal());
-                        }
-                    }
-                }
+            if (worldXPosition > 20) {
+                drive.stopAllMovementDirectionBased();
+                superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_FRONT_CHAMBER_AUTO.ordinal());
+                nextStage(progStates.driveToOurSamples.ordinal());
             }
             drive.applyMovementDirectionBased(); // always put at end of state
         }
@@ -159,39 +136,96 @@ public class AutoSamples extends Robot {
         if (programStage == progStates.driveToOurSamples.ordinal()) {
             if (stageFinished) {
                 past5In = false;
+                System.out.println("world X" + worldXPosition);
+                System.out.println("world y" + worldYPosition);
+                initializeStateVariables();
+            }
+
+            if (SystemClock.uptimeMillis()-stateStartTime>750) {
+                if (!past5In) {
+                    superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
+                    past5In = true;
+                }
+
+                if (SystemClock.uptimeMillis()-stateStartTime>1500) {
+                    ArrayList<CurvePoint> points = new ArrayList<>();
+                    points.add(new CurvePoint(stateStartingX, stateStartingY,
+                            0, 0, 0, 0, 0, 0));
+
+                    Pair<PointDouble, Double> wantedPos = pickupPoints.get(cycle);
+
+                    points.add(new CurvePoint(28, 14.5,
+                            0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
+                            Math.toRadians(60), 0.6));
+
+                    boolean completed = Movement.followCurve(points, Math.toRadians(90), 3);
+
+                    Movement.movementResult r = Movement.pointAngle(
+                            Math.toRadians(65), //Math.atan2(pickupYPosition - stateStartingY, 34 - stateStartingX),
+                            0.7,
+                            Math.toRadians(30));
+
+                    if (completed &&
+                            Math.abs(r.turnDelta_rad) < Math.toRadians(5)) {
+                        drive.stopAllMovementDirectionBased();
+                        superstructure.sampleCollected = false;
+                        superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                        nextStage(progStates.deliverBaskets.ordinal());
+                    }
+
+                    drive.applyMovementDirectionBased(); // always put at end of state
+                }
+            }
+        }
+
+        if (programStage == progStates.deliverBaskets.ordinal()) {
+            if (stageFinished) {
+                past5In = false;
+                initializeStateVariables();
+            }
+            if (superstructure.sampleCollected) {
+                if (!past5In) {
+                    superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
+                    past5In = true;
+                }
+                ArrayList<CurvePoint> points = new ArrayList<>();
+                points.add(new CurvePoint(stateStartingX, stateStartingY,
+                        0, 0, 0, 0, 0, 0));
+
+                points.add(new CurvePoint(12, 38.2,
+                        0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
+                        Math.toRadians(60), 0.6));
+
+                boolean completed = Movement.followCurve(points, Math.toRadians(-90), 3);
+
+                Movement.movementResult r = Movement.pointAngle(
+                        Math.toRadians(-45), //Math.atan2(pickupYPosition - stateStartingY, 34 - stateStartingX),
+                        0.7,
+                        Math.toRadians(30));
+
+                if (completed &&
+                        Math.abs(r.turnDelta_rad) < Math.toRadians(5)) {
+                    drive.stopAllMovementDirectionBased();
+
+                    if(lift.getLiftExtension()>22){
+                        superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
+
+                        nextStage(progStates.pickupRemainingTwo.ordinal());
+                    }
+                }
+
+                drive.applyMovementDirectionBased();
+            }
+        }
+
+        if (programStage == progStates.pickupRemainingTwo.ordinal()) {
+            if (stageFinished) {
+                past5In = false;
 
                 System.out.println("world X" + worldXPosition);
                 System.out.println("world y" + worldYPosition);
                 initializeStateVariables();
             }
-            /*ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, stateStartingY,
-                    0, 0, 0, 0, 0, 0));
-
-            points.add(new CurvePoint(23, 15,
-                    0.6 * SCALE_FACTOR, 0.6 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
-
-            if (Math.abs(Math.hypot(worldXPosition - 23, worldYPosition - 15)) < 5) {
-                if (!past5In) {
-                    //superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
-                    past5In = true;
-                }
-            }
-            boolean completed = Movement.followCurve(points, Math.toRadians(90), 1.5);
-
-            if (worldYPosition > 5) {
-                Movement.movementResult r = Movement.pointAngle(Math.toRadians(0), 0.7, Math.toRadians(20));
-
-                if (completed && Math.abs(r.turnDelta_rad) < Math.toRadians(3)) {
-                    drive.stopAllMovementDirectionBased();
-
-                    if(lift.getLiftExtension()>23){
-                        superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
-                        nextStage(progStates.endBehavior.ordinal());
-                    }
-                }
-            }*/
             if (SystemClock.uptimeMillis()-stateStartTime > 650) {
                 if (!past5In) {
                     superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
@@ -223,7 +257,6 @@ public class AutoSamples extends Robot {
                         if(cycle<3) {
                             superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
                         }
-
                         nextStage(progStates.endBehavior.ordinal());
                     }
 
@@ -239,49 +272,14 @@ public class AutoSamples extends Robot {
                 initializeStateVariables();
             }
             if (superstructure.sampleCollected && lift.getLiftExtension() < 1 ) {
-                nextStage(progStates.driveToBaskets.ordinal());
+                nextStage(progStates.deliverBaskets.ordinal());
             }
             drive.stopAllMovementDirectionBased();
+
         }
 
-        if (programStage == progStates.park.ordinal()) {
-            if (stageFinished) {
-                past5In = false;
-                autoParkSuperstruture = false;
-                cycle++;
-                initializeStateVariables();
-            }
-            if (SystemClock.uptimeMillis()-stateStartTime > 650) {
-                if (!past5In) {
-                    superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
-                    past5In = true;
-                }
-                // x = 60 y = -15 thetea = -90
+        telemetry.addData("State", programStage);
 
-                ArrayList<CurvePoint> points = new ArrayList<>();
-                points.add(new CurvePoint(stateStartingX, stateStartingY,
-                        0, 0, 0, 0, 0, 0));
-
-                points.add(new CurvePoint(70, -15,
-                        0.8 * SCALE_FACTOR, 0.8 * SCALE_FACTOR, 15, 15,
-                        Math.toRadians(60), 0.6));
-
-                boolean completed = Movement.followCurve(points, Math.toRadians(90), 3);
-
-                if (Math.abs(Math.hypot(worldXPosition - 60, worldYPosition - (-15))) < 24) {
-                    if (!autoParkSuperstruture) {
-                        superstructure.nextState(Superstructure.SuperstructureStates.AUTO_PARK.ordinal());
-                        autoParkSuperstruture = true;
-                    }
-                    Movement.movementResult r = Movement.pointAngle(
-                            Math.toRadians(-90), //Math.atan2(pickupYPosition - stateStartingY, 34 - stateStartingX),
-                            0.8,
-                            Math.toRadians(30));
-                }
-
-                drive.applyMovementDirectionBased();
-            }
-        }
 
         tp4.markStart();
 
@@ -293,4 +291,3 @@ public class AutoSamples extends Robot {
 
     }
 }
-

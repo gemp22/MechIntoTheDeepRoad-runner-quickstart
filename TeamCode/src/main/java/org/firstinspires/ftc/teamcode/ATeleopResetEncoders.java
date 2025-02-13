@@ -45,8 +45,8 @@ import java.util.HashMap;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 //import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name = "ATeleop", group = "Mechbot")
-public class ATeleop extends Robot {
+@TeleOp(name = "ATeleopResetEncoders", group = "Mechbot")
+public class ATeleopResetEncoders extends Robot {
 
     boolean justDidAReapproach = false;
     boolean gamepad2Trigger = false;
@@ -61,7 +61,7 @@ public class ATeleop extends Robot {
     @Override
     public void init() {
         isAuto = false;
-        resetEncoders =false;
+        resetEncoders = true;
         AutoSpecimens.pickupOffWall = false;
         super.init();      //Ask Miles what this is?
 
@@ -213,7 +213,7 @@ public class ATeleop extends Robot {
 //        }
 
         if (armPivot.getLiftLimitState() && !liftLimitPreValue) {
-           lift.resetLiftEncoders();
+            lift.resetLiftEncoders();
             wantedX =0;
         }
         liftLimitPreValue = armPivot.getLiftLimitState();
@@ -221,7 +221,7 @@ public class ATeleop extends Robot {
         //lift.setSetPoint(wantedX);
         //lift.updateLiftPosition();
 
-       // lift.setLiftPower(-gamepad1.right_stick_y);
+        // lift.setLiftPower(-gamepad1.right_stick_y);
 
         /*if (gamepad1.right_trigger > 0.05) {
             lift.setLiftPower(gamepad1.right_trigger);
@@ -236,8 +236,8 @@ public class ATeleop extends Robot {
         }*/
 
         //if (Math.abs(gamepad2.right_stick_y)>0.05){
-           // lift.setLiftPower(gamepad2.right_stick_y);
-       // }
+        // lift.setLiftPower(gamepad2.right_stick_y);
+        // }
 
         System.out.println("Lift Encoders: " + lift.getLiftExtension());
         System.out.println("Lift Encoders RAW: " + lift.liftRight.getCurrentPosition());
@@ -287,9 +287,6 @@ public class ATeleop extends Robot {
             superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal());
         }
 
-
-
-
 //        if (ButtonPress.isGamepad1_a_pressed()) {
 //            //superstructure.liftWantedHeight = 16;
 //            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
@@ -300,7 +297,7 @@ public class ATeleop extends Robot {
 //            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
 //        }
 
-        if (ButtonPress.isGamepad1_a_pressed() && !Superstructure.disableTelopGamepad1A) {
+        if (ButtonPress.isGamepad1_a_pressed()) {
             hangButton++;
             if (hangButton == 1) {
                 superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());

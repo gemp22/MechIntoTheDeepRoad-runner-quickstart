@@ -145,7 +145,7 @@ public class AutoSpecimens extends Robot {
                     0.35 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
-            points.add(new CurvePoint(27.7, 0,
+            points.add(new CurvePoint(26.5, 0,
                     0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
@@ -156,7 +156,6 @@ public class AutoSpecimens extends Robot {
 
             drive.applyMovementDirectionBased(); // always put at end of state
         }
-
 
         if (programStage == progStates.hangSpecimen.ordinal()) {
             if (stageFinished) {
@@ -210,9 +209,12 @@ public class AutoSpecimens extends Robot {
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
+                /*
                 points.add(new CurvePoint(20, -45,
                         1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
+
+                 */
 
                 /*points.add(new CurvePoint(15, -45,
                         0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 15, 15,
@@ -221,17 +223,22 @@ public class AutoSpecimens extends Robot {
                 double wantedX = cycle == 1 ? 26 : 15;
 
                 points.add(new CurvePoint(wantedX, -45,
-                        0.9 * SCALE_FACTOR, 0.9 * SCALE_FACTOR, 15, 10,
+                        1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
                 boolean completed = Movement.followCurve(points, Math.toRadians(90), 2);
 
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
 
-                if (cycle == 1 && worldYPosition < -30) {
+                if (worldYPosition < -15 && cycle == 1) {
                     Movement.movementResult r = Movement.pointAngle(
                             Math.toRadians(180),
-                            0.9,
+                            1,
+                            Math.toRadians(30));
+                } else  if (worldYPosition < -25) {
+                    Movement.movementResult r = Movement.pointAngle(
+                            Math.toRadians(180),
+                            1,
                             Math.toRadians(30));
                 }
 
@@ -337,7 +344,7 @@ public class AutoSpecimens extends Robot {
 
                     Movement.movementResult r = Movement.pointAngle(
                             Math.toRadians(180),
-                            0.9,
+                            1,
                             Math.toRadians(30));
                 }
                 drive.applyMovementDirectionBased();
@@ -404,7 +411,7 @@ public class AutoSpecimens extends Robot {
 
             movement_x = -0.7;
 
-            if (worldYPosition < -51 + (driveToGetSampleCycle * -9)) { // 51 was 52 for northern
+            if (worldYPosition < -49 + (driveToGetSampleCycle * -9)) { // 51 was 52 for northern
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
