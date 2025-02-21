@@ -174,9 +174,7 @@ public abstract class Robot extends OpMode {
     public void start() {
         programStage = 0;
     }
-
     public TimeProfiler tp0 = new TimeProfiler(1000);
-
     public TimeProfiler tp1 = new TimeProfiler(1000);
     public TimeProfiler tp2 = new TimeProfiler(1000);
     public TimeProfiler tp3 = new TimeProfiler(1000);
