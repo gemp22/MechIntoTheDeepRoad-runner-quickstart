@@ -3,16 +3,19 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Pair;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Autonomous
+@TeleOp
 public class ClawTest extends Robot {
 
     private int servoIndex = 0;
+    private double tilt = 0;
+    private double twist = 0;
     private double currentServoPosition = 0;
 
     @Override
@@ -75,10 +78,38 @@ public class ClawTest extends Robot {
             armPivot.intakeJawServo.setPosition(.6);
         }
 
+
+        if (ButtonPress.isGamepad1_dpad_left_pressed()) {
+            //currentServoPosition += 0.005;
+            //Open
+            twist += 0.05;
+        } else if (ButtonPress.isGamepad1_dpad_right_pressed()) {
+            //currentServoPosition -= 0.005;
+            //Closed
+            twist -= 0.05;
+        }
+
+        armPivot.twist.setPosition(twist);
+
+
+        if (ButtonPress.isGamepad1_dpad_up_pressed()) {
+            //currentServoPosition += 0.005;
+            //Open
+            tilt += 0.05;
+        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
+            //currentServoPosition -= 0.005;
+            //Closed
+            tilt -= 0.05;
+        }
+
+        armPivot.intakeTilt.setPosition(tilt);
+
 //        entry.getValue().first.setPosition(currentServoPosition);
 
         //telemetry.addData("Current Servo Tuning", entry.getKey());
-        telemetry.addData("Current Servo Position", armPivot.intakeJawServo.getPosition());
+        telemetry.addData("jaw: ", armPivot.intakeJawServo.getPosition());
+        telemetry.addData("tilt: ", armPivot.intakeTilt.getPosition());
+        telemetry.addData("twist: ", armPivot.twist.getPosition());
 
     }
 }
