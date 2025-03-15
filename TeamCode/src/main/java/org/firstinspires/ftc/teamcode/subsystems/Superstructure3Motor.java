@@ -9,12 +9,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.AutoSpecimens;
 import org.firstinspires.ftc.teamcode.ButtonPress;
 import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Robot3Motor;
 
 public class Superstructure3Motor {
     private ArmPivot3Motor armPivot;
     private Lift3Motor lift;
-    private Robot robot;
+    private Robot3Motor robot;
     public double liftWantedHeight = 0;// inches
     public double tiltWantedAngle = 0;// inches
     public double armWantedAngle = 0; // inches
@@ -111,7 +111,6 @@ public class Superstructure3Motor {
     }
 
     private boolean hangPastValidation = false;
-
     private int currentState = SuperstructureStates.RESTING.ordinal();
     private long stateStartTime = 0;
     private long taskStartTime = 0;
@@ -135,7 +134,7 @@ public class Superstructure3Motor {
         System.out.println("Delivery Level Ordinal: " + Superstructure3Motor.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
     }
 
-    public Superstructure3Motor(ArmPivot3Motor armPivot, Lift3Motor lift, Robot robot) {
+    public Superstructure3Motor(ArmPivot3Motor armPivot, Lift3Motor lift, Robot3Motor robot) {
         this.armPivot = armPivot;
         this.lift = lift;
         this.robot = robot;

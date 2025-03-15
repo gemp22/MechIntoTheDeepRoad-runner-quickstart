@@ -34,17 +34,12 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
     public DigitalChannel liftLimitSwitch = null;
     public DigitalChannel pivotLimitSwitch = null;
-
     public int armPivotPosition = 0;
-
     private final double armPivotMaxTicks = 2370;
 
     // for lift pController input
     public final double minPowerArmPivot = .001;
-
     public final double maxPowerArmPivot = 0.99;
-
-
 
     // variable for RR1.0 actions
     //private double pixelLiftPosition; // variable for regular use like on init.. humm may not need since its defined in the method?
@@ -52,9 +47,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
     public PController pControllerArmPivot = new PController(0.005);
 
-
     public PIDController pidControllerArmPivot = new PIDController(0.005,0.00007,0);
-
 
     private double angularVelocity = 0.0;
     private double lastAngle = 0.0;
@@ -93,8 +86,6 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         }
 
 
-
-
         servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
         servoMap.put("Twist Servo", new Pair<>(twist, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
         servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants.JAW_SERVO_INTAKE_POSITION));
@@ -107,10 +98,6 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         pControllerArmPivot.setOutputRange(minPowerArmPivot, maxPowerArmPivot);
         pControllerArmPivot.setThresholdValue(5);
 
-
-
-        //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // this is for lift left, change Kp to calibrate
     }
     public void InitArmPivotPIDController(){
 
@@ -119,20 +106,14 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         pidControllerArmPivot.setOutputRangePID(minPowerArmPivot, maxPowerArmPivot);
         pidControllerArmPivot.setThresholdValuePID(5);
 
-
-
-        //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        // this is for lift left, change Kp to calibrate
     }
 
     public void setArmPivotPosition() {
         armPivotPosition =armPivot.getCurrentPosition();
 
-
     }
     public void setArmPivotPower(double armPivotPower) {
         armPivot.setPower(armPivotPower);
-
 
     }
     public void setIntakeTiltAngle(double angle){
@@ -163,8 +144,6 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         lastUpdateStartTime = currentTime;
 
         armPivotPosition =armPivot.getCurrentPosition();
-
-
 
         double armAngle = (armPivotPosition / 10.390208333) + armOffset; // degrees
 
@@ -314,28 +293,20 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     public double getArmAngle() {
         armPivotPosition =armPivot.getCurrentPosition();
 
-
-
-
-        return (armPivotPosition / 10.390208333) - 8;
+        return (armPivotPosition / 17.6326) - 8;
     }
-
     public double getRadPerSecond() {
         return angularVelocity;
     }
-
     public double currSlipAngle() {
         return getRadPerSecond() * turnSlipAmountFor1RPS;
     }
-
     public void setArmPivotSetPointTicks(int ticks) {
         pControllerArmPivot.setSetPoint(ticks);
     }
 
-
     public void updatePControlArmPivotPosition() {
         armPivotPosition =armPivot.getCurrentPosition();
-
 
         if (armPivotPosition < pControllerArmPivot.setPoint) {
 
@@ -346,12 +317,9 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
                     pControllerArmPivot.getComputedOutput(armPivotPosition));
         }
 
-
-
     }
     public void updateArmPivotPositionPID() {
         armPivotPosition =armPivot.getCurrentPosition();
-
 
         if (armPivotPosition < pidControllerArmPivot.setPoint) {
 
@@ -361,8 +329,6 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
             armPivot.setPower(minPowerArmPivot -
                     pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
         }
-
-
 
     }
 
@@ -389,8 +355,6 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
                 armPivot.setPower(minPowerArmPivot -
                         pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
             }
-
-
 
         }
 

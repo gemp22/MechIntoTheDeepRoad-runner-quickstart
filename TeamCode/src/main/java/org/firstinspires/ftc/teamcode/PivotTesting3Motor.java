@@ -156,17 +156,15 @@ public class PivotTesting3Motor extends Robot
             armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
 
         }
-        else {                                       //uses proportional controller to hold lift in correct spot
-//            armPivot3Motor.setArmPivotPower(0);
-            armPivot3Motor.updatePControlArmPivotPosition();
+        else {    //uses proportional controller to hold lift in correct spot
+//                 armPivot3Motor.setArmPivotPower(0);
+            //armPivot3Motor.updatePControlArmPivotPosition();
         }
 
         if (gamepad1.dpad_right) {   ///move lift up and sets controller position
 
             lift3Motor.setLiftPower(.98);
-//            lift3Motor.liftLeft.setPower(0.98);
-//            lift3Motor.liftRight.setPower(.98);
-//            lift3Motor.upperLift.setPower(.98);
+
 
             lift3Motor.pControllerLiftRight.setSetPoint(lift3Motor.liftRight.getCurrentPosition());
             lift3Motor.pControllerLiftLeft.setSetPoint(lift3Motor.liftLeft.getCurrentPosition());
@@ -176,17 +174,15 @@ public class PivotTesting3Motor extends Robot
         else if (gamepad1.dpad_left) {  //move lift down and sets controller position
 
             lift3Motor.setLiftPower(-.98);
-//            lift3Motor.liftLeft.setPower(-.98);
-//            lift3Motor.liftRight.setPower(-.98);
-//            lift3Motor.upperLift.setPower(-.98);
-            //lift3Motor.pControllerUpperLift.setSetPoint(lift3Motor.liftRight.getCurrentPosition());
+
+
             lift3Motor.pControllerLiftRight.setSetPoint(lift3Motor.liftRight.getCurrentPosition());
             lift3Motor.pControllerLiftLeft.setSetPoint(lift3Motor.liftLeft.getCurrentPosition());
             lift3Motor.pControllerUpperLift.setSetPoint(lift3Motor.upperLift.getCurrentPosition());
 
         }
         else {
-            lift3Motor.updateLiftPosition();
+            //lift3Motor.updateLiftPosition();
 //            lift3Motor.liftLeft.setPower(0);
 //            lift3Motor.liftRight.setPower(0);
 //            lift3Motor.upperLift.setPower(0);
@@ -202,6 +198,7 @@ public class PivotTesting3Motor extends Robot
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("pivot SetPoint", armPivot3Motor.pControllerArmPivot.setPoint);
         telemetry.addData("pivot position", armPivot3Motor.armPivot.getCurrentPosition());
+        telemetry.addData("pivot angle",armPivot3Motor.getArmAngle());
         telemetry.addData("pivot pwr", armPivot3Motor.armPivot.getPower());
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -211,6 +208,8 @@ public class PivotTesting3Motor extends Robot
         telemetry.addData("lift left position", lift3Motor.liftLeft.getCurrentPosition());
         telemetry.addData("lift right position", lift3Motor.liftRight.getCurrentPosition());
         telemetry.addData("lift upper position", lift3Motor.upperLift.getCurrentPosition());
+        telemetry.addData("Average lift ticks", (lift3Motor.upperLift.getCurrentPosition()+lift3Motor.liftRight.getCurrentPosition()+lift3Motor.liftLeft.getCurrentPosition())/3);
+        telemetry.addData("Average lift extension", lift3Motor.getLiftExtension());
         telemetry.addData("lift left pwr", lift3Motor.liftLeft.getPower());
         telemetry.addData("lift right pwr", lift3Motor.liftRight.getPower());
         telemetry.addData("lift upper pwr", lift3Motor.upperLift.getPower());

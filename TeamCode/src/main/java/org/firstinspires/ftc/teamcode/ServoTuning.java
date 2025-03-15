@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Autonomous
-public class ServoTuning extends Robot {
+public class ServoTuning extends Robot3Motor {
 
     private int servoIndex = 0;
     private double currentServoPosition = 0;

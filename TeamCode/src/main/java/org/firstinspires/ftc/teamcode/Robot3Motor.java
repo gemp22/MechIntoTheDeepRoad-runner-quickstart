@@ -18,10 +18,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.subsystems.ArmPivot;
 import org.firstinspires.ftc.teamcode.subsystems.ArmPivot3Motor;
 import org.firstinspires.ftc.teamcode.subsystems.GoBildaOdo;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Lift3Motor;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
@@ -31,13 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class Robot extends OpMode {
+public abstract class Robot3Motor extends OpMode {
     public MecanumDrive drive = null;
     GoBildaOdo GoBildaOdo; // Declare OpMode member for the Odometry Computer
-    ArmPivot armPivot;
-    Lift lift;
-    Superstructure superstructure;
 
+    ArmPivot3Motor armPivot3Motor;
+    Lift3Motor lift3Motor;
+    Superstructure3Motor superstructure3Motor;
     HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
     public boolean isAuto = false;
     double startingTiltPos = 0;
@@ -127,19 +125,19 @@ public abstract class Robot extends OpMode {
 //        armPivot.InitArmPivotPIDController();
 //        armPivot.InitArmPivotPController();
 
-        armPivot = new ArmPivot(hardwareMap, servoMap);
-        lift = new Lift(hardwareMap);
+        armPivot3Motor = new ArmPivot3Motor(hardwareMap, servoMap);
+        lift3Motor = new Lift3Motor(hardwareMap);
 
 
-        lift.initLiftPController();
-        armPivot.InitArmPivotPIDController();
-        armPivot.InitArmPivotPController();
+        lift3Motor.initLiftPController();
+        armPivot3Motor.InitArmPivotPIDController();
+        armPivot3Motor.InitArmPivotPController();
 
 
         //armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
         //armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 
-        superstructure = new Superstructure(armPivot, lift, this);
+        superstructure3Motor = new Superstructure3Motor(armPivot3Motor, lift3Motor, this);
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
@@ -179,7 +177,7 @@ public abstract class Robot extends OpMode {
         telemetry.addData("World X", worldXPosition);
         telemetry.addData("World Y", worldYPosition);
         telemetry.addData("World Angle", worldAngle_rad);
-        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("tilt angle", armPivot3Motor.getIntakeTiltAngle());
 
     }
 
@@ -254,20 +252,20 @@ public abstract class Robot extends OpMode {
         telemetry.addData("World X", worldXPosition);
         telemetry.addData("World Y", worldYPosition);
         telemetry.addData("World Angle", Math.toDegrees(worldAngle_rad));
-        telemetry.addData("arm angle", armPivot.getArmAngle());
+        telemetry.addData("arm angle", armPivot3Motor.getArmAngle());
 
 //        telemetry.addData("vel x", goBildaPose.second.getX(DistanceUnit.INCH));
 //        telemetry.addData("vel y", goBildaPose.second.getY(DistanceUnit.INCH));
 //        telemetry.addData("vel heading RAD", goBildaPose.second.getHeading(AngleUnit.RADIANS));
 //        telemetry.addData("vel heading DEG", goBildaPose.second.getHeading(AngleUnit.DEGREES));
-        telemetry.addData("lift extension", lift.getLiftExtension());
-        telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
-        telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+        telemetry.addData("lift extension", lift3Motor.getLiftExtension());
+        telemetry.addData("liftWantedHeight", superstructure3Motor.liftWantedHeight);
+        telemetry.addData("tilt angle", armPivot3Motor.getIntakeTiltAngle());
 
-        telemetry.addData("pivot limit switch", armPivot.getPivotLimitState());
+        telemetry.addData("pivot limit switch", armPivot3Motor.getPivotLimitState());
 
         telemetry.addData("button press ", ButtonPress.isGamepad2_left_stick_button_pressed());
-        telemetry.addData("intake tilt linear interpolation output ", armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+        telemetry.addData("intake tilt linear interpolation output ", armPivot3Motor.intakeTiltNoArmPower(lift3Motor.getLiftExtension()));
         if(isAuto)
         {
             Log.i("Auto Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));

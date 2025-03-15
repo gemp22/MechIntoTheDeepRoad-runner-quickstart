@@ -127,24 +127,24 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
     public void setLiftPower(double liftPower) {
         liftLeft.setPower(liftPower);
         liftRight.setPower(liftPower);
-       upperLift.setPower(liftPower);
+        upperLift.setPower(liftPower);
 
     }
 
     public double getLiftExtension() {
-        liftLeftPosition=liftLeft.getCurrentPosition();
+        liftLeftPosition = liftLeft.getCurrentPosition();
         liftRightPosition= liftRight.getCurrentPosition();
         upperLiftPosition = liftRight.getCurrentPosition();
 
-        double averageLiftPosition = (liftLeftPosition+liftRightPosition+ upperLiftPosition)/3.0;
+        double averageLiftPosition = (liftLeftPosition + liftRightPosition + upperLiftPosition)/3.0;
 
-        return (averageLiftPosition / (177.333 )); //in inches
+       return (averageLiftPosition / (127)); //in inches
     }
 
     public void setSetPoint(double in) {
-        pControllerLiftLeft.setSetPoint(in * (177.333 ));
-        pControllerLiftRight.setSetPoint(in * (177.333 ));
-        pControllerUpperLift.setSetPoint(in * (177.333 ));
+        pControllerLiftLeft.setSetPoint(in * (127));
+        pControllerLiftRight.setSetPoint(in * (127));
+        pControllerUpperLift.setSetPoint(in * (127));
     }
 
     public void updateLiftPosition() {
@@ -160,7 +160,6 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
             liftLeft.setPower(minPowerLiftLeft -
                     pControllerLiftLeft.getComputedOutput(liftLeftPosition));
         }
-
 
         if (liftRightPosition < pControllerLiftRight.setPoint) {
 
