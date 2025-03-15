@@ -16,6 +16,7 @@ public class ClawTest extends Robot {
     private int servoIndex = 0;
     private double tilt = 0;
     private double twist = 0;
+    private double jaw = 0;
     private double currentServoPosition = 0;
 
     @Override
@@ -71,13 +72,13 @@ public class ClawTest extends Robot {
         if (ButtonPress.isGamepad1_a_pressed()) {
             //currentServoPosition += 0.005;
             //Open
-            armPivot.intakeJawServo.setPosition(.34);
+           jaw += 0.05;
         } else if (ButtonPress.isGamepad1_b_pressed()) {
             //currentServoPosition -= 0.005;
             //Closed
-            armPivot.intakeJawServo.setPosition(.6);
+            jaw -= 0.05;
         }
-
+        armPivot.intakeJawServo.setPosition(jaw);
 
         if (ButtonPress.isGamepad1_dpad_left_pressed()) {
             //currentServoPosition += 0.005;
@@ -96,7 +97,7 @@ public class ClawTest extends Robot {
             //currentServoPosition += 0.005;
             //Open
             tilt += 0.05;
-        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
+        } else if (ButtonPress.isGamepad1_dpad_down_pressed()) {
             //currentServoPosition -= 0.005;
             //Closed
             tilt -= 0.05;

@@ -19,10 +19,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.ArmPivot;
+import org.firstinspires.ftc.teamcode.subsystems.ArmPivot3Motor;
 import org.firstinspires.ftc.teamcode.subsystems.GoBildaOdo;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Lift3Motor;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
+import org.firstinspires.ftc.teamcode.subsystems.Superstructure3Motor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +35,11 @@ public abstract class Robot extends OpMode {
     public MecanumDrive drive = null;
     GoBildaOdo GoBildaOdo; // Declare OpMode member for the Odometry Computer
     ArmPivot armPivot;
+    ArmPivot3Motor armPivot3Motor;
+    Lift3Motor lift3Motor;
     Lift lift;
     Superstructure superstructure;
+    Superstructure3Motor superstructure3Motor;
     HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
     public boolean isAuto = false;
     double startingTiltPos = 0;
@@ -117,16 +123,23 @@ public abstract class Robot extends OpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        armPivot = new ArmPivot(hardwareMap, servoMap);
-        lift = new Lift(hardwareMap);
-        lift.initLiftPController();
-        armPivot.InitArmPivotPIDController();
-        armPivot.InitArmPivotPController();
+//        armPivot = new ArmPivot(hardwareMap, servoMap);
+//        lift = new Lift(hardwareMap);
+//        lift.initLiftPController();
+//        armPivot.InitArmPivotPIDController();
+//        armPivot.InitArmPivotPController();
+
+        armPivot3Motor = new ArmPivot3Motor(hardwareMap, servoMap);
+        lift3Motor = new Lift3Motor(hardwareMap);
+        lift3Motor.initLiftPController();
+        armPivot3Motor.InitArmPivotPIDController();
+        armPivot3Motor.InitArmPivotPController();
+
 
         //armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
         //armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 
-        superstructure = new Superstructure(armPivot, lift, this);
+        superstructure3Motor = new Superstructure3Motor(armPivot3Motor, lift3Motor, this);
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
@@ -250,6 +263,7 @@ public abstract class Robot extends OpMode {
         telemetry.addData("lift extension", lift.getLiftExtension());
         telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
         telemetry.addData("tilt angle", armPivot.getIntakeTiltAngle());
+
         telemetry.addData("pivot limit switch", armPivot.getPivotLimitState());
 
         telemetry.addData("button press ", ButtonPress.isGamepad2_left_stick_button_pressed());

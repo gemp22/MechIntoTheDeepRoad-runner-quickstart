@@ -48,7 +48,9 @@ public class Constants {
 
     // LIFT ID MAPPING
 
-    public static final String LIFT_LEFT_MOTOR_ID = "leftLift";
+    public static final String LIFT_LEFT_MOTOR_ID = "liftLeft";
+    public static final String LIFT_RIGHT_MOTOR_ID = "liftRight";
+    public static final String UPPER_LIFT_MOTOR_ID = "upperLift";
 
 
 }
