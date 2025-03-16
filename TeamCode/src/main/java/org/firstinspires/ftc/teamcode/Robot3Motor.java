@@ -32,10 +32,9 @@ import java.util.List;
 public abstract class Robot3Motor extends OpMode {
     public MecanumDrive drive = null;
     GoBildaOdo GoBildaOdo; // Declare OpMode member for the Odometry Computer
-
     ArmPivot3Motor armPivot3Motor;
     Lift3Motor lift3Motor;
-    Superstructure3Motor superstructure3Motor;
+    Superstructure3Motor superstructure;
     HashMap<String, Pair<Servo, Double>> servoMap = new HashMap<>();
     public boolean isAuto = false;
     double startingTiltPos = 0;
@@ -137,7 +136,7 @@ public abstract class Robot3Motor extends OpMode {
         //armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
         //armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
 
-        superstructure3Motor = new Superstructure3Motor(armPivot3Motor, lift3Motor, this);
+        superstructure = new Superstructure3Motor(armPivot3Motor, lift3Motor, this);
 
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         GoBildaOdo = new GoBildaOdo(hardwareMap);  //this is for GoBilda pinpoint
@@ -259,13 +258,16 @@ public abstract class Robot3Motor extends OpMode {
 //        telemetry.addData("vel heading RAD", goBildaPose.second.getHeading(AngleUnit.RADIANS));
 //        telemetry.addData("vel heading DEG", goBildaPose.second.getHeading(AngleUnit.DEGREES));
         telemetry.addData("lift extension", lift3Motor.getLiftExtension());
-        telemetry.addData("liftWantedHeight", superstructure3Motor.liftWantedHeight);
+        telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
+        telemetry.addData("tilt servo", armPivot3Motor.intakeTilt.getPosition());
         telemetry.addData("tilt angle", armPivot3Motor.getIntakeTiltAngle());
+        telemetry.addData("intake tilt linear interpolation output ", armPivot3Motor.intakeTiltNoArmPower(lift3Motor.getLiftExtension()));
+
 
         telemetry.addData("pivot limit switch", armPivot3Motor.getPivotLimitState());
 
         telemetry.addData("button press ", ButtonPress.isGamepad2_left_stick_button_pressed());
-        telemetry.addData("intake tilt linear interpolation output ", armPivot3Motor.intakeTiltNoArmPower(lift3Motor.getLiftExtension()));
+
         if(isAuto)
         {
             Log.i("Auto Loop Time", String.valueOf(SystemClock.uptimeMillis() - startLoopTime));

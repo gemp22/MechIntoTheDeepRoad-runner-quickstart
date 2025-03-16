@@ -73,7 +73,7 @@ public class ATeleop3Motor extends Robot3Motor {
     public void start() {
         super.start(); //what is super.start?
 
-        superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.TELEOP_START.ordinal());
+        superstructure.nextState(Superstructure3Motor.SuperstructureStates.TELEOP_START.ordinal());
 
         //pawright.setPosition(0.59);
 
@@ -204,13 +204,6 @@ public class ATeleop3Motor extends Robot3Motor {
         }
         drive.applyMovementDirectionBased();//this applys movement useing the mecanumDrive class
 
-//        if (gamepad1.dpad_up) {
-//            wantedX += 0.05;
-//        }
-//
-//        if (gamepad1.dpad_down && !armPivot.getLiftLimitState()) {
-//            wantedX -= 0.05;
-//        }
 
         if (armPivot3Motor.getLiftLimitState() && !liftLimitPreValue) {
            lift3Motor.resetLiftEncoders();
@@ -218,26 +211,6 @@ public class ATeleop3Motor extends Robot3Motor {
         }
         liftLimitPreValue = armPivot3Motor.getLiftLimitState();
 
-        //lift.setSetPoint(wantedX);
-        //lift.updateLiftPosition();
-
-       // lift.setLiftPower(-gamepad1.right_stick_y);
-
-        /*if (gamepad1.right_trigger > 0.05) {
-            lift.setLiftPower(gamepad1.right_trigger);
-            wantedX = lift.getLiftExtension();
-           // int liftLeftTicks = lift.liftLeft.getCurrentPosition();
-            //int liftRightTicks = lift.liftRight.getCurrentPosition();
-        }
-
-        else if (gamepad1.left_trigger > 0.05 && !armPivot.liftLimitSwitch.getState()) {
-            lift.setLiftPower(-gamepad1.left_trigger);
-            wantedX = lift.getLiftExtension();
-        }*/
-
-        //if (Math.abs(gamepad2.right_stick_y)>0.05){
-           // lift.setLiftPower(gamepad2.right_stick_y);
-       // }
 
         System.out.println("Lift Encoders: " + lift3Motor.getLiftExtension());
         System.out.println("Lift Encoders RAW: " + lift3Motor.liftRight.getCurrentPosition());
@@ -247,95 +220,70 @@ public class ATeleop3Motor extends Robot3Motor {
         // Basket Delivery State Machines
         if (ButtonPress.isGamepad2_y_pressed()) {
             System.out.println("gp2 Y Triangle is Pressed");
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
 
         } else if (ButtonPress.isGamepad2_x_pressed()) {
             System.out.println("gp2 X/ square is Pressed");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_LEVEL_1.ordinal());
 
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
             System.out.println("gp2 A/X is Pressed");
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
             //liftRestingStartTime = System.currentTimeMillis();
 
         } else if (ButtonPress.isGamepad2_b_pressed()) {
             //scoringState = ScoringStates.PICKUP;
             System.out.println("gp2 B/O is Pressed");
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_FRONT_PREP.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_FRONT_PREP.ordinal());
 
         } else if (gamepad2.right_trigger > 0.05 && armPivot3Motor.getArmAngle()>30&& !gamepad2TriggerPreVal) { //this is in
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_FRONT_CHAMBER.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_FRONT_CHAMBER.ordinal());
 
         }else if (ButtonPress.isGamepad2_dpad_left_pressed()) { //// Specimens pick up and dro
             System.out.println("gp2 Dpad left");
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
 
         } else if (ButtonPress.isGamepad2_dpad_right_pressed()) {
             System.out.println("gp2 Dpad right");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
 
         } else if (ButtonPress.isGamepad2_left_bumper_pressed()) {
             System.out.println("gp2 Dpad left bumper");
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
 
         } else if (ButtonPress.isGamepad2_right_bumper_pressed()) {
             System.out.println("gp2 Dpad right bumper");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal());
         }
 
 
 
-
-//        if (ButtonPress.isGamepad1_a_pressed()) {
-//            //superstructure.liftWantedHeight = 16;
-//            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
-//        }
-
-//        if (ButtonPress.isGamepad1_b_pressed()) {
-//            superstructure.liftWantedHeight = 0;
-//            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_1.ordinal());
-//        }
-
         if (ButtonPress.isGamepad1_a_pressed() && !Superstructure3Motor.disableTelopGamepad1A) {
             hangButton++;
             if (hangButton == 1) {
-                superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_1_PREP.ordinal());
             } else if (hangButton == 2) {
-                superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_1.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_1.ordinal());
             } else if (hangButton == 3) {
-                superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_2_PREP.ordinal());
             } else if (hangButton == 4) {
-                superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_2.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.HANG_BAR_2.ordinal());
             }
         }
 
         telemetry.addData("Lift Limit Switch", armPivot3Motor.getLiftLimitState());
 
 
-//        if (ButtonPress.isGamepad2_dpad_up_pressed()) {
-//            superstructure.liftWantedHeight += 0.5;
-//        } else if (ButtonPress.isGamepad2_dpad_down_pressed()) {
-//            superstructure.liftWantedHeight -= 0.5;
-//        }
-//        if(Math.abs(gamepad2.right_stick_y) > 0.05 && lift.getLiftExtension() >= -.02
-//                && lift.getLiftExtension() < Constants.LIFT_MAX_HORIZONTAL_POSITION_IN)
-//        {
-//            lift.setLiftPower(-gamepad2.right_stick_y);
-//            superstructure.liftWantedHeight = lift.getLiftExtension();
-//        }
 
         if (ButtonPress.isGamepad1_y_pressed()) {
 
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.HOLD_EVERYTHING.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.HOLD_EVERYTHING.ordinal());
         }
-//        if (ButtonPress.isGamepad1_x_pressed()) {
-//
-//            superstructure.nextState(Superstructure.SuperstructureStates.HANG_BAR_2.ordinal());
-//        }
+
 
         if(gamepad2.right_trigger > 0.05){
             gamepad2TriggerPreVal = true;
@@ -344,75 +292,20 @@ public class ATeleop3Motor extends Robot3Motor {
         }
 
 
-
-        /*
-
-        }else if (scoringState == ScoringStates.PICKUP) {
-            lift.setLiftPower(-gamepad2.right_stick_y);
-
-            if (lift.getLiftExtension()>6){
-                armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-            }
-        }
-
-        if (ButtonPress.isGamepad1_a_pressed()) {
-            wePressed = true;
-            intakeTiltState += 1;
-        }*/
-
-
-
-        /*if (ButtonPress.isGamepad1_a_pressed() && lift.getLiftExtension() > 4.33) {
-            if (intakeToggle) {
-                intakeToggle = false;
-            } else {
-                armPivot.setIntakeTiltAngle(60);
-                intakeToggle = true;
-            }
-        }*/
-
-        /*if (!intakeToggle && lift.getLiftExtension()>4.33){
-            armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
-        }*/
-
-        /*if( gamepad1.right_bumper){
-            armPivot.vexIntake.setPower(-.91);
-        }
-        */
-
         if(ButtonPress.isGamepad1_left_bumper_pressed()){
-            superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
         }
 
 
         if (gamepad1.guide && !intakeUnJamPreValue) {
-            if (!superstructure3Motor.intakeUnJam) {
-                superstructure3Motor.nextState(Superstructure3Motor.SuperstructureStates.UNJAM_INTAKE.ordinal());
+            if (!superstructure.intakeUnJam) {
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.UNJAM_INTAKE.ordinal());
             }
         }
         intakeUnJamPreValue = gamepad1.guide;
 
-        /*
-        if (gamepad1.y) {
-            armPivot.twist.setPosition(0.772);
-        }*/
-/*
-        if (gamepad1.x){
-            armPivot.setIntakeTiltAngle(0);
-        }
 
-        if (gamepad1.b){
-            armPivot.intakeTilt.setPosition(.118);
-        }
 
-*/
-//        if (gamepad1.dpad_right){
-//            armPivot.intakeJawServo.setPosition(.112);
-//        }
-//        if (gamepad1.dpad_left){
-//            armPivot.intakeJawServo.setPosition(.72);
-//        }
-
-        superstructure3Motor.update(telemetry, gamepad1, gamepad2);
+        superstructure.update(telemetry, gamepad1, gamepad2);
     }
 }

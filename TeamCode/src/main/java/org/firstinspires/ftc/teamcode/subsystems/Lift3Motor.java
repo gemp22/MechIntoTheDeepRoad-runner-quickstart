@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Constants3Motor;
 import org.firstinspires.ftc.teamcode.PController;
 import org.firstinspires.ftc.teamcode.PIDController;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Robot3Motor;
 
 public class Lift3Motor {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx liftLeft;
@@ -50,7 +50,7 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
         //pixelLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        if(Robot.resetEncoders) {
+        if(Robot3Motor.resetEncoders) {
             liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -61,7 +61,7 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setPower(0);
 
-        if(Robot.resetEncoders) {
+        if(Robot3Motor.resetEncoders) {
             liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -72,7 +72,7 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
         upperLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         upperLift.setPower(0);
 
-        if(Robot.resetEncoders) {
+        if(Robot3Motor.resetEncoders) {
             upperLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

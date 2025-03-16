@@ -16,11 +16,11 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.Constants3Motor;
 import org.firstinspires.ftc.teamcode.Movement;
 import org.firstinspires.ftc.teamcode.PController;
 import org.firstinspires.ftc.teamcode.PIDController;
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Robot3Motor;
 
 import java.util.HashMap;
 
@@ -61,6 +61,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         armOffset = -8;
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
+        intakeTilt.setDirection(Servo.Direction.REVERSE);
         //intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
 
         armPivot = hardwareMap.get(DcMotorEx.class, "pivot");
@@ -79,16 +80,15 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armPivot.setPower(0);
 
-        if(Robot.resetEncoders) {
+        if(Robot3Motor.resetEncoders) {
             armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-
-        servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants.TILT_SERVO_PARALLEL_WITH_FLOOR));
-        servoMap.put("Twist Servo", new Pair<>(twist, Constants.TWIST_SERVO_HORIZONTAL_POSITION));
-        servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants.JAW_SERVO_INTAKE_POSITION));
+        servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR));
+        servoMap.put("Twist Servo", new Pair<>(twist, Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION));
+        servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants3Motor.JAW_SERVO_INTAKE_POSITION));
     }
 
     public void InitArmPivotPController(){
@@ -117,17 +117,17 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
     }
     public void setIntakeTiltAngle(double angle){
-        double intakeTilt0Deg = Constants.TILT_SERVO_PARALLEL_WITH_FLOOR;
-        double intakeTilt90Deg = Constants.TILT_SERVO_90_DEGREES_UP;
+        double intakeTilt0Deg = Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR;
+        double intakeTilt90Deg = Constants3Motor.TILT_SERVO_90_DEGREES_UP;
         //double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
         double output = intakeTilt90Deg+((angle-90)*(intakeTilt0Deg-intakeTilt90Deg)/(0-90));
 
-        intakeTilt.setPosition(Range.clip(output, intakeTilt90Deg, Constants.TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION));
+        intakeTilt.setPosition(Range.clip(output, intakeTilt90Deg, Constants3Motor.TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION));
     }
 
     public double getIntakeTiltAngle (){
-        double intakeTilt0Deg = Constants.TILT_SERVO_PARALLEL_WITH_FLOOR;
-        double intakeTilt90Deg = Constants.TILT_SERVO_90_DEGREES_UP;
+        double intakeTilt0Deg = Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR;
+        double intakeTilt90Deg = Constants3Motor.TILT_SERVO_90_DEGREES_UP;
 
         //return ((intakeTilt.getPosition() - intakeTilt0Deg) / ((intakeTilt90Deg - intakeTilt0Deg) / 90));
 
@@ -378,9 +378,9 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     public double intakeTiltNoArmPower(double liftExtension) {
 
         //linear interpolation to return tilt angle for sample collection off the floor
-        double intakeTiltAngle = Constants.TILT_INTAKE_ANGLE_CLOSE_TO_BOT+
-                (liftExtension-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT)* (Constants.TILT_INTAKE_ANGLE_FAR_FROM_BOT-Constants.TILT_INTAKE_ANGLE_CLOSE_TO_BOT)/
-                (Constants.LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT-Constants.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT);
+        double intakeTiltAngle = Constants3Motor.TILT_INTAKE_ANGLE_CLOSE_TO_BOT+
+                (liftExtension-Constants3Motor.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT)* (Constants3Motor.TILT_INTAKE_ANGLE_FAR_FROM_BOT-Constants3Motor.TILT_INTAKE_ANGLE_CLOSE_TO_BOT)/
+                (Constants3Motor.LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT-Constants3Motor.LIFT_EXTENSION_FOR_COLLECTION_CLOSE_TO_BOT);
 //intakeTilt90Deg+((angle-90)*(intakeTilt0Deg-intakeTilt90Deg)/(0-90));
         return intakeTiltAngle;
     }

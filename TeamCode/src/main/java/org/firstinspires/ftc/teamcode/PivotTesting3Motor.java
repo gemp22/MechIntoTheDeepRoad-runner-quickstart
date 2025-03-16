@@ -158,7 +158,7 @@ public class PivotTesting3Motor extends Robot
         }
         else {    //uses proportional controller to hold lift in correct spot
 //                 armPivot3Motor.setArmPivotPower(0);
-            //armPivot3Motor.updatePControlArmPivotPosition();
+            armPivot3Motor.updatePControlArmPivotPosition();
         }
 
         if (gamepad1.dpad_right) {   ///move lift up and sets controller position
@@ -182,7 +182,7 @@ public class PivotTesting3Motor extends Robot
 
         }
         else {
-            //lift3Motor.updateLiftPosition();
+            lift3Motor.updateLiftPosition();
 //            lift3Motor.liftLeft.setPower(0);
 //            lift3Motor.liftRight.setPower(0);
 //            lift3Motor.upperLift.setPower(0);
