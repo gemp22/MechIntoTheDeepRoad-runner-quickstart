@@ -387,12 +387,13 @@ public class Superstructure3Motor {
                 initializeStateVariables();
             }
             System.out.println("HANG_BAR_1PREP DEBUG Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG_BAR_1PREP DEBUG lift height: " + lift.getLiftExtension());
 
             lift.setSetPoint(liftWantedHeight);
             lift.updateLiftPosition();
             armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
             armPivot.setIntakeTiltAngle(90);
-            armPivot.update(55, 0.75, 30, 0.2, telemetry);
+            armPivot.update(53, 0.87, 12, 0.48, telemetry);
         }
 
         if (currentState == SuperstructureStates.HANG_BAR_1.ordinal()) {
@@ -404,23 +405,26 @@ public class Superstructure3Motor {
             System.out.println("HANG DEBUG BAR 1 Lift In State: " + (lift.getLiftExtension() < 5));
             System.out.println("HANG DEBUG BAR 1 Lift Height: " + lift.getLiftExtension());
             System.out.println("HANG DEBUG BAR 1 Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG DEBUG BAR 1 Arm power: " + armPivot.armPivot.getPower());
+            System.out.println("HANG DEBUG BAR 1 Lift Power: " + lift.liftLeft.getPower());
 
             if (lift.getLiftExtension() < 2.4 && armPivot.getArmAngle() < 5) {
                 lift.setLiftPower(0);
                 armPivot.setArmPivotPower(0);
                 nextState(SuperstructureStates.HANG_BAR_1_RESTING.ordinal());
             } else {
-                if (lift.getLiftExtension() > 2) {
+                if (lift.getLiftExtension() > 2 && armPivot.getArmAngle()<-1) {
                     lift.setLiftPower(-1);
-                } else {
-                    lift.setLiftPower(-0.5);
+                }
+                else {
+                    lift.setLiftPower(-0.25);
                 }
 //                lift.setSetPoint(liftWantedHeight);
 //                lift.updateLiftPosition();
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                 armPivot.setIntakeTiltAngle(90);
 
-                if (armPivot.getArmAngle() > 0) {
+                if (armPivot.getArmAngle() > -5) {
                     armPivot.setArmPivotPower(-1);
                 } else {
                     armPivot.setArmPivotPower(-0.5);
@@ -789,7 +793,7 @@ public class Superstructure3Motor {
             }
 
             //lift.updateLiftPosition();
-            armPivot.update(targetPivotAngle, 0.8, 30, 0.15, telemetry);
+            armPivot.update(targetPivotAngle, 0.8, 30, 0.25, telemetry);
         }
 
         if (currentState == SuperstructureStates.SPECIMEN_HANG_CHAMBER.ordinal()) {

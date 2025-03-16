@@ -261,7 +261,7 @@ public class ATeleop3Motor extends Robot3Motor {
         }
 
 
-
+        //a/x button
         if (ButtonPress.isGamepad1_a_pressed() && !Superstructure3Motor.disableTelopGamepad1A) {
             hangButton++;
             if (hangButton == 1) {

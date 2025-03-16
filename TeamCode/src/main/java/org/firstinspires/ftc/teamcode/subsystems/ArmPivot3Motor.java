@@ -145,7 +145,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
         armPivotPosition =armPivot.getCurrentPosition();
 
-        double armAngle = (armPivotPosition / 10.390208333) + armOffset; // degrees
+        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffset; // degrees
 
         angularVelocity = AngleWrap(Math.toRadians(armAngle)-lastAngle) / elapsedTime;
 
@@ -183,7 +183,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         armPivotPosition = armPivot.getCurrentPosition();
 
 
-        double armAngle = (armPivotPosition / 10.390208333) + armOffset;
+        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffset;
 
         // Calculate angular velocity
         angularVelocity = AngleWrap(Math.toRadians(armAngle) - lastAngle) / elapsedTime;
@@ -233,7 +233,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         // Calculate the current arm angle based on encoder positions
         armPivotPosition = armPivot.getCurrentPosition();
 
-        double armAngle = (armPivotPosition / 10.390208333) - 8;
+        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) - 8;
 
         // Calculate angular velocity
         angularVelocity = (AngleWrap(Math.toRadians(armAngle) - lastAngle)) / elapsedTime;
@@ -335,7 +335,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     public void updateArmPivotPositionPIDwMotionProf() {
         armPivotPosition =armPivot.getCurrentPosition();
 
-        double pidThreshold = 2*10.3920833; //2 degrees * 10.3920133 tick/deg = ticks see Excel calcs
+        double pidThreshold = 2* Constants3Motor.ARM_PIVOT_TICKS_PER_DEG; //2 degrees * 10.3920133 tick/deg = ticks see Excel calcs
         double decelSlope = 4;
         double setPoint = pidControllerArmPivot.setPoint;
         int position = armPivotPosition;

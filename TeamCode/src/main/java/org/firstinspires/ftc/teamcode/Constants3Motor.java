@@ -38,7 +38,7 @@ public class Constants3Motor {
     public static final double LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT = 11.75;
     public static final double MAX_ARM_PIVOT_MOTOR_POWER= 0.75;
     public static final double MIN_ARM_PIVOT_MOTOR_POWER= 0.75;
-    public static final double ARM_PIVOT_TICKS_PER_DEG = 48;
+    public static final double ARM_PIVOT_TICKS_PER_DEG = 19.5;
     public static final double ARM_PIVOT_MAX_HORIZONTAL_POSITION_DEG = 48;
     public static final double ARM_PIVOT_HIGH_BASKET_POSITION_DEG = 48;
     public static final double ARM_PIVOT_BASKET_POSITION_DEG= 48;
