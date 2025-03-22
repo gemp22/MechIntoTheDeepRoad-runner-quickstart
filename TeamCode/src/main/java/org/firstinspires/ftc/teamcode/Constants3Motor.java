@@ -2,19 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 public class Constants3Motor {
     public static final double JAW_SERVO_DROP_POSITION = 0.605; //.33
-    public static final double JAW_SERVO_GRAB_POSITION = 0.805; //.85
+    public static final double JAW_SERVO_GRAB_POSITION = 0.85; //.85
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = 1;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = 0.0;
     public static final double JAW_SERVO_WALL_COLLECTION = .55;
     public static final double JAW_SERVO_WALL_GRAB_PREP = .65;
-    public static final double JAW_SERVO_INTAKE_POSITION = 0.63;
+    public static final double JAW_SERVO_INTAKE_POSITION = 0.7;
     public static final double TILT_SERVO_90_DEGREES_UP = .155;
     public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.4;
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.49;
     public static final double TILT_SERVO_BASKET_DELIVERY = 0.846;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.445;
-    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -45; //-53
-    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -10; //-15
+    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -40; //-53
+    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -15; //-15
     public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
     public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.42;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.504;

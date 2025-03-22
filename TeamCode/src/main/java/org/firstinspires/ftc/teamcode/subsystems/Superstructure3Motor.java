@@ -52,6 +52,9 @@ public class Superstructure3Motor {
 
     private double hangPivotAngleBarTwoAttachAdjustment = 0;
 
+    double pivotAngleWhenAtHardstop = 0;
+    boolean pivotAtHardstop = false;
+
     private int hangCounter = 0;
     public enum SuperstructureStates {
         //basket delivery////
@@ -393,7 +396,7 @@ public class Superstructure3Motor {
             lift.updateLiftPosition();
             armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
             armPivot.setIntakeTiltAngle(90);
-            armPivot.update(53, 0.87, 12, 0.48, telemetry);
+            armPivot.update(53, 0.8, 10, 0.45, telemetry);
         }
 
         if (currentState == SuperstructureStates.HANG_BAR_1.ordinal()) {
@@ -408,12 +411,12 @@ public class Superstructure3Motor {
             System.out.println("HANG DEBUG BAR 1 Arm power: " + armPivot.armPivot.getPower());
             System.out.println("HANG DEBUG BAR 1 Lift Power: " + lift.liftLeft.getPower());
 
-            if (lift.getLiftExtension() < 2.4 && armPivot.getArmAngle() < 5) {
+            if (lift.getLiftExtension() < 2.4 && armPivot.getArmAngle() < 0) {
                 lift.setLiftPower(0);
                 armPivot.setArmPivotPower(0);
                 nextState(SuperstructureStates.HANG_BAR_1_RESTING.ordinal());
             } else {
-                if (lift.getLiftExtension() > 2 && armPivot.getArmAngle()<-1) {
+                if (lift.getLiftExtension() > 2 && armPivot.getArmAngle()<-5) {
                     lift.setLiftPower(-1);
                 }
                 else {
@@ -424,7 +427,7 @@ public class Superstructure3Motor {
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                 armPivot.setIntakeTiltAngle(90);
 
-                if (armPivot.getArmAngle() > -5) {
+                if (armPivot.getArmAngle() > -9) {
                     armPivot.setArmPivotPower(-1);
                 } else {
                     armPivot.setArmPivotPower(-0.5);
@@ -441,11 +444,11 @@ public class Superstructure3Motor {
 
         if (currentState == SuperstructureStates.HANG_BAR_2_PREP.ordinal()) {
             if (stateFinished) {
-                lastPitchAngle =  robot.drive.lazyImu.get().getRobotYawPitchRollAngles().getPitch();
+                //lastPitchAngle =  robot.drive.lazyImu.get().getRobotYawPitchRollAngles().getPitch();
                 liftIsReadyToAttachToBar2 = false;
                 liftIsReadyForBar2Pivot = false;
                 okToExtendLiftToBar2 = false;
-                hangPivotAngleToBarTwoPrep = 20.0;
+                hangPivotAngleToBarTwoPrep = 18.0;
                 disableTelopGamepad1A = true;
                 initializeStateVariables();
             }
@@ -457,6 +460,8 @@ public class Superstructure3Motor {
             System.out.println("HANG DEBUG BAR 2 PREP Lift In State: " + (lift.getLiftExtension() < 5));
             System.out.println("HANG DEBUG BAR 2 PREP Lift Height: " + lift.getLiftExtension());
             System.out.println("HANG DEBUG BAR 2 PREP Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG DEBUG BAR 2 PREP Arm power: " + armPivot.armPivot.getPower());
+            System.out.println("HANG DEBUG BAR 2 PREP Lift Power: " + lift.liftLeft.getPower());
 
 
             if (SystemClock.uptimeMillis() - stateStartTime > 750 && lift.getLiftExtension() > 7 && !liftIsReadyToAttachToBar2) {
@@ -475,7 +480,7 @@ public class Superstructure3Motor {
                 {
                     hangPivotAngleToBarTwoPrep -= 1;
                 }
-                if (armPivot.getArmAngle() > 18 && okToExtendLiftToBar2) {
+                if (armPivot.getArmAngle() > 13 && okToExtendLiftToBar2) {
                     lift.setSetPoint(21.5);
                     lift.updateLiftPosition();
                     armPivot.update(hangPivotAngleToBarTwoPrep, 0.4, 15, 0.3, telemetry); // target angle was 22
@@ -508,6 +513,14 @@ public class Superstructure3Motor {
             }
         }
         if (currentState == SuperstructureStates.HANG_BAR_TWO_PREP_RESTING.ordinal()) {
+
+            System.out.println("HANG DEBUG BAR 2 RESTING Limit Switch State: " + armPivot.getLiftLimitState());
+            System.out.println("HANG DEBUG BAR 2 RESTING Lift In State: " + (lift.getLiftExtension() < 5));
+            System.out.println("HANG DEBUG BAR 2 RESTING Lift Height: " + lift.getLiftExtension());
+            System.out.println("HANG DEBUG BAR 2 RESTING Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG DEBUG BAR 2 RESTING Arm power: " + armPivot.armPivot.getPower());
+            System.out.println("HANG DEBUG BAR 2 RESTING Lift Power: " + lift.liftLeft.getPower());
+
             if (stateFinished) {
                 hangPivotAngleBarTwoAttachAdjustment = 14;
                 initializeStateVariables();
@@ -528,9 +541,17 @@ public class Superstructure3Motor {
         if (currentState == SuperstructureStates.HANG_BAR_2.ordinal()) {
             if (stateFinished) {
                 liftSwitchPressedOnce = false;
+                pivotAtHardstop = false;
                 initializeStateVariables();
             }
 
+            System.out.println("HANG DEBUG BAR 2  Limit Switch State: " + armPivot.getLiftLimitState());
+            System.out.println("HANG DEBUG BAR 2  Lift In State: " + (lift.getLiftExtension() < 5));
+            System.out.println("HANG DEBUG BAR 2  Lift Height: " + lift.getLiftExtension());
+            System.out.println("HANG DEBUG BAR 2  Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG DEBUG BAR 2  Arm power: " + armPivot.armPivot.getPower());
+            System.out.println("HANG DEBUG BAR 2  Lift Power: " + lift.liftLeft.getPower());
+            System.out.println("HANG DEBUG BAR 2  Pivot Angle at hardstop: " + pivotAngleWhenAtHardstop);
 
 
             if (!armPivot.getLiftLimitState() && !liftSwitchPressedOnce) {
@@ -538,8 +559,13 @@ public class Superstructure3Motor {
                 armPivot.setArmPivotPower(0);
             }
 
-            if (armPivot.getLiftLimitState()) {
+            if (armPivot.getLiftLimitState() && !liftSwitchPressedOnce) {
                 liftSwitchPressedOnce = true;
+            }
+
+            if (lift.getLiftExtension()< 8 && !pivotAtHardstop) {  // this captures arm pivot angle at hardstop so we can be more accurate on last hang State
+                pivotAtHardstop = true;
+                pivotAngleWhenAtHardstop=armPivot.getArmAngle();
             }
 
             if (liftSwitchPressedOnce) {
@@ -560,9 +586,40 @@ public class Superstructure3Motor {
         if (currentState == SuperstructureStates.HANG_BAR_2_DONE_DONE_DONE.ordinal()) {
             if (stateFinished) {
                 initializeStateVariables();
+                liftSwitchPressedOnce = false;
+                lift.setSetPoint(2); // put lift out a bit to tip bot forward
+
+            }
+            System.out.println("HANG DEBUG BAR 2 DONE Limit Switch State: " + armPivot.getLiftLimitState());
+            System.out.println("HANG DEBUG BAR 2 DONE Lift In State: " + (lift.getLiftExtension() < 5));
+            System.out.println("HANG DEBUG BAR 2 DONE Lift Height: " + lift.getLiftExtension());
+            System.out.println("HANG DEBUG BAR 2 DONE Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG DEBUG BAR 2 DONE Arm power: " + armPivot.armPivot.getPower());
+            System.out.println("HANG DEBUG BAR 2 DONE Lift LEFT Power: " + lift.liftLeft.getPower());
+            System.out.println("HANG DEBUG BAR 2 DONE Lift RIGHT Power: " + lift.liftRight.getPower());
+            System.out.println("HANG DEBUG BAR 2 DONE Lift LEFT Power: " + lift.upperLift.getPower());
+
+            lift.updateLiftPosition();
+
+//            if(armPivot.getArmAngle() < -5)
+//            {
+//                lift.setSetPoint(0);
+//            }
+
+            if(Math.abs(armPivot.getArmAngle() - pivotAngleWhenAtHardstop) > 90) // this helps ensure that the pivot closes 90 deg from the hardstop in prev state
+            {
+                lift.setSetPoint(0);
             }
 
-            lift.setLiftPower(0);
+            if (armPivot.getLiftLimitState() && lift.getLiftExtension() < 2) {
+                liftSwitchPressedOnce = true;
+            }
+
+            if (liftSwitchPressedOnce) {
+
+                lift.setLiftPower(0);
+            }
+
             armPivot.setArmPivotPower(0);
         }
 
