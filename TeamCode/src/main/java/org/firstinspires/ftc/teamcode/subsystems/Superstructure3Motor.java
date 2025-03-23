@@ -54,6 +54,7 @@ public class Superstructure3Motor {
 
     double pivotAngleWhenAtHardstop = 0;
     boolean pivotAtHardstop = false;
+    boolean liftExtenedToTipBotForward = false;
 
     private int hangCounter = 0;
     public enum SuperstructureStates {
@@ -169,7 +170,6 @@ public class Superstructure3Motor {
                 if(lift.getLiftExtension()<6 || armPivot.getArmAngle()<60){
                     isLiftOrPivotSmall = true;
                 }
-
                 initializeStateVariables();
             }
 
@@ -186,7 +186,7 @@ public class Superstructure3Motor {
                     if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && (SystemClock.uptimeMillis() - taskStartTime) > 1500) { //gives time for twist before Pivot goes down
                         armPivot.setIntakeTiltAngle(90);
                         System.out.println("in bad if statement at " + (SystemClock.uptimeMillis() - taskStartTime));
-                        armPivot.update(-3, 0.3, 40, 0.05, telemetry);
+                        armPivot.update(-3, 0.5, 20, 0.05, telemetry);
                     }else if(armPivot.getArmAngle() < -3) {
                         //armPivot.setIntakeTiltAngle(90);
                         armPivot.armPivot.setPower(0);
@@ -195,9 +195,9 @@ public class Superstructure3Motor {
             }else if (lift.getLiftExtension() < 12 && !isLiftOrPivotSmall) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                 System.out.println("lift extension is less than 12 ");
-                if (lift.getLiftExtension() < 3 && armPivot.getArmAngle() > -3) {
+                if (lift.getLiftExtension() < 3 && armPivot.getArmAngle() > -5) {
                     armPivot.setIntakeTiltAngle(90);
-                    armPivot.update(-3, 0.3, 40, 0.05, telemetry);
+                    armPivot.update(-3, 0.5, 20, 0.05, telemetry);
                 }else {
                     armPivot.armPivot.setPower(0);
 
@@ -231,7 +231,7 @@ public class Superstructure3Motor {
                 } else {
                     armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
                     armPivot.vexIntake.setPower(0);
-                    armPivot.setIntakeTiltAngle(0);
+                    armPivot.setIntakeTiltAngle(45);
                     collectionMode = false;
                 }
             }
@@ -301,7 +301,7 @@ public class Superstructure3Motor {
             }
 
             armPivot.setIntakeTiltAngle(0);
-            armPivot.update2(94, 0.65, 30, 0.20, telemetry);
+            armPivot.update2(90, 0.99, 15, 0.6, telemetry);
             armPivot.setArmPivotSetPointTicks(armPivot.armPivot.getCurrentPosition());
 
 
@@ -351,7 +351,7 @@ public class Superstructure3Motor {
             }
 
                 armPivot.setIntakeTiltAngle(0);
-                armPivot.update2(94, 0.65, 30, 0.20, telemetry);
+                armPivot.update2(90, 0.99, 15, 0.6, telemetry);
                 armPivot.setArmPivotSetPointTicks(armPivot.armPivot.getCurrentPosition());
 
 
@@ -545,18 +545,19 @@ public class Superstructure3Motor {
                 initializeStateVariables();
             }
 
-            System.out.println("HANG DEBUG BAR 2  Limit Switch State: " + armPivot.getLiftLimitState());
-            System.out.println("HANG DEBUG BAR 2  Lift In State: " + (lift.getLiftExtension() < 5));
-            System.out.println("HANG DEBUG BAR 2  Lift Height: " + lift.getLiftExtension());
-            System.out.println("HANG DEBUG BAR 2  Arm Angle: " + armPivot.getArmAngle());
-            System.out.println("HANG DEBUG BAR 2  Arm power: " + armPivot.armPivot.getPower());
-            System.out.println("HANG DEBUG BAR 2  Lift Power: " + lift.liftLeft.getPower());
-            System.out.println("HANG DEBUG BAR 2  Pivot Angle at hardstop: " + pivotAngleWhenAtHardstop);
+            System.out.println("HANG DEBUG BAR2  Limit Switch State: " + armPivot.getLiftLimitState());
+            System.out.println("HANG DEBUG BAR2  Lift In State: " + (lift.getLiftExtension() < 5));
+            System.out.println("HANG DEBUG BAR2  Lift Height: " + lift.getLiftExtension());
+            System.out.println("HANG DEBUG BAR2  Arm Angle: " + armPivot.getArmAngle());
+            System.out.println("HANG DEBUG BAR2  Arm power: " + armPivot.armPivot.getPower());
+            System.out.println("HANG DEBUG BAR2  Lift Power: " + lift.liftLeft.getPower());
+            System.out.println("HANG DEBUG BAR2  Pivot Angle at hardstop: " + pivotAngleWhenAtHardstop);
+            System.out.println("HANG DEBUG BAR2  Pivot adjusted angle:  " + Math.abs(armPivot.getArmAngle() - pivotAngleWhenAtHardstop));
 
 
             if (!armPivot.getLiftLimitState() && !liftSwitchPressedOnce) {
                 lift.setLiftPower(-1);
-                armPivot.setArmPivotPower(0);
+                armPivot.setArmPivotPower(0); // keeps pivot at hardstop while pulling up
             }
 
             if (armPivot.getLiftLimitState() && !liftSwitchPressedOnce) {
@@ -572,7 +573,7 @@ public class Superstructure3Motor {
                 if (ButtonPress.isGamepad1_b_pressed()) {
                     nextState(SuperstructureStates.HANG_BAR_2_DONE_DONE_DONE.ordinal());
                 }
-                lift.setSetPoint(0);
+                lift.setSetPoint(0);  // this has to be 0 or wont go in hook
                 lift.updateLiftPosition();
                 armPivot.setArmPivotPower(-1);
 
@@ -587,7 +588,8 @@ public class Superstructure3Motor {
             if (stateFinished) {
                 initializeStateVariables();
                 liftSwitchPressedOnce = false;
-                lift.setSetPoint(2); // put lift out a bit to tip bot forward
+                liftExtenedToTipBotForward =false;
+
 
             }
             System.out.println("HANG DEBUG BAR 2 DONE Limit Switch State: " + armPivot.getLiftLimitState());
@@ -598,26 +600,35 @@ public class Superstructure3Motor {
             System.out.println("HANG DEBUG BAR 2 DONE Lift LEFT Power: " + lift.liftLeft.getPower());
             System.out.println("HANG DEBUG BAR 2 DONE Lift RIGHT Power: " + lift.liftRight.getPower());
             System.out.println("HANG DEBUG BAR 2 DONE Lift LEFT Power: " + lift.upperLift.getPower());
+            System.out.println("HANG DEBUG BAR 2 DONE Pivot adjusted angle:  " + Math.abs(armPivot.getArmAngle() - pivotAngleWhenAtHardstop));
 
-            lift.updateLiftPosition();
+
 
 //            if(armPivot.getArmAngle() < -5)
 //            {
 //                lift.setSetPoint(0);
 //            }
 
-            if(Math.abs(armPivot.getArmAngle() - pivotAngleWhenAtHardstop) > 90) // this helps ensure that the pivot closes 90 deg from the hardstop in prev state
+            if(Math.abs(armPivot.getArmAngle() - pivotAngleWhenAtHardstop) > 80 && !liftExtenedToTipBotForward) // this helps ensure that the pivot is closed 90 deg from the hardstop in prev state
             {
-                lift.setSetPoint(0);
+                liftExtenedToTipBotForward = true;
+                lift.setSetPoint(3); // put lift out a bit to tip bot forward and help pivot motor a bit
             }
 
-            if (armPivot.getLiftLimitState() && lift.getLiftExtension() < 2) {
+            if(lift.getLiftExtension() > 2.5 && liftExtenedToTipBotForward) // this helps ensure that the pivot is closed 90 deg from the hardstop in prev state
+            {
+//                liftExtenedToTipBotForward = true;
+                lift.setSetPoint(0); // put lift out a bit to tip bot forward and help pivot motor a bit
+            }
+
+            if (armPivot.getLiftLimitState() && lift.getLiftExtension() < 2 && liftExtenedToTipBotForward) {
                 liftSwitchPressedOnce = true;
             }
 
             if (liftSwitchPressedOnce) {
-
-                lift.setLiftPower(0);
+                lift.setLiftPower(0);  // turns of power to lift motors
+            } else {
+                lift.updateLiftPosition();
             }
 
             armPivot.setArmPivotPower(0);

@@ -62,7 +62,6 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
         intakeTilt.setDirection(Servo.Direction.REVERSE);
-        //intakeTilt.setPosition(Constants.TILT_SERVO_PARALLEL_WITH_FLOOR);
 
         armPivot = hardwareMap.get(DcMotorEx.class, "pivot");
 
