@@ -2,16 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 public class Constants3Motor {
     public static final double JAW_SERVO_DROP_POSITION = 0.605; //.33
-    public static final double JAW_SERVO_GRAB_POSITION = 0.85; //.85
-    public static final double JAW_SERVO_MAX_CLOSED_POSITION = 1;
-    public static final double JAW_SERVO_MAX_OPEN_POSITION = 0.8;
+    public static final double JAW_SERVO_GRAB_POSITION = 0.7; //.85
+    public static final double JAW_SERVO_MAX_CLOSED_POSITION = .81;
+    public static final double JAW_SERVO_MAX_OPEN_POSITION = 0.67;
     public static final double JAW_SERVO_WALL_COLLECTION = .55;
     public static final double JAW_SERVO_WALL_GRAB_PREP = .65;
-    public static final double JAW_SERVO_INTAKE_POSITION = 0.835;
+    public static final double JAW_SERVO_INTAKE_POSITION = 0.67;
     public static final double TILT_SERVO_90_DEGREES_UP = .08;
     public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.6;
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.75;
-    public static final double TILT_SERVO_BASKET_DELIVERY = 0.846;
+    public static final double TILT_SERVO_BASKET_DELIVERY = 0.1;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.7;
     public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -40; //-53
     public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -15; //-15

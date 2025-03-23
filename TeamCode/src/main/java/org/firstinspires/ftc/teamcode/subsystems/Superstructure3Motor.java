@@ -192,6 +192,7 @@ public class Superstructure3Motor {
                         armPivot.armPivot.setPower(0);
                     }
                 }
+
             }else if (lift.getLiftExtension() < 12 && !isLiftOrPivotSmall) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                 System.out.println("lift extension is less than 12 ");
@@ -202,6 +203,7 @@ public class Superstructure3Motor {
                     armPivot.armPivot.setPower(0);
 
                 }
+
             }else{
                 System.out.println("Angle we should be setting to: " + restingStateStartingAngle);
                 armPivot.update(restingStateStartingAngle,.75,20,0.10, telemetry);
@@ -287,9 +289,10 @@ public class Superstructure3Motor {
             }
 
 
-            if (armPivot.getArmAngle() > 73) {
+            if (armPivot.getArmAngle() > 70) { //was 73
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_BASKET_DEPOSIT_POSITION);
-                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR);
+                //armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR);
+                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_BASKET_DELIVERY);
                 lift.setSetPoint(liftWantedHeight);
                 lift.updateLiftPosition();
 
@@ -300,8 +303,8 @@ public class Superstructure3Motor {
                 }
             }
 
-            armPivot.setIntakeTiltAngle(0);
-            armPivot.update2(90, 0.99, 15, 0.6, telemetry);
+            //armPivot.setIntakeTiltAngle(0);
+            armPivot.update2(91, 1, 15, 0.7, telemetry);
             armPivot.setArmPivotSetPointTicks(armPivot.armPivot.getCurrentPosition());
 
 
@@ -339,7 +342,8 @@ public class Superstructure3Motor {
 
             if (armPivot.getArmAngle() > 73) {
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_BASKET_DEPOSIT_POSITION);
-                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR);
+                //armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR);
+                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_BASKET_DELIVERY);
                 lift.setSetPoint(liftWantedHeight);
                 lift.updateLiftPosition();
 
@@ -350,10 +354,9 @@ public class Superstructure3Motor {
                 }
             }
 
-                armPivot.setIntakeTiltAngle(0);
+                //armPivot.setIntakeTiltAngle(0);
                 armPivot.update2(90, 0.99, 15, 0.6, telemetry);
                 armPivot.setArmPivotSetPointTicks(armPivot.armPivot.getCurrentPosition());
-
 
         }
 
@@ -377,7 +380,6 @@ public class Superstructure3Motor {
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
                 armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_PARALLEL_WITH_PIVOT);
             }
-
 
         }
 
@@ -590,7 +592,6 @@ public class Superstructure3Motor {
                 liftSwitchPressedOnce = false;
                 liftExtenedToTipBotForward =false;
 
-
             }
             System.out.println("HANG DEBUG BAR 2 DONE Limit Switch State: " + armPivot.getLiftLimitState());
             System.out.println("HANG DEBUG BAR 2 DONE Lift In State: " + (lift.getLiftExtension() < 5));
@@ -601,7 +602,6 @@ public class Superstructure3Motor {
             System.out.println("HANG DEBUG BAR 2 DONE Lift RIGHT Power: " + lift.liftRight.getPower());
             System.out.println("HANG DEBUG BAR 2 DONE Lift LEFT Power: " + lift.upperLift.getPower());
             System.out.println("HANG DEBUG BAR 2 DONE Pivot adjusted angle:  " + Math.abs(armPivot.getArmAngle() - pivotAngleWhenAtHardstop));
-
 
 
 //            if(armPivot.getArmAngle() < -5)
@@ -668,6 +668,7 @@ public class Superstructure3Motor {
                     }
                 }
             } else {
+
                 /*if (hangCounter % 3 == 0) {
                     lift.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                     lift.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
