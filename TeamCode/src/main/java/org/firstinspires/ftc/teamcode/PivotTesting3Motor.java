@@ -144,14 +144,14 @@ public class PivotTesting3Motor extends Robot
         //manual pivot controller
         if (gamepad1.dpad_down) {   ///move lift up and sets controller position
 
-            armPivot3Motor.setArmPivotPower(.98);
+//            armPivot3Motor.setArmPivotPower(.98);
 
             armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
 
         }
         else if (gamepad1.dpad_up) {  //move lift down and sets controller position
 
-            armPivot3Motor.setArmPivotPower(-.98);
+//            armPivot3Motor.setArmPivotPower(-.98);
 
             armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
 

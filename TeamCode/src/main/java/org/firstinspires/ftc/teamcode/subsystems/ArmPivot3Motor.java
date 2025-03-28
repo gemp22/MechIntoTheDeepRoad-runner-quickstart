@@ -55,10 +55,10 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     private long lastUpdateStartTime = 0;
 
     public static double turnSlipAmountFor1RPS = 0.05;
-    public static double armOffset = 0.0;
+    public static double armOffsetAtRest = -3;
 
     public ArmPivot3Motor(HardwareMap hardwareMap, HashMap<String, Pair<Servo, Double>> servoMap) {
-        armOffset = -8;
+
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
         intakeTilt.setDirection(Servo.Direction.REVERSE);
@@ -66,7 +66,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         armPivot = hardwareMap.get(DcMotorEx.class, "pivot");
 
         intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
-        intakeJawServo.setDirection(Servo.Direction.REVERSE);
+        //intakeJawServo.setDirection(Servo.Direction.REVERSE);
         //intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
 
         twist = hardwareMap.get(ServoImplEx.class, "twist");
@@ -144,7 +144,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
         armPivotPosition =armPivot.getCurrentPosition();
 
-        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffset; // degrees
+        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // degrees
 
         angularVelocity = AngleWrap(Math.toRadians(armAngle)-lastAngle) / elapsedTime;
 
@@ -182,7 +182,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         armPivotPosition = armPivot.getCurrentPosition();
 
 
-        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffset;
+        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest;
 
         // Calculate angular velocity
         angularVelocity = AngleWrap(Math.toRadians(armAngle) - lastAngle) / elapsedTime;
@@ -292,7 +292,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     public double getArmAngle() {
         armPivotPosition =armPivot.getCurrentPosition();
 
-        return (armPivotPosition / 17.6326) - 8;
+        return (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) - armOffsetAtRest;
     }
     public double getRadPerSecond() {
         return angularVelocity;
