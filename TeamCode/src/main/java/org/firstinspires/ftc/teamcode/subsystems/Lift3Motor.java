@@ -13,13 +13,13 @@ import org.firstinspires.ftc.teamcode.Robot3Motor;
 public class Lift3Motor {  //this is a subsystem Class used in Auto. its based on example for RR actions.
     public DcMotorEx liftLeft;
     public DcMotorEx liftRight;
-    public DcMotorEx upperLift;
+    //public DcMotorEx upperLift;
     public int liftLeftPosition = 0;
     public int liftRightPosition = 0;
     public int upperLiftPosition = 0;
     private final double liftLeftMaxTicks = 2370;
     private final double liftRightMaxTicks = 2370;
-    private final double upperLiftMaxTicks = 2370;
+    //private final double upperLiftMaxTicks = 2370;
     // for lift pController input
     public final double minPowerLiftLeft = .001;
     public final double minPowerLiftRight = .001;
@@ -37,14 +37,14 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
 
     public PController pControllerLiftLeft = new PController(0.005);
     public PController pControllerLiftRight = new PController(0.005);
-    public PController pControllerUpperLift = new PController(0.005);
+    //public PController pControllerUpperLift = new PController(0.005);
     public PIDController pidControllerLiftLeft = new PIDController(0.005,.00007,0);
     public PIDController pidControllerLiftRight = new PIDController(0.005,0.00007,0);
-    public PIDController pidControllerUpperLift = new PIDController(0.005,0.00007,0);
+    //public PIDController pidControllerUpperLift = new PIDController(0.005,0.00007,0);
 
     public Lift3Motor(HardwareMap hardwareMap) {
         liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
-        liftLeft.setDirection(DcMotor.Direction.FORWARD);
+        liftLeft.setDirection(DcMotor.Direction.REVERSE);
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftLeft.setPower(0);
         //pixelLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // to reset at initiation
@@ -57,7 +57,7 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
         }
 
         liftRight = hardwareMap.get(DcMotorEx.class, "liftRight");
-        liftRight.setDirection(DcMotor.Direction.REVERSE);
+        liftRight.setDirection(DcMotor.Direction.FORWARD);
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftRight.setPower(0);
 
@@ -67,16 +67,16 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
             liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        upperLift = hardwareMap.get(DcMotorEx.class, "upperLift");
-        upperLift.setDirection(DcMotor.Direction.FORWARD);
-        upperLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        upperLift.setPower(0);
-
-        if(Robot3Motor.resetEncoders) {
-            upperLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
+//        upperLift = hardwareMap.get(DcMotorEx.class, "upperLift");
+//        upperLift.setDirection(DcMotor.Direction.FORWARD);
+//        upperLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        upperLift.setPower(0);
+//
+//        if(Robot3Motor.resetEncoders) {
+//            upperLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        }
     }
     public void initLiftPController(){
 
@@ -90,10 +90,10 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
         pControllerLiftRight.setOutputRange(minPowerLiftRight, maxPowerLiftRight);
         pControllerLiftRight.setThresholdValue(5);
 
-        pControllerUpperLift.setInputRange(0, upperLiftMaxTicks);
-        pControllerUpperLift.setSetPoint(0);
-        pControllerUpperLift.setOutputRange(minPowerUpperLift, maxPowerUpperLift);
-        pControllerUpperLift.setThresholdValue(5);
+//        pControllerUpperLift.setInputRange(0, upperLiftMaxTicks);
+//        pControllerUpperLift.setSetPoint(0);
+//        pControllerUpperLift.setOutputRange(minPowerUpperLift, maxPowerUpperLift);
+//        pControllerUpperLift.setThresholdValue(5);
         //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // this is for lift left, change Kp to calibrate
     }
@@ -109,10 +109,10 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
         pidControllerLiftRight.setOutputRangePID(minPowerLiftRight, maxPowerLiftRight);
         pidControllerLiftRight.setThresholdValuePID(5);
 
-        pidControllerUpperLift.setInputRangePID(0, upperLiftMaxTicks);
-        pidControllerUpperLift.setSetPointPID(0);
-        pidControllerUpperLift.setOutputRangePID(minPowerUpperLift, maxPowerUpperLift);
-        pidControllerUpperLift.setThresholdValuePID(5);
+//        pidControllerUpperLift.setInputRangePID(0, upperLiftMaxTicks);
+//        pidControllerUpperLift.setSetPointPID(0);
+//        pidControllerUpperLift.setOutputRangePID(minPowerUpperLift, maxPowerUpperLift);
+//        pidControllerUpperLift.setThresholdValuePID(5);
         //armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // this is for lift left, change Kp to calibrate
     }
@@ -120,37 +120,42 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
     public void setLiftPosition() {
         liftLeftPosition=liftLeft.getCurrentPosition();
         liftRightPosition= liftRight.getCurrentPosition();
-        upperLiftPosition = upperLift.getCurrentPosition();
+        //upperLiftPosition = upperLift.getCurrentPosition();
 
     }
 
     public void setLiftPower(double liftPower) {
         liftLeft.setPower(liftPower);
         liftRight.setPower(liftPower);
-        upperLift.setPower(liftPower);
+        //upperLift.setPower(liftPower);
 
     }
 
     public double getLiftExtension() {
         liftLeftPosition = liftLeft.getCurrentPosition();
         liftRightPosition= liftRight.getCurrentPosition();
-        upperLiftPosition = liftRight.getCurrentPosition();
+        //upperLiftPosition = liftRight.getCurrentPosition();
 
-        double averageLiftPosition = (liftLeftPosition + liftRightPosition + upperLiftPosition)/3.0;
+        //double averageLiftPosition = (liftLeftPosition + liftRightPosition + upperLiftPosition)/3.0;
+        double averageLiftPosition = (liftLeftPosition+liftRightPosition)/2.0;
 
-       return (averageLiftPosition / (127)); //in inches
+       //return (averageLiftPosition / (127)); //in inches for 3 motor
+        return (averageLiftPosition / (177.333 )); //in inches for 2 motor
     }
 
     public void setSetPoint(double in) {
-        pControllerLiftLeft.setSetPoint(in * (127));
-        pControllerLiftRight.setSetPoint(in * (127));
-        pControllerUpperLift.setSetPoint(in * (127));
+//        pControllerLiftLeft.setSetPoint(in * (127));
+//        pControllerLiftRight.setSetPoint(in * (127));
+        //pControllerUpperLift.setSetPoint(in * (127));
+
+        pControllerLiftLeft.setSetPoint(in * (177.333 ));
+        pControllerLiftRight.setSetPoint(in * (177.333 ));
     }
 
     public void updateLiftPosition() {
         liftLeftPosition = liftLeft.getCurrentPosition();
         liftRightPosition = liftRight.getCurrentPosition();
-        upperLiftPosition = upperLift.getCurrentPosition();
+        //upperLiftPosition = upperLift.getCurrentPosition();
 
         if (liftLeftPosition < pControllerLiftLeft.setPoint) {
 
@@ -170,19 +175,19 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
                     pControllerLiftRight.getComputedOutput(liftRightPosition));
         }
 
-        if (upperLiftPosition < pControllerUpperLift.setPoint) {
-
-            upperLift.setPower(minPowerUpperLift +
-                    pControllerUpperLift.getComputedOutput(upperLiftPosition));
-        } else {
-            upperLift.setPower(minPowerUpperLift -
-                    pControllerUpperLift.getComputedOutput(upperLiftPosition));
-        }
+//        if (upperLiftPosition < pControllerUpperLift.setPoint) {
+//
+//            upperLift.setPower(minPowerUpperLift +
+//                    pControllerUpperLift.getComputedOutput(upperLiftPosition));
+//        } else {
+//            upperLift.setPower(minPowerUpperLift -
+//                    pControllerUpperLift.getComputedOutput(upperLiftPosition));
+//        }
     }
     public void updateLiftPositionPID() {
         liftLeftPosition=liftLeft.getCurrentPosition();
         liftRightPosition= liftRight.getCurrentPosition();
-        upperLiftPosition = upperLift.getCurrentPosition();
+        //upperLiftPosition = upperLift.getCurrentPosition();
 
         if (liftLeftPosition < pidControllerLiftLeft.setPoint) {
 
@@ -203,14 +208,14 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
                     pidControllerLiftRight.getComputedOutputPID(liftRightPosition));
         }
 
-        if (upperLiftPosition < pControllerUpperLift.setPoint) {
-
-            upperLift.setPower(minPowerUpperLift +
-                    pidControllerUpperLift.getComputedOutputPID(upperLiftPosition));
-        } else {
-            upperLift.setPower(minPowerUpperLift -
-                    pidControllerUpperLift.getComputedOutputPID(upperLiftPosition));
-        }
+//        if (upperLiftPosition < pControllerUpperLift.setPoint) {
+//
+//            upperLift.setPower(minPowerUpperLift +
+//                    pidControllerUpperLift.getComputedOutputPID(upperLiftPosition));
+//        } else {
+//            upperLift.setPower(minPowerUpperLift -
+//                    pidControllerUpperLift.getComputedOutputPID(upperLiftPosition));
+//        }
     }
 
     public void setLiftVelocityFromPivotVelocity(double pivotVelocity)
@@ -219,16 +224,16 @@ public class Lift3Motor {  //this is a subsystem Class used in Auto. its based o
 
         liftRight.setVelocity(velocity);
         liftLeft.setVelocity(velocity);
-        upperLift.setVelocity(velocity);
+        //upperLift.setVelocity(velocity);
     }
 
     public void resetLiftEncoders(){
         liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 

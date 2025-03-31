@@ -25,7 +25,10 @@ import org.firstinspires.ftc.teamcode.Robot3Motor;
 import java.util.HashMap;
 
 public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its based on example for RR actions.
-    public DcMotorEx armPivot;
+    //public DcMotorEx armPivot;
+
+    public DcMotorEx armPivotLeft;
+    public DcMotorEx armPivotRight;
 
     public CRServo vexIntake = null;
     public Servo intakeTilt;
@@ -34,7 +37,9 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
     public DigitalChannel liftLimitSwitch = null;
     public DigitalChannel pivotLimitSwitch = null;
-    public int armPivotPosition = 0;
+    //public int armPivotPosition = 0;
+    public int armPivotPositionRight = 0;
+    public int armPivotPositionLeft = 0;
     private final double armPivotMaxTicks = 2370;
 
     // for lift pController input
@@ -45,9 +50,15 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     //private double pixelLiftPosition; // variable for regular use like on init.. humm may not need since its defined in the method?
     private boolean exitArmPivotPControllerLoop = false;
 
-    public PController pControllerArmPivot = new PController(0.005);
+    //public PController pControllerArmPivot = new PController(0.005);
 
-    public PIDController pidControllerArmPivot = new PIDController(0.005,0.00007,0);
+    public PController pControllerArmPivotLeft = new PController(0.005);
+    public PController pControllerArmPivotRight = new PController(0.005);
+
+    //public PIDController pidControllerArmPivot = new PIDController(0.005,0.00007,0);
+
+    public PIDController pidControllerArmPivotLeft = new PIDController(0.005,0.00007,0);
+    public PIDController pidControllerArmPivotRight = new PIDController(0.005,0.00007,0);
 
     private double angularVelocity = 0.0;
     private double lastAngle = 0.0;
@@ -55,7 +66,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     private long lastUpdateStartTime = 0;
 
     public static double turnSlipAmountFor1RPS = 0.05;
-    public static double armOffsetAtRest = -3;
+    public static double armOffsetAtRest = -3; //degrees lower than horizontal
 
     public ArmPivot3Motor(HardwareMap hardwareMap, HashMap<String, Pair<Servo, Double>> servoMap) {
 
@@ -63,7 +74,10 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
         intakeTilt.setDirection(Servo.Direction.REVERSE);
 
-        armPivot = hardwareMap.get(DcMotorEx.class, "pivot");
+        //armPivotLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
+
+        armPivotLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
+        armPivotRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
 
         intakeJawServo = hardwareMap.get(ServoImplEx.class, "intakeJaw");
         //intakeJawServo.setDirection(Servo.Direction.REVERSE);
@@ -75,14 +89,33 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         liftLimitSwitch = hardwareMap.get(DigitalChannel.class, "liftLimitSwitch");
         pivotLimitSwitch = hardwareMap.get(DigitalChannel.class, "pivotLimitSwitch");
 
-        armPivot.setDirection(DcMotor.Direction.FORWARD);
-        armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armPivot.setPower(0);
+//        armPivot.setDirection(DcMotor.Direction.FORWARD);
+//        armPivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        armPivot.setPower(0);
+//
+//        if(Robot3Motor.resetEncoders) {
+//            armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        }
+
+        armPivotLeft.setDirection(DcMotor.Direction.REVERSE);
+        armPivotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armPivotLeft.setPower(0);
 
         if(Robot3Motor.resetEncoders) {
-            armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        armPivotRight.setDirection(DcMotor.Direction.FORWARD);
+        armPivotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armPivotRight.setPower(0);
+
+        if(Robot3Motor.resetEncoders) {
+            armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR));
@@ -92,27 +125,51 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
     public void InitArmPivotPController(){
 
-        pControllerArmPivot.setInputRange(0, armPivotMaxTicks);
-        pControllerArmPivot.setSetPoint(0);
-        pControllerArmPivot.setOutputRange(minPowerArmPivot, maxPowerArmPivot);
-        pControllerArmPivot.setThresholdValue(5);
+//        pControllerArmPivot.setInputRange(0, armPivotMaxTicks);
+//        pControllerArmPivot.setSetPoint(0);
+//        pControllerArmPivot.setOutputRange(minPowerArmPivot, maxPowerArmPivot);
+//        pControllerArmPivot.setThresholdValue(5);
+
+        pControllerArmPivotLeft.setInputRange(0, armPivotMaxTicks);
+        pControllerArmPivotRight.setSetPoint(0);
+        pControllerArmPivotRight.setOutputRange(minPowerArmPivot, maxPowerArmPivot);
+        pControllerArmPivotRight.setThresholdValue(5);
+
+        pControllerArmPivotLeft.setInputRange(0, armPivotMaxTicks);
+        pControllerArmPivotLeft.setSetPoint(0);
+        pControllerArmPivotLeft.setOutputRange(minPowerArmPivot, maxPowerArmPivot);
+        pControllerArmPivotLeft.setThresholdValue(5);
 
     }
     public void InitArmPivotPIDController(){
 
-        pidControllerArmPivot.setInputRangePID(0, armPivotMaxTicks);
-        pidControllerArmPivot.setSetPointPID(0);
-        pidControllerArmPivot.setOutputRangePID(minPowerArmPivot, maxPowerArmPivot);
-        pidControllerArmPivot.setThresholdValuePID(5);
+//        pidControllerArmPivot.setInputRangePID(0, armPivotMaxTicks);
+//        pidControllerArmPivot.setSetPointPID(0);
+//        pidControllerArmPivot.setOutputRangePID(minPowerArmPivot, maxPowerArmPivot);
+//        pidControllerArmPivot.setThresholdValuePID(5);
+
+        pidControllerArmPivotRight.setInputRangePID(0, armPivotMaxTicks);
+        pidControllerArmPivotRight.setSetPointPID(0);
+        pidControllerArmPivotRight.setOutputRangePID(minPowerArmPivot, maxPowerArmPivot);
+        pidControllerArmPivotRight.setThresholdValuePID(5);
+
+        pidControllerArmPivotLeft.setInputRangePID(0, armPivotMaxTicks);
+        pidControllerArmPivotLeft.setSetPointPID(0);
+        pidControllerArmPivotLeft.setOutputRangePID(minPowerArmPivot, maxPowerArmPivot);
+        pidControllerArmPivotLeft.setThresholdValuePID(5);
 
     }
 
     public void setArmPivotPosition() {
-        armPivotPosition =armPivot.getCurrentPosition();
+        //armPivotPosition =armPivot.getCurrentPosition();
+        armPivotPositionRight =armPivotRight.getCurrentPosition();
+        armPivotPositionLeft =armPivotLeft.getCurrentPosition();
 
     }
     public void setArmPivotPower(double armPivotPower) {
-        armPivot.setPower(armPivotPower);
+        //armPivot.setPower(armPivotPower);
+        armPivotLeft.setPower(armPivotPower);
+        armPivotRight.setPower(armPivotPower);
 
     }
     public void setIntakeTiltAngle(double angle){
@@ -142,9 +199,15 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
         lastUpdateStartTime = currentTime;
 
-        armPivotPosition =armPivot.getCurrentPosition();
+        //armPivotPosition =armPivot.getCurrentPosition();
+        armPivotPositionLeft =armPivotLeft.getCurrentPosition();
+        armPivotPositionRight =armPivotRight.getCurrentPosition();
 
-        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // degrees
+        double averageArmPosition = (armPivotPositionLeft+armPivotPositionRight)/2.0;
+
+        //double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // degrees
+        double armAngle = (averageArmPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // 2 motor set up degrees
+
 
         angularVelocity = AngleWrap(Math.toRadians(armAngle)-lastAngle) / elapsedTime;
 
@@ -179,10 +242,15 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         lastUpdateStartTime = currentTime;
 
         // Read encoder positions and calculate current arm angle
-        armPivotPosition = armPivot.getCurrentPosition();
+        //armPivotPosition = armPivot.getCurrentPosition();
+        armPivotPositionLeft = armPivotLeft.getCurrentPosition();
+        armPivotPositionRight = armPivotRight.getCurrentPosition();
 
 
-        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest;
+        double averageArmPosition = (armPivotPositionLeft+armPivotPositionRight)/2.0;
+
+        //double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // degrees
+        double armAngle = (averageArmPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // 2 motor set up degrees
 
         // Calculate angular velocity
         angularVelocity = AngleWrap(Math.toRadians(armAngle) - lastAngle) / elapsedTime;
@@ -230,9 +298,14 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         lastUpdateStartTime = currentTime;
 
         // Calculate the current arm angle based on encoder positions
-        armPivotPosition = armPivot.getCurrentPosition();
+        //armPivotPosition = armPivot.getCurrentPosition();
+        armPivotPositionLeft = armPivotLeft.getCurrentPosition();
+        armPivotPositionRight = armPivotRight.getCurrentPosition();
 
-        double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) - 8;
+        double averageArmPosition = (armPivotPositionLeft+armPivotPositionRight)/2.0;
+
+        //double armAngle = (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // degrees
+        double armAngle = (averageArmPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest; // 2 motor set up degrees
 
         // Calculate angular velocity
         angularVelocity = (AngleWrap(Math.toRadians(armAngle) - lastAngle)) / elapsedTime;
@@ -290,9 +363,14 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     }
 
     public double getArmAngle() {
-        armPivotPosition =armPivot.getCurrentPosition();
+        //armPivotPosition =armPivot.getCurrentPosition();
+        armPivotPositionLeft =armPivotLeft.getCurrentPosition();
+        armPivotPositionRight =armPivotRight.getCurrentPosition();
 
-        return (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) - armOffsetAtRest;
+        double averageArmPosition = (armPivotPositionLeft+armPivotPositionRight)/2.0;
+
+        //return (armPivotPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest;
+        return (averageArmPosition / Constants3Motor.ARM_PIVOT_TICKS_PER_DEG) + armOffsetAtRest;
     }
     public double getRadPerSecond() {
         return angularVelocity;
@@ -301,58 +379,121 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         return getRadPerSecond() * turnSlipAmountFor1RPS;
     }
     public void setArmPivotSetPointTicks(int ticks) {
-        pControllerArmPivot.setSetPoint(ticks);
+
+        //pControllerArmPivot.setSetPoint(ticks);
+        pControllerArmPivotLeft.setSetPoint(ticks);
+        pControllerArmPivotRight.setSetPoint(ticks);
     }
 
     public void updatePControlArmPivotPosition() {
-        armPivotPosition =armPivot.getCurrentPosition();
+        //armPivotPosition =armPivot.getCurrentPosition();
+        armPivotPositionLeft =armPivotLeft.getCurrentPosition();
+        armPivotPositionRight =armPivotRight.getCurrentPosition();
 
-        if (armPivotPosition < pControllerArmPivot.setPoint) {
+//        if (armPivotPosition < pControllerArmPivot.setPoint) {
+//
+//            armPivot.setPower(minPowerArmPivot +
+//                    pControllerArmPivot.getComputedOutput(armPivotPosition));
+//        } else {
+//            armPivot.setPower(minPowerArmPivot -
+//                    pControllerArmPivot.getComputedOutput(armPivotPosition));
+//        }
+        if (armPivotPositionLeft < pControllerArmPivotRight.setPoint) {
 
-            armPivot.setPower(minPowerArmPivot +
-                    pControllerArmPivot.getComputedOutput(armPivotPosition));
+            armPivotLeft.setPower(minPowerArmPivot +
+                    pControllerArmPivotLeft.getComputedOutput(armPivotPositionLeft));
         } else {
-            armPivot.setPower(minPowerArmPivot -
-                    pControllerArmPivot.getComputedOutput(armPivotPosition));
+            armPivotLeft.setPower(minPowerArmPivot -
+                    pControllerArmPivotLeft.getComputedOutput(armPivotPositionLeft));
+        }
+        if (armPivotPositionRight < pControllerArmPivotRight.setPoint) {
+
+            armPivotRight.setPower(minPowerArmPivot +
+                    pControllerArmPivotRight.getComputedOutput(armPivotPositionRight));
+        } else {
+            armPivotRight.setPower(minPowerArmPivot -
+                    pControllerArmPivotRight.getComputedOutput(armPivotPositionRight));
         }
 
     }
     public void updateArmPivotPositionPID() {
-        armPivotPosition =armPivot.getCurrentPosition();
+//        armPivotPosition =armPivot.getCurrentPosition();
+//
+//        if (armPivotPosition < pidControllerArmPivot.setPoint) {
+//
+//            armPivot.setPower(minPowerArmPivot +
+//                    pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
+//        } else {
+//            armPivot.setPower(minPowerArmPivot -
+//                    pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
+//        }
+        armPivotPositionLeft =armPivotLeft.getCurrentPosition();
+        armPivotPositionRight =armPivotRight.getCurrentPosition();
 
-        if (armPivotPosition < pidControllerArmPivot.setPoint) {
+        if (armPivotPositionLeft < pidControllerArmPivotLeft.setPoint) {
 
-            armPivot.setPower(minPowerArmPivot +
-                    pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
+            armPivotLeft.setPower(minPowerArmPivot +
+                    pidControllerArmPivotLeft.getComputedOutputPID(armPivotPositionLeft));
         } else {
-            armPivot.setPower(minPowerArmPivot -
-                    pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
+            armPivotLeft.setPower(minPowerArmPivot -
+                    pidControllerArmPivotLeft.getComputedOutputPID(armPivotPositionLeft));
+        }
+
+
+        if (armPivotPositionRight < pidControllerArmPivotRight.setPoint) {
+
+            armPivotRight.setPower(minPowerArmPivot +
+                    pidControllerArmPivotRight.getComputedOutputPID(armPivotPositionRight));
+        } else {
+            armPivotRight.setPower(minPowerArmPivot -
+                    pidControllerArmPivotRight.getComputedOutputPID(armPivotPositionRight));
         }
 
     }
 
     public void updateArmPivotPositionPIDwMotionProf() {
-        armPivotPosition =armPivot.getCurrentPosition();
+        //armPivotPosition =armPivot.getCurrentPosition();
+        armPivotPositionLeft =armPivotLeft.getCurrentPosition();
+        armPivotPositionRight =armPivotRight.getCurrentPosition();
 
         double pidThreshold = 2* Constants3Motor.ARM_PIVOT_TICKS_PER_DEG; //2 degrees * 10.3920133 tick/deg = ticks see Excel calcs
         double decelSlope = 4;
-        double setPoint = pidControllerArmPivot.setPoint;
-        int position = armPivotPosition;
+        //double setPoint = pidControllerArmPivot.setPoint;
+        double setPointRight = pidControllerArmPivotRight.setPoint;
+        double setPointLeft = pidControllerArmPivotLeft.setPoint;
+        int positionLeft = armPivotPositionLeft;
+        int positionRight = armPivotPositionRight;
 
 
-        if (setPoint-pidThreshold > position || setPoint+pidThreshold < position){
-            double armPivotvelocity = Math.min(1000, Math.abs(0+(decelSlope*(position-setPoint))));// point slope formula to get velocity profile see excel file
+        if (setPointRight-pidThreshold > positionRight || setPointRight+pidThreshold < positionRight){
+            double armPivotvelocity = Math.min(1000, Math.abs(0+(decelSlope*(positionRight-setPointRight))));// point slope formula to get velocity profile see excel file
             double liftVelocity = armPivotvelocity/5.061079545;
         }
         else {
 
-            if (armPivotPosition < pidControllerArmPivot.setPoint) {
+            if (armPivotPositionRight < pidControllerArmPivotRight.setPoint) {
 
-                armPivot.setPower(minPowerArmPivot +
-                        pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
+                armPivotRight.setPower(minPowerArmPivot +
+                        pidControllerArmPivotRight.getComputedOutputPID(armPivotPositionRight));
             } else {
-                armPivot.setPower(minPowerArmPivot -
-                        pidControllerArmPivot.getComputedOutputPID(armPivotPosition));
+                armPivotRight.setPower(minPowerArmPivot -
+                        pidControllerArmPivotRight.getComputedOutputPID(armPivotPositionRight));
+            }
+
+        }
+        if (setPointLeft-pidThreshold > positionLeft || setPointLeft+pidThreshold < positionLeft){
+            double armPivotvelocity = Math.min(1000, Math.abs(0+(decelSlope*(positionLeft-setPointLeft))));// point slope formula to get velocity profile see excel file
+            double liftVelocity = armPivotvelocity/5.061079545;
+        }
+        else {
+
+            if (armPivotPositionLeft < pidControllerArmPivotLeft.setPoint) {
+
+                armPivotLeft.setPower(minPowerArmPivot +
+                        pidControllerArmPivotLeft.getComputedOutputPID(armPivotPositionLeft));
+            } else {
+                armPivotLeft.setPower(minPowerArmPivot -
+                        pidControllerArmPivotLeft.getComputedOutputPID(armPivotPositionLeft));
             }
 
         }
@@ -360,7 +501,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     }
     public void setArmPivotVelocity(double velocity)
     {
-        armPivot.setVelocity(velocity);
+        armPivotLeft.setVelocity(velocity);
 
     }
 

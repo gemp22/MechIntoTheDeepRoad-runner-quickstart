@@ -81,9 +81,17 @@ public class PivotTesting3Motor extends Robot
         lift3Motor = new Lift3Motor(hardwareMap);
 
 
-        armPivot3Motor.armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armPivot3Motor.armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armPivot3Motor.armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        armPivot3Motor.armPivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        armPivot3Motor.armPivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armPivot3Motor.armPivot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armPivot3Motor.armPivotLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armPivot3Motor.armPivotLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armPivot3Motor.armPivotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armPivot3Motor.armPivotRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armPivot3Motor.armPivotRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armPivot3Motor.armPivotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         lift3Motor.liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift3Motor.liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -93,9 +101,9 @@ public class PivotTesting3Motor extends Robot
         lift3Motor.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift3Motor.liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        lift3Motor.upperLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift3Motor.upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift3Motor.upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        lift3Motor.upperLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        lift3Motor.upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        lift3Motor.upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         armPivot3Motor.InitArmPivotPIDController();
         armPivot3Motor.InitArmPivotPController();
@@ -144,16 +152,16 @@ public class PivotTesting3Motor extends Robot
         //manual pivot controller
         if (gamepad1.dpad_down) {   ///move lift up and sets controller position
 
-//            armPivot3Motor.setArmPivotPower(.98);
+            armPivot3Motor.setArmPivotPower(.98);
 
-            armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
+//            armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
 
         }
         else if (gamepad1.dpad_up) {  //move lift down and sets controller position
 
-//            armPivot3Motor.setArmPivotPower(-.98);
+            armPivot3Motor.setArmPivotPower(-.98);
 
-            armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
+//            armPivot3Motor.pControllerArmPivot.setSetPoint(armPivot3Motor.armPivot.getCurrentPosition());
 
         }
         else {    //uses proportional controller to hold lift in correct spot
@@ -168,7 +176,7 @@ public class PivotTesting3Motor extends Robot
 
             lift3Motor.pControllerLiftRight.setSetPoint(lift3Motor.liftRight.getCurrentPosition());
             lift3Motor.pControllerLiftLeft.setSetPoint(lift3Motor.liftLeft.getCurrentPosition());
-            lift3Motor.pControllerUpperLift.setSetPoint(lift3Motor.upperLift.getCurrentPosition());
+            //lift3Motor.pControllerUpperLift.setSetPoint(lift3Motor.upperLift.getCurrentPosition());
 
         }
         else if (gamepad1.dpad_left) {  //move lift down and sets controller position
@@ -178,7 +186,7 @@ public class PivotTesting3Motor extends Robot
 
             lift3Motor.pControllerLiftRight.setSetPoint(lift3Motor.liftRight.getCurrentPosition());
             lift3Motor.pControllerLiftLeft.setSetPoint(lift3Motor.liftLeft.getCurrentPosition());
-            lift3Motor.pControllerUpperLift.setSetPoint(lift3Motor.upperLift.getCurrentPosition());
+            //lift3Motor.pControllerUpperLift.setSetPoint(lift3Motor.upperLift.getCurrentPosition());
 
         }
         else {
@@ -196,23 +204,30 @@ public class PivotTesting3Motor extends Robot
 //        armPivot.updateLiftPosition();
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("pivot SetPoint", armPivot3Motor.pControllerArmPivot.setPoint);
-        telemetry.addData("pivot position", armPivot3Motor.armPivot.getCurrentPosition());
+        //telemetry.addData("pivot SetPoint", armPivot3Motor.pControllerArmPivot.setPoint);
+        telemetry.addData("pivot SetPoint Left", armPivot3Motor.pControllerArmPivotLeft.setPoint);
+        telemetry.addData("pivot SetPoint Right", armPivot3Motor.pControllerArmPivotRight.setPoint);
+        //telemetry.addData("pivot position", armPivot3Motor.armPivot.getCurrentPosition());
+        telemetry.addData("pivot position left", armPivot3Motor.armPivotLeft.getCurrentPosition());
+        telemetry.addData("pivot position right", armPivot3Motor.armPivotRight.getCurrentPosition());
         telemetry.addData("pivot angle",armPivot3Motor.getArmAngle());
-        telemetry.addData("pivot pwr", armPivot3Motor.armPivot.getPower());
+        //telemetry.addData("pivot pwr", armPivot3Motor.armPivot.getPower());
+        telemetry.addData("pivot pwr left", armPivot3Motor.armPivotLeft.getPower());
+        telemetry.addData("pivot pwr right", armPivot3Motor.armPivotRight.getPower());
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("lift left SetPoint", lift3Motor.pControllerLiftLeft.setPoint);
         telemetry.addData("lift right SetPoint", lift3Motor.pControllerLiftRight.setPoint);
-        telemetry.addData("lift upper SetPoint", lift3Motor.pControllerUpperLift.setPoint);
+        //telemetry.addData("lift upper SetPoint", lift3Motor.pControllerUpperLift.setPoint);
         telemetry.addData("lift left position", lift3Motor.liftLeft.getCurrentPosition());
         telemetry.addData("lift right position", lift3Motor.liftRight.getCurrentPosition());
-        telemetry.addData("lift upper position", lift3Motor.upperLift.getCurrentPosition());
-        telemetry.addData("Average lift ticks", (lift3Motor.upperLift.getCurrentPosition()+lift3Motor.liftRight.getCurrentPosition()+lift3Motor.liftLeft.getCurrentPosition())/3);
+        //telemetry.addData("lift upper position", lift3Motor.upperLift.getCurrentPosition());
+        //telemetry.addData("Average lift ticks", (lift3Motor.upperLift.getCurrentPosition()+lift3Motor.liftRight.getCurrentPosition()+lift3Motor.liftLeft.getCurrentPosition())/3);
+        telemetry.addData("Average lift ticks", (lift3Motor.liftRight.getCurrentPosition()+lift3Motor.liftLeft.getCurrentPosition())/2);
         telemetry.addData("Average lift extension", lift3Motor.getLiftExtension());
         telemetry.addData("lift left pwr", lift3Motor.liftLeft.getPower());
         telemetry.addData("lift right pwr", lift3Motor.liftRight.getPower());
-        telemetry.addData("lift upper pwr", lift3Motor.upperLift.getPower());
+        //telemetry.addData("lift upper pwr", lift3Motor.upperLift.getPower());
         telemetry.addData("stage", stage);
 
     }

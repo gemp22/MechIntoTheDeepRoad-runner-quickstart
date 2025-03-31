@@ -189,7 +189,7 @@ public class ATeleop3Motor extends Robot3Motor {
     @Override
     public void mainLoop() {
         super.mainLoop();
-        telemetry.addData("arm pivot current angle", armPivot3Motor.getArmAngle());
+
         ButtonPress.giveMeInputs(gamepad1.a, gamepad1.b, gamepad1.x, gamepad1.y, gamepad1.dpad_up,
                 gamepad1.dpad_down, gamepad1.dpad_right, gamepad1.dpad_left, gamepad1.right_bumper,
                 gamepad1.left_bumper, gamepad1.left_stick_button, gamepad1.right_stick_button,

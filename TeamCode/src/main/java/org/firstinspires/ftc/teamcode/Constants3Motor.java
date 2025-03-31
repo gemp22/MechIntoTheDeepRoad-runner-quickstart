@@ -1,29 +1,29 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Constants3Motor {
-    public static final double JAW_SERVO_DROP_POSITION = 0.47; //.33
-    public static final double JAW_SERVO_GRAB_POSITION = 0.71; //.85
+    public static final double JAW_SERVO_DROP_POSITION = 0.35; //.33
+    public static final double JAW_SERVO_GRAB_POSITION = 0.77; //.85
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = .81;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = 0.115;
     public static final double JAW_SERVO_WALL_COLLECTION = .515;
     public static final double JAW_SERVO_WALL_GRAB_PREP = .68;
     public static final double JAW_SERVO_INTAKE_POSITION = 0.65;
-    public static final double TILT_SERVO_90_DEGREES_UP = .295;
-    public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.5;
+    public static final double TILT_SERVO_90_DEGREES_UP = .265;
+    public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.465;
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.58;
-    public static final double TILT_SERVO_BASKET_DELIVERY = 0.375;
+    public static final double TILT_SERVO_BASKET_DELIVERY = 0.4;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.6;
-    public static final double TILT_SERVO_HOME = 0.355;
+    public static final double TILT_SERVO_HOME = 0.3;
     public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -45; //-53
     public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -47; //-15
     public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
-    public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.51;
-    public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_PREP = 0.3;
+    public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.48;
+    public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_PREP = 0.23;
     public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_HANG = 0.4;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.699;
     public static final double TWIST_SERVO_WALL_COLLECTION_POSITION = .989;
     public static final double TWIST_SERVO_BASKET_DEPOSIT_POSITION = 0.139;
-    public static final double TWIST_SERVO_BACK_SPECIMEN_PLACING = .989;
+    public static final double TWIST_SERVO_BACK_SPECIMEN_PLACING = .409;//.989
     public static final double TWIST_SERVO_FRONT_SPECIMEN_PLACING = .559;
     public static final double INTAKE_VEX_MOTOR_POWER = -.91;
     public static final double OUTTAKE_VEX_MOTOR_POWER = .5;
@@ -42,7 +42,8 @@ public class Constants3Motor {
     public static final double LIFT_EXTENSION_FOR_COLLECTION_FAR_FROM_BOT = 11.75;
     public static final double MAX_ARM_PIVOT_MOTOR_POWER= 0.75;
     public static final double MIN_ARM_PIVOT_MOTOR_POWER= 0.75;
-    public static final double ARM_PIVOT_TICKS_PER_DEG = 17.5;
+    //public static final double ARM_PIVOT_TICKS_PER_DEG = 17.5;  // for one motor pivot
+    public static final double ARM_PIVOT_TICKS_PER_DEG = 10.390208333;  // for 2 motor pivot
     public static final double ARM_PIVOT_MAX_HORIZONTAL_POSITION_DEG = 48;
     public static final double ARM_PIVOT_HIGH_BASKET_POSITION_DEG = 48;
     public static final double ARM_PIVOT_BASKET_POSITION_DEG= 48;
