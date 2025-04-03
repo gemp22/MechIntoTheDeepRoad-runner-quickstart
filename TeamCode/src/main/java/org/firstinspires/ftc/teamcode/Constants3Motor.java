@@ -8,18 +8,19 @@ public class Constants3Motor {
     public static final double JAW_SERVO_WALL_COLLECTION = .515;
     public static final double JAW_SERVO_WALL_GRAB_PREP = .68;
     public static final double JAW_SERVO_INTAKE_POSITION = 0.65;
-    public static final double TILT_SERVO_90_DEGREES_UP = .265;
-    public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.465;
-    public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.58;
-    public static final double TILT_SERVO_BASKET_DELIVERY = 0.4;
+    public static final double TILT_SERVO_90_DEGREES_UP = .09;//.265
+    public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.5;//.465
+    public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.875;//.58
+    public static final double TILT_SERVO_BASKET_DELIVERY = 0.34;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.6;
     public static final double TILT_SERVO_HOME = 0.3;
     public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -45; //-53
     public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -47; //-15
     public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
-    public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.48;
-    public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_PREP = 0.23;
+    public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.69;
+    public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_PREP = 0.0;
     public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_HANG = 0.4;
+    public static final double TILT_SERVO_HOME_STATE_ANGLE = 94;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.699;
     public static final double TWIST_SERVO_WALL_COLLECTION_POSITION = .989;
     public static final double TWIST_SERVO_BASKET_DEPOSIT_POSITION = 0.139;
@@ -50,6 +51,7 @@ public class Constants3Motor {
     public static final double ARM_PIVOT_HIGH_CHAMBER_POSITION_IN = 90;
     public static final double ARM_PIVOT_HANG_FIRST_BAR_GRAB_POSITION_IN = 45;
     public static final double ARM_PIVOT_HANG_SECOND_BAR_GRAB_POSITION_IN = 10;
+    public static final double ARM_PIVOT_DELIVERY_ANGLE = 92;
 
 
     // LIFT ID MAPPING
