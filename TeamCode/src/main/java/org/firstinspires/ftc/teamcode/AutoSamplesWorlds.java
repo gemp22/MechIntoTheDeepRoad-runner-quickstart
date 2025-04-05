@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.MovementVars.movement_y;
-import static org.firstinspires.ftc.teamcode.RobotPosition.AngleWrap;
-import static org.firstinspires.ftc.teamcode.RobotPosition.worldAngle_rad;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldXPosition;
 import static org.firstinspires.ftc.teamcode.RobotPosition.worldYPosition;
 
-import android.graphics.Point;
 import android.os.SystemClock;
 import android.util.Pair;
 
@@ -17,13 +13,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
+import org.firstinspires.ftc.teamcode.subsystems.Superstructure3Motor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Autonomous
-public class AutoSamples extends Robot {
+public class AutoSamplesWorlds extends Robot3Motor {
 
     private final double SCALE_FACTOR = 1;
 
@@ -59,13 +55,14 @@ public class AutoSamples extends Robot {
 
     @Override
     public void init() {
-        Robot.resetEncoders = true;
+        Robot3Motor.resetEncoders = true;
         super.init();
 
         isAuto = true;
         drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        armPivot.intakeTilt.setPosition(Constants.TILT_SERVO_90_DEGREES_UP);
-        armPivot.intakeJawServo.setPosition(Constants.JAW_SERVO_GRAB_POSITION);
+        armPivot3Motor.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+        armPivot3Motor.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+        armPivot3Motor.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
     }
 
     private int timeDelay = 0;
@@ -116,7 +113,7 @@ public class AutoSamples extends Robot {
             if (stageFinished) {
                 past5In = false;
 
-                superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_LEVEL_2.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_LEVEL_2_AUTO.ordinal());
                 initializeStateVariables();
             }
             ArrayList<CurvePoint> points = new ArrayList<>();
@@ -141,10 +138,10 @@ public class AutoSamples extends Robot {
                 if (completed && Math.abs(r.turnDelta_rad) < Math.toRadians(5)) {
                     drive.stopAllMovementDirectionBased();
 
-                    System.out.println("lift extension in delivery state: " + lift.getLiftExtension());
+                    System.out.println("lift extension in delivery state: " + lift3Motor.getLiftExtension());
 
-                    if(lift.getLiftExtension()>22){
-                        superstructure.nextState(Superstructure.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
+                    if(lift3Motor.getLiftExtension()>22){
+                        superstructure.nextState(Superstructure3Motor.SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal());
 
                         if (cycle < 3) {
                             nextStage(progStates.driveToOurSamples.ordinal());
@@ -195,7 +192,7 @@ public class AutoSamples extends Robot {
             }*/
             if (SystemClock.uptimeMillis()-stateStartTime > 650) {
                 if (!past5In) {
-                    superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
+                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
                     past5In = true;
                 }
                 if(SystemClock.uptimeMillis() - stateStartTime > 1250)
@@ -219,10 +216,10 @@ public class AutoSamples extends Robot {
 
                     if (completed &&
                             Math.abs(r.turnDelta_rad) < Math.toRadians(5) &&
-                            lift.getLiftExtension()<1 && armPivot.getArmAngle()<-3) {
+                            lift3Motor.getLiftExtension()<1 && armPivot3Motor.getArmAngle()<-3) {
                         superstructure.sampleCollected = false;
                         if(cycle<3) {
-                            superstructure.nextState(Superstructure.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
+                            superstructure.nextState(Superstructure3Motor.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
                         }
 
                         nextStage(progStates.endBehavior.ordinal());
@@ -239,7 +236,7 @@ public class AutoSamples extends Robot {
                 cycle++;
                 initializeStateVariables();
             }
-            if (superstructure.sampleCollected && lift.getLiftExtension() < 1 ) {
+            if (superstructure.sampleCollected && lift3Motor.getLiftExtension() < 1 ) {
                 nextStage(progStates.driveToBaskets.ordinal());
             }
             drive.stopAllMovementDirectionBased();
@@ -254,7 +251,7 @@ public class AutoSamples extends Robot {
             }
             if (SystemClock.uptimeMillis()-stateStartTime > 650) {
                 if (!past5In) {
-                    superstructure.nextState(Superstructure.SuperstructureStates.RESTING.ordinal());
+                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
                     past5In = true;
                 }
                 // x = 60 y = -15 thetea = -90
@@ -271,7 +268,7 @@ public class AutoSamples extends Robot {
 
                 if (Math.abs(Math.hypot(worldXPosition - 60, worldYPosition - (-15))) < 24) {
                     if (!autoParkSuperstruture) {
-                        superstructure.nextState(Superstructure.SuperstructureStates.AUTO_PARK.ordinal());
+                        superstructure.nextState(Superstructure3Motor.SuperstructureStates.AUTO_PARK.ordinal());
                         autoParkSuperstruture = true;
                     }
                     Movement.movementResult r = Movement.pointAngle(

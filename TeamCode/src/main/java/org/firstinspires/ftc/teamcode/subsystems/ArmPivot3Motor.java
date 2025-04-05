@@ -32,6 +32,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
 
     public CRServo vexIntake = null;
     public Servo intakeTilt;
+    public Servo intakeTiltTwo;
     public Servo intakeJawServo;
     public Servo twist;
 
@@ -66,14 +67,14 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
     private long lastUpdateStartTime = 0;
 
     public static double turnSlipAmountFor1RPS = 0.05;
-    public static double armOffsetAtRest = -3; //degrees lower than horizontal
+    public static double armOffsetAtRest = -2; //degrees lower than horizontal
 
     public ArmPivot3Motor(HardwareMap hardwareMap, HashMap<String, Pair<Servo, Double>> servoMap) {
 
         vexIntake = hardwareMap.get(CRServo.class, "vexIntake");
         intakeTilt = hardwareMap.get(Servo.class, "intakeTilt");
         intakeTilt.setDirection(Servo.Direction.REVERSE);
-        intakeTilt = hardwareMap.get(Servo.class, "intakeTiltTwo");
+        intakeTiltTwo = hardwareMap.get(Servo.class, "intakeTiltTwo");
 
         //armPivotLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
 
@@ -85,6 +86,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         //intakeJawServo.setPosition(Constants.JAW_SERVO_INTAKE_POSITION);
 
         twist = hardwareMap.get(ServoImplEx.class, "twist");
+        twist.setDirection(Servo.Direction.REVERSE);
         //twist.setPosition(Constants.TWIST_SERVO_HORIZONTAL_POSITION);
 
         liftLimitSwitch = hardwareMap.get(DigitalChannel.class, "liftLimitSwitch");
@@ -120,7 +122,7 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         }
 
         servoMap.put("Tilt Servo", new Pair<>(intakeTilt, Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR));
-        servoMap.put("Tilt Servo2", new Pair<>(intakeTilt, Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR));
+        servoMap.put("Tilt Servo2", new Pair<>(intakeTiltTwo, Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR));
         servoMap.put("Twist Servo", new Pair<>(twist, Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION));
         servoMap.put("Jaw Servo", new Pair<>(intakeJawServo, Constants3Motor.JAW_SERVO_INTAKE_POSITION));
     }
@@ -174,13 +176,14 @@ public class ArmPivot3Motor {  //this is a subsystem Class used in Auto. its bas
         armPivotRight.setPower(armPivotPower);
 
     }
-    public void setIntakeTiltAngle(double angle){
+    public void     setIntakeTiltAngle(double angle){
         double intakeTilt0Deg = Constants3Motor.TILT_SERVO_PARALLEL_WITH_FLOOR;
         double intakeTilt90Deg = Constants3Motor.TILT_SERVO_90_DEGREES_UP;
         //double output = (((intakeTilt90Deg - intakeTilt0Deg) / 90) * angle) + intakeTilt0Deg;
         double output = intakeTilt90Deg+((angle-90)*(intakeTilt0Deg-intakeTilt90Deg)/(0-90));
 
         intakeTilt.setPosition(Range.clip(output, intakeTilt90Deg, Constants3Motor.TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION));
+        intakeTiltTwo.setPosition(Range.clip(output, intakeTilt90Deg, Constants3Motor.TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION));
     }
 
     public double getIntakeTiltAngle (){
