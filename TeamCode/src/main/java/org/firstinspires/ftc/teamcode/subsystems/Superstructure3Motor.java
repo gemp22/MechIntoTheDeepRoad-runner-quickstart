@@ -160,7 +160,7 @@ public class Superstructure3Motor {
         System.out.println("pivot angle" + armPivot.getArmAngle());
 
 
-        if (currentState == SuperstructureStates.RESTING.ordinal()) {
+        if (currentState == SuperstructureStates.RESTING.ordinal()) { // Trying out new two state resting hopefully can delete this
             if (stateFinished) {
                 restingStateStartingAngle = armPivot.getArmAngle();
                 // init vars as needed
@@ -195,7 +195,7 @@ public class Superstructure3Motor {
                 System.out.println("arm safe timer" + (SystemClock.uptimeMillis() - taskStartTime));
                 if(SystemClock.uptimeMillis() - taskStartTime > 750){ //wait for jaw and tilt
                     armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
-                    if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && (SystemClock.uptimeMillis() - taskStartTime) > 1500) { //gives time for twist before Pivot goes down
+                    if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && (SystemClock.uptimeMillis() - taskStartTime) > 1500 && !collectionMode) { //gives time for twist before Pivot goes down
                         armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
 
                         System.out.println("in bad if statement at " + (SystemClock.uptimeMillis() - taskStartTime));
@@ -212,7 +212,7 @@ public class Superstructure3Motor {
             }else if (lift.getLiftExtension() < 12 && !isLiftOrPivotSmall) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                 System.out.println("lift extension is less than 12 ");
-                if (lift.getLiftExtension() < 13 && armPivot.getArmAngle() > -5) {
+                if (lift.getLiftExtension() < 13 && armPivot.getArmAngle() > -5 && !collectionMode) {
 
                     armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
                     //armPivot.update(-3, 0.7, 15, 0.05, telemetry); // for 1 pivot motor
@@ -268,7 +268,7 @@ public class Superstructure3Motor {
                 armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
             }
 
-            if (lift.getLiftExtension() < 0.9 && !outTakeMode && armPivot.getArmAngle()<10) {
+            if (lift.getLiftExtension() < 0.9 && !outTakeMode && armPivot.getArmAngle()<10 && collectionMode) {
                 collectionMode = false;
                 armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
             }
@@ -291,6 +291,164 @@ public class Superstructure3Motor {
             outTakePreValue = gamepad2.guide;
         }
 
+        if (currentState == SuperstructureStates.GOTO_RESTING_WORLDS.ordinal()) {
+            if (stateFinished) {
+                restingStateStartingAngle = armPivot.getArmAngle();
+                // init vars as needed
+                setToHomeResting = false;
+                collectionMode = false;
+                outTakeMode = false;
+                taskReStartTime = false;
+                taskReStartTime2 = false;
+                isLiftOrPivotSmall = false;
+//                liftStateStartExtension = lift.getLiftExtension();
+//                pivotStateStartAngle = armPivot.getArmAngle();
+                armPivot.vexIntake.setPower(0);
+                lift.setSetPoint(0);
+                liftWantedHeight = 0;
+                armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
+                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_PIVOT);
+                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_PIVOT);
+                //armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_HOME);
+                if(lift.getLiftExtension()<6 || armPivot.getArmAngle()<60){
+                    isLiftOrPivotSmall = true;
+                }
+                initializeStateVariables();
+            }
+
+            if(isLiftOrPivotSmall){
+                System.out.println("lift/pivot is small");
+
+                if(!taskReStartTime){
+                    taskStartTime = SystemClock.uptimeMillis();
+                    taskReStartTime = true;
+                }
+                System.out.println("arm safe timer" + (SystemClock.uptimeMillis() - taskStartTime));
+                if(SystemClock.uptimeMillis() - taskStartTime > 750){ //wait for jaw and tilt
+                    armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
+                    if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && (SystemClock.uptimeMillis() - taskStartTime) > 1500 ) { //gives time for twist before Pivot goes down
+                        armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
+
+                        System.out.println("in bad if statement at " + (SystemClock.uptimeMillis() - taskStartTime));
+                        //armPivot.update(-3, 0.5, 20, 0.05, telemetry); // for 1 pivot motor
+                        armPivot.update(-3, 0.3, 40, 0.1, telemetry);
+                    }else if(armPivot.getArmAngle() < -3) {
+                        //armPivot.setIntakeTiltAngle(90);
+                        //armPivot.armPivot.setPower(0); // 1 motor
+                        armPivot.armPivotLeft.setPower(0); // 2 motor
+                        armPivot.armPivotRight.setPower(0); // 2 motor
+                    }
+                }
+
+            }else if (lift.getLiftExtension() < 12 && !isLiftOrPivotSmall) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
+                armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
+                System.out.println("lift extension is less than 12 ");
+                if (lift.getLiftExtension() < 3 && armPivot.getArmAngle() > -5 ) {
+
+                    armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
+                    //armPivot.update(-3, 0.7, 15, 0.05, telemetry); // for 1 pivot motor
+                    armPivot.update(-3, 0.3, 40, 0.1, telemetry);
+                }else {
+                    armPivot.armPivotLeft.setPower(0); // 2 motor
+                    armPivot.armPivotRight.setPower(0); // 2 motor
+                }
+
+            }else{
+                System.out.println("Angle we should be setting to: " + restingStateStartingAngle);
+                //armPivot.update(restingStateStartingAngle, .75, 20, 0.10, telemetry);
+                armPivot.update(restingStateStartingAngle,.75,20,0.10, telemetry);
+            }
+            if (lift.getLiftExtension()<1 && armPivot.getArmAngle()<0){
+                nextState(SuperstructureStates.RESTING_WORLDS.ordinal());
+            }
+            lift.setSetPoint(liftWantedHeight);
+            lift.updateLiftPosition();
+        }
+
+        if (currentState == SuperstructureStates.RESTING_WORLDS.ordinal()) {
+            if (stateFinished) {
+                restingStateStartingAngle = armPivot.getArmAngle();
+                // init vars as needed
+                setToHomeResting = false;
+                collectionMode = false;
+                outTakeMode = false;
+                taskReStartTime = false;
+                taskReStartTime2 = false;
+                isLiftOrPivotSmall = false;
+                armPivot.vexIntake.setPower(0);
+                lift.setSetPoint(0);
+                liftWantedHeight = 0;
+                armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
+                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+                armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
+                //armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_HOME);
+                armPivot.armPivotLeft.setPower(0); // 2 motor
+                armPivot.armPivotRight.setPower(0); // 2 motor
+                initializeStateVariables();
+            }
+            if ((gamepad2.right_stick_y) < -0.01  // this is out
+                    && lift.getLiftExtension() < Constants3Motor.LIFT_MAX_HORIZONTAL_POSITION_IN) {
+                lift.setLiftPower(-gamepad2.right_stick_y);
+                liftWantedHeight = lift.getLiftExtension();
+                //liftWantedHeight = lift.getLiftExtension();
+
+            } else if (gamepad2.right_stick_y > 0.01 && lift.getLiftExtension() > 0) { //this is in
+                lift.setLiftPower(-gamepad2.right_stick_y);
+                liftWantedHeight = lift.getLiftExtension();
+                //liftWantedHeight = lift.getLiftExtension();
+
+            } else {
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+            }
+
+            if (ButtonPress.isGamepad2_left_stick_button_pressed() && lift.getLiftExtension() > 0.9) {
+                if (!collectionMode) {
+                    armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_INTAKE_POSITION);
+
+                    armPivot.vexIntake.setPower(-.91);
+                    collectionMode = true;
+                } else {
+                    armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
+                    armPivot.vexIntake.setPower(0);
+                    armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
+                    collectionMode = false;
+                }
+            }
+
+            Log.i("pivot angle: ", String.valueOf(armPivot.getArmAngle()));
+            Log.i("pivot power left: ", String.valueOf(armPivot.armPivotLeft.getPower()));
+            Log.i("pivot power right: ", String.valueOf(armPivot.armPivotRight.getPower()));
+
+            if (collectionMode) {
+                armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+            }
+
+            if (lift.getLiftExtension() < 0.9 && !outTakeMode && armPivot.getArmAngle()<10 && collectionMode) {
+                collectionMode = false;
+                armPivot.vexIntake.setPower(0);
+                armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
+            }
+
+            if (gamepad2.guide && !outTakePreValue) {
+                if (!outTakeMode) {
+                    armPivot.setIntakeTiltAngle(Constants3Motor.TILT_INTAKE_ANGLE_OUTTAKE);
+                    armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_WALL_COLLECTION);
+                    armPivot.vexIntake.setPower(.5);
+
+                    outTakeMode = true;
+                    collectionMode=false;
+                } else {
+                    armPivot.vexIntake.setPower(0);
+                    outTakeMode = false;
+                    collectionMode=false;
+                }
+            }
+
+            outTakePreValue = gamepad2.guide;
+
+        }
 
         if (currentState == SuperstructureStates.PICKUP.ordinal()) {
             if (stateFinished) {

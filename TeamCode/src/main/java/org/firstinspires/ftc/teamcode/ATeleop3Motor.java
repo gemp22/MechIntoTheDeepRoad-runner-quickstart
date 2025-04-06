@@ -230,7 +230,7 @@ public class ATeleop3Motor extends Robot3Motor {
         } else if (ButtonPress.isGamepad2_a_pressed()) {
             //scoringState = ScoringStates.RESTING;
             System.out.println("gp2 A/X is Pressed");
-            superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+            superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
             //liftRestingStartTime = System.currentTimeMillis();
 
         } else if (ButtonPress.isGamepad2_b_pressed()) {

@@ -16,12 +16,12 @@ public class Constants3Motor {
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.6;
     public static final double TILT_SERVO_HOME = 0.3;
     public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -32; //-53
-    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -47; //-15
+    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -22; //-15
     public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
     public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.63;
     public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_PREP = 0;
     public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_HANG = 0.4;
-    public static final double TILT_SERVO_HOME_STATE_ANGLE = 255;
+    public static final double TILT_SERVO_HOME_STATE_ANGLE = 90;
     public static final double TWIST_SERVO_HORIZONTAL_POSITION = 0.709;
     public static final double TWIST_SERVO_WALL_COLLECTION_POSITION = .984;
     public static final double TWIST_SERVO_BASKET_DEPOSIT_POSITION = 0.154;

@@ -192,7 +192,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
             }*/
             if (SystemClock.uptimeMillis()-stateStartTime > 650) {
                 if (!past5In) {
-                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                     past5In = true;
                 }
                 if(SystemClock.uptimeMillis() - stateStartTime > 1250)
@@ -251,7 +251,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
             }
             if (SystemClock.uptimeMillis()-stateStartTime > 650) {
                 if (!past5In) {
-                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                     past5In = true;
                 }
                 // x = 60 y = -15 thetea = -90

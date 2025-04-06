@@ -176,7 +176,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                     drive.stopAllMovementDirectionBased();
 
                     if (overallCycleToChamber == 2) {
-                        superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+                        superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                         nextStage(progStates.endBehavior.ordinal());
                     } else {
                         nextStage(progStates.driveToPlayerStation.ordinal());
@@ -194,7 +194,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
             if (stageFinished) {
                 past5In = false;
                 if (cycle == 1) {
-                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+                    superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                 } else {
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
                 }
@@ -353,7 +353,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
         if (programStage == progStates.driveUpToSamples.ordinal()) {
             if (stageFinished) {
                 past5In = false;
-                superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                 initializeStateVariables();
             }
 
