@@ -29,6 +29,8 @@ public class AutoSamplesWorlds extends Robot3Motor {
 
     private boolean autoParkSuperstruture = false;
 
+    private double currentServoPosition = 0;
+
     public enum progStates {
 
         driveToBaskets,
@@ -63,6 +65,8 @@ public class AutoSamplesWorlds extends Robot3Motor {
         armPivot3Motor.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
         armPivot3Motor.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
         armPivot3Motor.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
+        armPivot3Motor.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
+
     }
 
     private int timeDelay = 0;
@@ -77,6 +81,19 @@ public class AutoSamplesWorlds extends Robot3Motor {
         } else if (ButtonPress.isGamepad1_left_bumper_pressed()) {
             timeDelay -= 1;
         }
+        if (ButtonPress.isGamepad1_a_pressed()) {
+            armPivot3Motor.intakeTilt.setPosition(currentServoPosition+= 0.005);
+            armPivot3Motor.intakeTiltTwo.setPosition(currentServoPosition+= 0.005); ;
+        } else if (ButtonPress.isGamepad1_b_pressed()) {
+            armPivot3Motor.intakeTilt.setPosition(currentServoPosition-= 0.005);
+            armPivot3Motor.intakeTiltTwo.setPosition(currentServoPosition-= 0.005);
+        }
+
+
+
+        telemetry.addData("tilt servo", armPivot3Motor.intakeTilt.getPosition());
+        telemetry.addData("tilt angle", armPivot3Motor.getIntakeTiltAngle());
+
 
 
         telemetry.addData("Delay", timeDelay);
@@ -93,11 +110,15 @@ public class AutoSamplesWorlds extends Robot3Motor {
     private int pixelDropLocation = 0;
 
     private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
-        put(0, new Pair<>(new PointDouble(28.5487, -10.6718), 67.3253)); // -31.3774
-        put(1, new Pair<>(new PointDouble(25.7552,5.5614 ), 60.0452)); // 50.0452
-        put(2, new Pair<>(new PointDouble(25.7771, 11.4609), 62.00)); //55.3688
+        put(0, new Pair<>(new PointDouble(25.0392, -7.2228), 54.31)); // -31.3774
+        put(1, new Pair<>(new PointDouble(25.1792,2.5118), 55.2959)); // 50.0452
+        put(2, new Pair<>(new PointDouble(24.9231, 10.9599), 56.7378)); //55.3688
         put(3, new Pair<>(new PointDouble(18, 18), 0.0));
     }};
+
+//    put(0, new Pair<>(new PointDouble(28.5487, -10.6718), 67.3253)); // -31.3774
+//    put(1, new Pair<>(new PointDouble(25.7552,5.5614 ), 60.0452)); // 50.0452
+//    put(2, new Pair<>(new PointDouble(25.7771, 11.4609), 62.00)); //55.3688
 
     private boolean hasGrabbedPixels = false;
 
@@ -107,7 +128,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
 
     @Override
     public void mainLoop() {
-        telemetry.addData("pixels", pixelsCounted);
+        telemetry.addData("auto state", programStage);
 
         if (programStage == progStates.driveToBaskets.ordinal()) {
             if (stageFinished) {
@@ -120,7 +141,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(12, 14,
+            points.add(new CurvePoint(14, 12,
                     0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(60), 0.6));
 
@@ -190,13 +211,14 @@ public class AutoSamplesWorlds extends Robot3Motor {
                     }
                 }
             }*/
-            if (SystemClock.uptimeMillis()-stateStartTime > 650) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 600) { // this gives time for sample to drop
                 if (!past5In) {
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                     past5In = true;
                 }
                 if(SystemClock.uptimeMillis() - stateStartTime > 1250)
                 {
+                    //armPivot3Motor.setIntakeTiltAngle(0);
                     ArrayList<CurvePoint> points = new ArrayList<>();
                     points.add(new CurvePoint(stateStartingX, stateStartingY,
                             0, 0, 0, 0, 0, 0));
@@ -216,7 +238,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
 
                     if (completed &&
                             Math.abs(r.turnDelta_rad) < Math.toRadians(5) &&
-                            lift3Motor.getLiftExtension()<1 && armPivot3Motor.getArmAngle()<-3) {
+                            lift3Motor.getLiftExtension()<1 && armPivot3Motor.getArmAngle()<0) {
                         superstructure.sampleCollected = false;
                         if(cycle<3) {
                             superstructure.nextState(Superstructure3Motor.SuperstructureStates.SAMPLE_COLLECTION_EXTENSTION.ordinal());
@@ -249,7 +271,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
                 cycle++;
                 initializeStateVariables();
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 650) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 600) { //650
                 if (!past5In) {
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                     past5In = true;

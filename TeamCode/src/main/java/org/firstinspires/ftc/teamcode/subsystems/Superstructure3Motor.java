@@ -307,8 +307,8 @@ public class Superstructure3Motor {
                 lift.setSetPoint(0);
                 liftWantedHeight = 0;
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
-                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_PIVOT);
-                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_PARALLEL_WITH_PIVOT);
+                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
                 //armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_HOME);
                 if(lift.getLiftExtension()<6 || armPivot.getArmAngle()<60){
                     isLiftOrPivotSmall = true;
@@ -1256,48 +1256,51 @@ public class Superstructure3Motor {
             if (stateFinished) {
                 // init vars as needed
                 taskReStartTime = false;
+                taskReStartTime2 = false;
                 collectionMode = false;
                 sampleCollected = false;
-                liftWantedHeight = 11.5;
+                liftWantedHeight = 9;
                 armPivot.vexIntake.setPower(0);
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
-                armPivot.setIntakeTiltAngle(90);
+                armPivot.setIntakeTiltAngle(-15); // get tilt angle down a little before extension
+                taskStartTime2 = SystemClock.uptimeMillis();
                 initializeStateVariables();
             }
+            if (SystemClock.uptimeMillis()-taskStartTime2 > 350) {  // this waits for the tilt to get parallel before extending added 4/7/2025
+                if (!sampleCollected) {
+                    if (lift.getLiftExtension() > 0.5 && !collectionMode) {
+                        armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_INTAKE_POSITION);
+                        armPivot.vexIntake.setPower(-.91);
 
-            if (!sampleCollected) {
-                if (lift.getLiftExtension() > 1.5 && !collectionMode) {
-                    armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_INTAKE_POSITION);
-                    armPivot.vexIntake.setPower(-.91);
+                        collectionMode = true;
+                    }
 
-                    collectionMode = true;
+                    if (collectionMode) {
+                        armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+                    }
+                } else {
+                    armPivot.setIntakeTiltAngle(90);
                 }
 
-                if (collectionMode) {
-                    armPivot.setIntakeTiltAngle(armPivot.intakeTiltNoArmPower(lift.getLiftExtension()));
+                if (lift.getLiftExtension() > 7.5) { // captures task start time
+                    if (!taskReStartTime) {
+                        taskStartTime = SystemClock.uptimeMillis();
+                        taskReStartTime = true;
+                    }
+
+                    if (SystemClock.uptimeMillis() - taskStartTime > 625) {
+                        //collectionMode = false;
+                        sampleCollected = true;
+                        armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
+                        armPivot.vexIntake.setPower(0);
+                        liftWantedHeight = 0;
+                    }
                 }
-            } else {
-                armPivot.setIntakeTiltAngle(90);
+
+                lift.setSetPoint(liftWantedHeight);
+                lift.updateLiftPosition();
+
             }
-
-            if (lift.getLiftExtension() > 10) { // captures task start time
-                if(!taskReStartTime) {
-                    taskStartTime = SystemClock.uptimeMillis();
-                    taskReStartTime =true;
-                }
-
-                if(SystemClock.uptimeMillis()-taskStartTime > 650){
-                    //collectionMode = false;
-                    sampleCollected = true;
-                    armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
-                    armPivot.vexIntake.setPower(0);
-                    liftWantedHeight = 0;
-                }
-            }
-
-            lift.setSetPoint(liftWantedHeight);
-            lift.updateLiftPosition();
-
         }
 
         if (currentState == SuperstructureStates.UNJAM_INTAKE.ordinal()) {
@@ -1397,7 +1400,7 @@ public class Superstructure3Motor {
         if (currentState == SuperstructureStates.AUTO_PARK.ordinal()) {
             if (stateFinished) {
                 liftWantedHeight = 10;
-                targetPivotAngle = 45;
+                targetPivotAngle = 55;
                 armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
                 armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
                 lift.setSetPoint(liftWantedHeight);

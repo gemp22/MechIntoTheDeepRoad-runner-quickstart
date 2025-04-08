@@ -261,7 +261,7 @@ public abstract class Robot3Motor extends OpMode {
         telemetry.addData("liftWantedHeight", superstructure.liftWantedHeight);
         telemetry.addData("tilt servo", armPivot3Motor.intakeTilt.getPosition());
         telemetry.addData("tilt angle", armPivot3Motor.getIntakeTiltAngle());
-        telemetry.addData("intake tilt linear interpolation output ", armPivot3Motor.intakeTiltNoArmPower(lift3Motor.getLiftExtension()));
+        //telemetry.addData("intake tilt linear interpolation output ", armPivot3Motor.intakeTiltNoArmPower(lift3Motor.getLiftExtension()));
 
 
         telemetry.addData("pivot limit switch", armPivot3Motor.getPivotLimitState());
