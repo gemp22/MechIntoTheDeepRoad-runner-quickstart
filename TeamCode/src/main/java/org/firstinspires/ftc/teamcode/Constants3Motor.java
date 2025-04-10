@@ -1,24 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Constants3Motor {
-    public static final double JAW_SERVO_DROP_POSITION = 0.35; //.33
-    public static final double JAW_SERVO_GRAB_POSITION = 0.77; //.85
+    public static final double JAW_SERVO_DROP_POSITION = 0.32; //.33
+    public static final double JAW_SERVO_GRAB_POSITION = 0.78; //.85
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = .81;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = 0.115;
     public static final double JAW_SERVO_WALL_COLLECTION = .515;
     public static final double JAW_SERVO_WALL_GRAB_PREP = .68;
-    public static final double JAW_SERVO_INTAKE_POSITION = 0.65;
-    public static final double TILT_SERVO_90_DEGREES_UP = 0;//.265
-    public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.59;//.465
-    public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.8;//.58
-    public static final double TILT_SERVO_BASKET_DELIVERY = 0.30;
-    public static final double TILT_SERVO_BASKET_DELIVERY_PREP = 0.4;
+    public static final double JAW_SERVO_INTAKE_POSITION = 0.67;
+    public static final double TILT_SERVO_90_DEGREES_UP = 0.13;//.265
+    public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.75;//.465
+    public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.98;//.58
+    public static final double TILT_SERVO_BASKET_DELIVERY = 0.45;
+    public static final double TILT_SERVO_BASKET_DELIVERY_PREP = 0.5;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.6;
     public static final double TILT_SERVO_HOME = 0.3;
-    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -32; //-53
-    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -22; //-15
+    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -30; //-53
+    public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -25; //-15
     public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
-    public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.63;
+    public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.8;
     public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_PREP = 0;
     public static final double TILT_SERVO_BACK_SPECIMEN_PLACE_HANG = 0.4;
     public static final double TILT_SERVO_HOME_STATE_ANGLE = 90;

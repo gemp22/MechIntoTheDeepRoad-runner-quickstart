@@ -12,6 +12,7 @@ import android.util.Pair;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Superstructure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+@Disabled
 @Autonomous
 public class AutoSamples extends Robot {
 

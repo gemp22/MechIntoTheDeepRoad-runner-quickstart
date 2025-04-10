@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+@Disabled
 @TeleOp(name = "LiftTest", group = "Mechbot")
 public class LiftTest extends Robot {
 

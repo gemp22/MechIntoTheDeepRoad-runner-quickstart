@@ -186,6 +186,7 @@ public class ATeleop3Motor extends Robot3Motor {
 
     private long liftRestingStartTime = 0;
 
+
     @Override
     public void mainLoop() {
         super.mainLoop();
@@ -258,6 +259,10 @@ public class ATeleop3Motor extends Robot3Motor {
             System.out.println("gp2 Dpad right bumper");
             //scoringState = ScoringStates.SCORING_LEVEL_1;
             superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_CHAMBER_TELE.ordinal());
+        }
+        else if(gamepad2Trigger && !gamepad2TriggerPreVal)
+        {
+            //superstructure.nextState(Superstructure3Motor.SuperstructureStates.RESTING_CHAMBER_COLLECTION.ordinal());
         }
 
 

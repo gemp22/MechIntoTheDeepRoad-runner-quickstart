@@ -63,6 +63,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
     boolean justDidAReapproach = false;
 
     boolean hasPushSamplesIn = false;
+    private double currentServoPosition = 0;
 
 
     @Override
@@ -76,6 +77,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
         armPivot3Motor.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
         armPivot3Motor.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
         armPivot3Motor.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
+        armPivot3Motor.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
     }
 
     private int timeDelay = 0;
@@ -90,7 +92,16 @@ public class AutoSpecimensWorlds extends Robot3Motor {
             timeDelay -= 1;
         }
 
+        if (ButtonPress.isGamepad1_a_pressed()) {
+            armPivot3Motor.intakeTilt.setPosition(currentServoPosition+= 0.005);
+            armPivot3Motor.intakeTiltTwo.setPosition(currentServoPosition+= 0.005); ;
+        } else if (ButtonPress.isGamepad1_b_pressed()) {
+            armPivot3Motor.intakeTilt.setPosition(currentServoPosition-= 0.005);
+            armPivot3Motor.intakeTiltTwo.setPosition(currentServoPosition-= 0.005);
+        }
 
+        telemetry.addData("tilt servo 2 position", armPivot3Motor.intakeTiltTwo.getPosition());
+        telemetry.addData("tilt servo 1 position", armPivot3Motor.intakeTilt.getPosition());
         telemetry.addData("Delay", timeDelay);
     }
 
@@ -124,7 +135,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
 
     @Override
     public void mainLoop() {
-        telemetry.addData("pixels", pixelsCounted);
+
         boolean jamDetected = false;//pixelJamAndCounting();
         telemetry.addData("Superstructure State", currentState);
         System.out.println("Superstructure State: " + currentState);
@@ -144,7 +155,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                     0.35 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
-            points.add(new CurvePoint(26.5, 0,
+            points.add(new CurvePoint(25.75, 0,
                     0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
@@ -433,10 +444,10 @@ public class AutoSpecimensWorlds extends Robot3Motor {
             }
 
             ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, -52 + (driveToGetSampleCycle * -9),
+            points.add(new CurvePoint(stateStartingX, -51 + (driveToGetSampleCycle * -9), //adjust here to change push specimen starting location
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(15, -52 + (driveToGetSampleCycle * -9),
+            points.add(new CurvePoint(15, -51 + (driveToGetSampleCycle * -9),
                     0.9, 0.9, 20, 20,
                     Math.toRadians(60), 0.6));
 

@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Pair;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Autonomous
+@TeleOp
 public class ServoTuning extends Robot3Motor {
 
     private int servoIndex = 0;
