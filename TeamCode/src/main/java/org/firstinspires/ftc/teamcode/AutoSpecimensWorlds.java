@@ -100,8 +100,18 @@ public class AutoSpecimensWorlds extends Robot3Motor {
             armPivot3Motor.intakeTiltTwo.setPosition(currentServoPosition-= 0.005);
         }
 
+        if (ButtonPress.isGamepad1_x_pressed()) {
+            armPivot3Motor.intakeJawServo.setPosition(currentServoPosition+= 0.005);
+
+        } else if (ButtonPress.isGamepad1_y_pressed()) {
+            armPivot3Motor.intakeJawServo.setPosition(currentServoPosition-= 0.005);
+
+        }
+
         telemetry.addData("tilt servo 2 position", armPivot3Motor.intakeTiltTwo.getPosition());
         telemetry.addData("tilt servo 1 position", armPivot3Motor.intakeTilt.getPosition());
+        telemetry.addData("Jaw position", armPivot3Motor.intakeJawServo.getPosition());
+
         telemetry.addData("Delay", timeDelay);
     }
 

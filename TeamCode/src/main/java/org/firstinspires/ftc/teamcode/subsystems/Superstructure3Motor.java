@@ -308,8 +308,10 @@ public class Superstructure3Motor {
                 lift.setSetPoint(0);
                 liftWantedHeight = 0;
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
-                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
-                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+//                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+//                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_90_DEGREES_UP);
+                armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_BASKET_DELIVERY_PREP);
+                armPivot.intakeTiltTwo.setPosition(Constants3Motor.TILT_SERVO_BASKET_DELIVERY_PREP);
                 //armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_HOME);
                 if(lift.getLiftExtension()<6 || armPivot.getArmAngle()<60){
                     isLiftOrPivotSmall = true;
@@ -332,8 +334,8 @@ public class Superstructure3Motor {
 
                         System.out.println("in bad if statement at " + (SystemClock.uptimeMillis() - taskStartTime));
                         //armPivot.update(-3, 0.5, 20, 0.05, telemetry); // for 1 pivot motor
-                        armPivot.update(-3, 0.3, 40, 0.1, telemetry);
-                    }else if(armPivot.getArmAngle() < -3) {
+                        armPivot.update(-2, 0.3, 40, 0.1, telemetry);
+                    }else if(armPivot.getArmAngle() < -2) {
                         //armPivot.setIntakeTiltAngle(90);
                         //armPivot.armPivot.setPower(0); // 1 motor
                         armPivot.armPivotLeft.setPower(0); // 2 motor
@@ -344,11 +346,11 @@ public class Superstructure3Motor {
             }else if (lift.getLiftExtension() < 12 && !isLiftOrPivotSmall) { //this gives time for jaw and tilt to get right before twist and pivot for long lift extensions
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                 System.out.println("lift extension is less than 12 ");
-                if (lift.getLiftExtension() < 3 && armPivot.getArmAngle() > -5 ) {
+                if (lift.getLiftExtension() < 10 && armPivot.getArmAngle() > -3 ) {
 
                     armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
                     //armPivot.update(-3, 0.7, 15, 0.05, telemetry); // for 1 pivot motor
-                    armPivot.update(-3, 0.3, 40, 0.1, telemetry);
+                    armPivot.update(-2, 0.35, 40, 0.1, telemetry);
                 }else {
                     armPivot.armPivotLeft.setPower(0); // 2 motor
                     armPivot.armPivotRight.setPower(0); // 2 motor
@@ -492,7 +494,7 @@ public class Superstructure3Motor {
             if (stateFinished) {
                 deliveryTIlt = false;
                 deliveryTwist = false;
-                liftWantedHeight = 10;
+                liftWantedHeight = 9;
                 initializeStateVariables();
             }
 
@@ -554,7 +556,7 @@ public class Superstructure3Motor {
             if (stateFinished) {
                 deliveryTIlt = false;
                 deliveryTwist = false;
-                liftWantedHeight = 10;
+                liftWantedHeight = 9;
                 initializeStateVariables();
             }
 

@@ -111,8 +111,8 @@ public class AutoSamplesWorlds extends Robot3Motor {
 
     private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
         put(0, new Pair<>(new PointDouble(25.5, -9), 55.0)); // -31.3774
-        put(1, new Pair<>(new PointDouble(25.1792,2.5118), 56.2959)); // 50.0452
-        put(2, new Pair<>(new PointDouble(24.9231, 10.9599), 57.7378)); //55.3688
+        put(1, new Pair<>(new PointDouble(25.1792,2.5118), 56.5)); // 50.0452
+        put(2, new Pair<>(new PointDouble(24.9231, 10.9599), 57.5)); //55.3688
         put(3, new Pair<>(new PointDouble(18, 18), 0.0));
     }};
 
@@ -211,7 +211,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
                     }
                 }
             }*/
-            if (SystemClock.uptimeMillis()-stateStartTime > 625) { // this gives time for sample to drop
+            if (SystemClock.uptimeMillis()-stateStartTime > 650) { // this gives time for sample to drop
                 if (!past5In) {
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                     past5In = true;
