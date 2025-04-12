@@ -444,7 +444,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
             }
 
             ArrayList<CurvePoint> points = new ArrayList<>();
-            points.add(new CurvePoint(stateStartingX, -51 + (driveToGetSampleCycle * -9), //adjust here to change push specimen starting location
+            points.add(new CurvePoint(stateStartingX, -50 + (driveToGetSampleCycle * -9), //adjust here to change push specimen starting location
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(15, -51 + (driveToGetSampleCycle * -9),

@@ -648,7 +648,7 @@ public class Superstructure3Motor {
         if (currentState == SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal()) {
             if (stateFinished) {
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_DROP_POSITION);
-                armPivot.vexIntake.setPower(.3);
+                armPivot.vexIntake.setPower(.2);
 
                 //armPivot.setIntakeTiltAngle(-64);
                 armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_BASKET_DELIVERY);
@@ -660,8 +660,14 @@ public class Superstructure3Motor {
             if (SystemClock.uptimeMillis()-stateStartTime > 100) {
             }
 
+            if (!armPivot.getPivotLimitState() && armPivot.getArmAngle() > restingStateStartingAngle- 1) {  //added this if statement to keep arm against hardstop during drop
+                armPivot.setArmPivotPower(0.25);
+            }else{
+                armPivot.update(restingStateStartingAngle,.75,15,0.15, telemetry);
+            }
+
             //armPivot.update(restingStateStartingAngle,.75,15,0.15, telemetry);
-            armPivot.update(restingStateStartingAngle,.75,15,0.15, telemetry);
+
 
             if (gamepad1.right_bumper) {
                 armPivot.vexIntake.setPower(0);
@@ -704,10 +710,15 @@ public class Superstructure3Motor {
             System.out.println("HANG DEBUG BAR 1 Arm power right: " + armPivot.armPivotRight.getPower());
             System.out.println("HANG DEBUG BAR 1 Lift Power: " + lift.liftLeft.getPower());
 
-            if (lift.getLiftExtension() < 2.8 && armPivot.getArmAngle() < 6) {
+            if (lift.getLiftExtension() < 2.85 && armPivot.getArmAngle() < 6) {
                 lift.setLiftPower(0);
                 armPivot.setArmPivotPower(0);
                 nextState(SuperstructureStates.HANG_BAR_1_RESTING.ordinal());
+            } else if (ButtonPress.isGamepad1_b_pressed()) {
+                lift.setLiftPower(0);
+                armPivot.setArmPivotPower(0);
+                nextState(SuperstructureStates.HANG_BAR_1_RESTING.ordinal());
+
             } else {
                 if (lift.getLiftExtension() > 2 && armPivot.getArmAngle() < 2) {
                     lift.setLiftPower(-1);

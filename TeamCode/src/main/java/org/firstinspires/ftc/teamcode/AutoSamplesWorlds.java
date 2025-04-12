@@ -110,7 +110,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
     private int pixelDropLocation = 0;
 
     private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
-        put(0, new Pair<>(new PointDouble(25.0392, -8.25), 54.31)); // -31.3774
+        put(0, new Pair<>(new PointDouble(25.5, -9), 55.0)); // -31.3774
         put(1, new Pair<>(new PointDouble(25.1792,2.5118), 56.2959)); // 50.0452
         put(2, new Pair<>(new PointDouble(24.9231, 10.9599), 57.7378)); //55.3688
         put(3, new Pair<>(new PointDouble(18, 18), 0.0));
@@ -141,9 +141,9 @@ public class AutoSamplesWorlds extends Robot3Motor {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(13.5, 12.5,
+            points.add(new CurvePoint(13.3, 12.7,
                     0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 15, 15,
-                    Math.toRadians(60), 0.6));
+                    Math.toRadians(61), 0.6));
 
             if (Math.abs(Math.hypot(worldXPosition - 13, worldYPosition - 13)) < 5) {
                 if (!past5In) {
@@ -211,7 +211,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
                     }
                 }
             }*/
-            if (SystemClock.uptimeMillis()-stateStartTime > 600) { // this gives time for sample to drop
+            if (SystemClock.uptimeMillis()-stateStartTime > 625) { // this gives time for sample to drop
                 if (!past5In) {
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                     past5In = true;
