@@ -726,6 +726,7 @@ public class Superstructure3Motor {
                 else {
                     lift.setLiftPower(-0.25);
                 }
+
 //                lift.setSetPoint(liftWantedHeight);
 //                lift.updateLiftPosition();
                 armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
