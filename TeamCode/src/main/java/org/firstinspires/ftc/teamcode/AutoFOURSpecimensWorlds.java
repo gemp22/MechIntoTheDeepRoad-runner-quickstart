@@ -11,6 +11,7 @@ import android.os.SystemClock;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,7 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Autonomous
-public class AutoSpecimensWorlds extends Robot3Motor {
+@Disabled
+public class AutoFOURSpecimensWorlds extends Robot3Motor {
 
     private final double SCALE_FACTOR = 1;
 
@@ -39,14 +41,10 @@ public class AutoSpecimensWorlds extends Robot3Motor {
         grabSpecimen,
 
         driveToChamber,
-
         driveUpToSamples,
-
         strafeToSamples,
         pushSamplesToPlayerStation,
-
         pushSampleToPickUpSpecimen,
-
         endBehavior
     }
 
@@ -135,7 +133,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
     private boolean hasGrabbedPixels = false;
 
     private double cutOffTime = 22.5;
-    private int currentState = AutoSpecimensWorlds.programStage;
+    private int currentState = AutoFOURSpecimensWorlds.programStage;
 
     private boolean past5In = false;
 
@@ -162,11 +160,11 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                     0, 0, 0, 0, 0, 0));
 
             points.add(new CurvePoint(15, 0,
-                    0.35 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 10,
+                    0.4 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 10, // changed move speed from .35 to .45
                     Math.toRadians(60), 0.6));
 
             points.add(new CurvePoint(25.75, 0,
-                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 10,
+                    0.3 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 10, // changed move speed from .2 to .25
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(-90))) {
@@ -184,19 +182,19 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                 initializeStateVariables();
             }
 
-            if (SystemClock.uptimeMillis()-stateStartTime > 750) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 400) { // chaged from 750 to speed up
                 ArrayList<CurvePoint> points = new ArrayList<>();
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
                 points.add(new CurvePoint(stateStartingX-8, stateStartingY,
-                        0.4 * SCALE_FACTOR, 0.4 * SCALE_FACTOR, 15, 15,
+                        0.5 * SCALE_FACTOR, 0.4 * SCALE_FACTOR, 15, 15, // changed move speed from .4 to .5
                         Math.toRadians(60), 0.6));
 
-                if (Movement.followCurve(points, Math.toRadians(90), 3)) {
+                if (Movement.followCurve(points, Math.toRadians(90), 4)) { //Change tol from 3 to 4
                     drive.stopAllMovementDirectionBased();
 
-                    if (overallCycleToChamber == 2) {
+                    if (overallCycleToChamber == 3) { //changed from 2 to 3 to get one more cycle
                         superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                         nextStage(progStates.endBehavior.ordinal());
                     } else {
@@ -206,7 +204,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
 
                 drive.applyMovementDirectionBased();
             } else {
-                movement_y = -0.25;
+                movement_y = -0.25;  // this makes robot drive toward submersible until time above is met
                 drive.applyMovementDirectionBased();
             }
         }
@@ -246,7 +244,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                         1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
-                boolean completed = Movement.followCurve(points, Math.toRadians(90), 2);
+                boolean completed = Movement.followCurve(points, Math.toRadians(90), 3); // changed tol from 2 to 3
 
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
 
@@ -267,7 +265,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                     cycle++;
                     //superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
 
-                    if(cycle<2) {
+                    if(cycle<3) { // changed from 2 to 3
                         nextStage(progStates.grabSpecimen.ordinal());
                     }else {
                         nextStage(progStates.driveUpToSamples.ordinal());
@@ -283,7 +281,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                 past5In = false;
                 initializeStateVariables();
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 250) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 200) { // changed from 250 to 200
 
                 if (!past5In) {
                     //superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
@@ -299,7 +297,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                     }
                 }
 
-                if (SystemClock.uptimeMillis()-stateStartTime>1250) {
+                if (SystemClock.uptimeMillis()-stateStartTime>1000) { // 2050
                     pickupOffWall = false;
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
                     drive.stopAllMovementDirectionBased();
@@ -317,10 +315,10 @@ public class AutoSpecimensWorlds extends Robot3Motor {
                 //superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_TRANSPORT.ordinal());
                 initializeStateVariables();
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 400) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 300) { // was 400
                 pickupOffWall = true;
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 500) {
+            if (SystemClock.uptimeMillis()-stateStartTime > 400) { // was 500
 
                 ArrayList<CurvePoint> points = new ArrayList<>();
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
@@ -431,7 +429,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
 
             movement_x = -0.7;
 
-            if (worldYPosition < -49 + (driveToGetSampleCycle * -9)) { // 51 was 52 for northern
+            if (worldYPosition < -49 + (driveToGetSampleCycle * -9)) { // was 51
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
@@ -466,7 +464,7 @@ public class AutoSpecimensWorlds extends Robot3Motor {
 
                 //nextStage(progStates.hangSpecimen.ordinal());
                 driveToGetSampleCycle++;
-                if (driveToGetSampleCycle == 2) {
+                if (driveToGetSampleCycle == 3) { // was 2
                     cycle = 0;
                     nextStage(progStates.pushSampleToPickUpSpecimen.ordinal());
                 } else {
