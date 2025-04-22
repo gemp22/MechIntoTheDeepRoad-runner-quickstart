@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 public class Constants3Motor {
-    public static final double JAW_SERVO_DROP_POSITION = 0.395; //.33
-    public static final double JAW_SERVO_GRAB_POSITION = 0.9; //.85
+    public static final double JAW_SERVO_DROP_POSITION = 0.355; //.33
+    public static final double JAW_SERVO_GRAB_POSITION = 0.86; //.85
     public static final double JAW_SERVO_MAX_CLOSED_POSITION = .81;
     public static final double JAW_SERVO_MAX_OPEN_POSITION = 0.115;
     public static final double JAW_SERVO_WALL_COLLECTION = .59;
     public static final double JAW_SERVO_WALL_GRAB_PREP = .68;
-    public static final double JAW_SERVO_INTAKE_POSITION = 0.8;
+    public static final double JAW_SERVO_INTAKE_POSITION = 0.75;
     public static final double TILT_SERVO_90_DEGREES_UP = 0.13;//.265
     public static final double TILT_SERVO_PARALLEL_WITH_FLOOR = 0.75;//.465
     public static final double TILT_SERVO_CLOSE_TO_ROBOT_COLLECTION_POSITION = 0.98;//.58
@@ -15,7 +15,7 @@ public class Constants3Motor {
     public static final double TILT_SERVO_BASKET_DELIVERY_PREP = 0.6;
     public static final double TILT_SERVO_FAR_FROM_ROBOT_POSITION = 0.6;
     public static final double TILT_SERVO_HOME = 0.3;
-    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -30; //-53
+    public static final double TILT_INTAKE_ANGLE_CLOSE_TO_BOT = -32; //-53
     public static final double TILT_INTAKE_ANGLE_FAR_FROM_BOT = -26.5; //-15
     public static final double TILT_INTAKE_ANGLE_OUTTAKE = 20;
     public static final double TILT_SERVO_PARALLEL_WITH_PIVOT = 0.8;
@@ -34,7 +34,7 @@ public class Constants3Motor {
     public static final double MAX_LIFT_MOTOR_POWER= 0.75;
     public static final double MIN_LIFT_MOTOR_POWER= 0.75;
     public static final double LIFT_TICKS_PER_INCH = 48;
-    public static final double LIFT_MAX_HORIZONTAL_POSITION_IN = 11.75;
+    public static final double LIFT_MAX_HORIZONTAL_POSITION_IN = 13.75;
     public static final double LIFT_HIGH_BASKET_POSITION_IN = 48;
     public static final double LIFT_LOW_BASKET_POSITION_IN = 48;
     public static final double LIFT_HIGH_CHAMBER_POSITION_IN = 48;

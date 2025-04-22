@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 @Autonomous
 @Disabled
-public class AutoFOURSpecimensWorlds extends Robot3Motor {
+public class AutoSpecimensWorldsV3 extends Robot3Motor {
 
     private final double SCALE_FACTOR = 1;
 
@@ -41,10 +41,14 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
         grabSpecimen,
 
         driveToChamber,
+
         driveUpToSamples,
+
         strafeToSamples,
         pushSamplesToPlayerStation,
+
         pushSampleToPickUpSpecimen,
+
         endBehavior
     }
 
@@ -133,7 +137,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
     private boolean hasGrabbedPixels = false;
 
     private double cutOffTime = 22.5;
-    private int currentState = AutoFOURSpecimensWorlds.programStage;
+    private int currentState = AutoSpecimensWorldsV3.programStage;
 
     private boolean past5In = false;
 
@@ -151,7 +155,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
         if (programStage == progStates.driveBackwardToChamberAndHang.ordinal()) {
             if (stageFinished) {
                 past5In = false;
-               // superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
+                superstructure.nextState(Superstructure3Motor.SuperstructureStates.SPECIMEN_HANG_PREP.ordinal());
                 initializeStateVariables();
             }
 
@@ -159,21 +163,17 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(12, 0,
-                    0.4 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 20, // changed move speed from .6
+            points.add(new CurvePoint(15, 0,
+                    0.35 * SCALE_FACTOR, 0.3 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
-            points.add(new CurvePoint(18, 0,
-                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 20, // changed move speed from .2 to .25
-                    Math.toRadians(60), 0.6));
-
-            points.add(new CurvePoint(25, 0,
-                    0.1 * SCALE_FACTOR, 0.1 * SCALE_FACTOR, 20, 20, // changed move speed from .2 to .25
+            points.add(new CurvePoint(25.75, 0,
+                    0.2 * SCALE_FACTOR, 0.2 * SCALE_FACTOR, 20, 10,
                     Math.toRadians(60), 0.6));
 
             if (Movement.followCurve(points, Math.toRadians(-90))) {
                 drive.stopAllMovementDirectionBased();
-               // nextStage(progStates.hangSpecimen.ordinal());
+                nextStage(progStates.hangSpecimen.ordinal());
             }
 
             drive.applyMovementDirectionBased(); // always put at end of state
@@ -186,19 +186,19 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
                 initializeStateVariables();
             }
 
-            if (SystemClock.uptimeMillis()-stateStartTime > 400) { // chaged from 750 to speed up
+            if (SystemClock.uptimeMillis()-stateStartTime > 750) {
                 ArrayList<CurvePoint> points = new ArrayList<>();
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
                         0, 0, 0, 0, 0, 0));
 
                 points.add(new CurvePoint(stateStartingX-8, stateStartingY,
-                        0.5 * SCALE_FACTOR, 0.4 * SCALE_FACTOR, 15, 15, // changed move speed from .4 to .5
+                        0.4 * SCALE_FACTOR, 0.4 * SCALE_FACTOR, 15, 15,
                         Math.toRadians(60), 0.6));
 
-                if (Movement.followCurve(points, Math.toRadians(90), 4)) { //Change tol from 3 to 4
+                if (Movement.followCurve(points, Math.toRadians(90), 3)) {
                     drive.stopAllMovementDirectionBased();
 
-                    if (overallCycleToChamber == 3) { //changed from 2 to 3 to get one more cycle
+                    if (overallCycleToChamber == 2) {
                         superstructure.nextState(Superstructure3Motor.SuperstructureStates.GOTO_RESTING_WORLDS.ordinal());
                         nextStage(progStates.endBehavior.ordinal());
                     } else {
@@ -208,7 +208,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
 
                 drive.applyMovementDirectionBased();
             } else {
-                movement_y = -0.25;  // this makes robot drive toward submersible until time above is met
+                movement_y = -0.25;
                 drive.applyMovementDirectionBased();
             }
         }
@@ -245,19 +245,19 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
                 double wantedX = cycle == 1 ? 26 : 15;
 
                 points.add(new CurvePoint(wantedX, -45,
-                        1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 15, 15,
+                        1 * SCALE_FACTOR, 1 * SCALE_FACTOR, 20, 20,
                         Math.toRadians(60), 0.6));
 
-                boolean completed = Movement.followCurve(points, Math.toRadians(90), 3); // changed tol from 2 to 3
+                boolean completed = Movement.followCurve(points, Math.toRadians(90), 2.5);
 
                 double relativePointAngle = AngleWrap(Math.toRadians(180) - worldAngle_rad);
 
-                if (worldYPosition < -15 && cycle == 1) {
+                if (worldYPosition < -30 && cycle == 1) {
                     Movement.movementResult r = Movement.pointAngle(
                             Math.toRadians(180),
                             1,
                             Math.toRadians(30));
-                } else  if (worldYPosition < -25) {
+                } else  if (worldYPosition < -35) {
                     Movement.movementResult r = Movement.pointAngle(
                             Math.toRadians(180),
                             1,
@@ -269,7 +269,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
                     cycle++;
                     //superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
 
-                    if(cycle<3) { // changed from 2 to 3
+                    if(cycle<2) {
                         nextStage(progStates.grabSpecimen.ordinal());
                     }else {
                         nextStage(progStates.driveUpToSamples.ordinal());
@@ -285,7 +285,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
                 past5In = false;
                 initializeStateVariables();
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 200) { // changed from 250 to 200
+            if (SystemClock.uptimeMillis()-stateStartTime > 250) {
 
                 if (!past5In) {
                     //superstructure.nextState(Superstructure.SuperstructureStates.COLLECT_SPECIMEN_PREP.ordinal());
@@ -301,7 +301,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
                     }
                 }
 
-                if (SystemClock.uptimeMillis()-stateStartTime>1000) { // 2050
+                if (SystemClock.uptimeMillis()-stateStartTime>1250) {
                     pickupOffWall = false;
                     superstructure.nextState(Superstructure3Motor.SuperstructureStates.COLLECT_SPECIMEN_WALL.ordinal());
                     drive.stopAllMovementDirectionBased();
@@ -319,10 +319,10 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
                 //superstructure.nextState(Superstructure.SuperstructureStates.SPECIMEN_TRANSPORT.ordinal());
                 initializeStateVariables();
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 300) { // was 400
+            if (SystemClock.uptimeMillis()-stateStartTime > 400) {
                 pickupOffWall = true;
             }
-            if (SystemClock.uptimeMillis()-stateStartTime > 400) { // was 500
+            if (SystemClock.uptimeMillis()-stateStartTime > 500) {
 
                 ArrayList<CurvePoint> points = new ArrayList<>();
                 points.add(new CurvePoint(stateStartingX, stateStartingY,
@@ -433,7 +433,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
 
             movement_x = -0.7;
 
-            if (worldYPosition < -49 + (driveToGetSampleCycle * -9)) { // was 51
+            if (worldYPosition < -49 + (driveToGetSampleCycle * -9)) { // 51 was 52 for northern
                 drive.stopAllMovementDirectionBased();
 
                 //nextStage(progStates.hangSpecimen.ordinal());
@@ -468,7 +468,7 @@ public class AutoFOURSpecimensWorlds extends Robot3Motor {
 
                 //nextStage(progStates.hangSpecimen.ordinal());
                 driveToGetSampleCycle++;
-                if (driveToGetSampleCycle == 3) { // was 2
+                if (driveToGetSampleCycle == 2) {
                     cycle = 0;
                     nextStage(progStates.pushSampleToPickUpSpecimen.ordinal());
                 } else {

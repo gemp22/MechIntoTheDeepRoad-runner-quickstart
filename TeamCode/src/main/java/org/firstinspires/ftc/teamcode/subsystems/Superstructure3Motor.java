@@ -159,6 +159,7 @@ public class Superstructure3Motor {
         System.out.println("Tilt2 Pos: " + armPivot.intakeTiltTwo.getPosition());
         System.out.println("lift extension" + lift.getLiftExtension());
         System.out.println("pivot angle" + armPivot.getArmAngle());
+        System.out.println("jaw angle: " + armPivot.intakeJawServo.getPosition());
 
 
         if (currentState == SuperstructureStates.RESTING.ordinal()) { // Trying out new two state resting hopefully can delete this
@@ -304,7 +305,7 @@ public class Superstructure3Motor {
                 isLiftOrPivotSmall = false;
 //                liftStateStartExtension = lift.getLiftExtension();
 //                pivotStateStartAngle = armPivot.getArmAngle();
-                armPivot.vexIntake.setPower(0);
+//                armPivot.vexIntake.setPower(0);
                 lift.setSetPoint(0);
                 liftWantedHeight = 0;
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_GRAB_POSITION);
@@ -319,15 +320,22 @@ public class Superstructure3Motor {
                 initializeStateVariables();
             }
 
+
+
             if(isLiftOrPivotSmall){
                 System.out.println("lift/pivot is small");
 
                 if(!taskReStartTime){
                     taskStartTime = SystemClock.uptimeMillis();
+                    taskStartTime2 = SystemClock.uptimeMillis();
                     taskReStartTime = true;
                 }
+
+
                 System.out.println("arm safe timer" + (SystemClock.uptimeMillis() - taskStartTime));
-                if(SystemClock.uptimeMillis() - taskStartTime > 750){ //wait for jaw and tilt
+                if(SystemClock.uptimeMillis() - taskStartTime > 800){ //wait for jaw and tilt
+                    //we want to keep the vex intake on a bit more when going to home
+                    armPivot.vexIntake.setPower(0);
                     armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
                     if (lift.getLiftExtension()<3 && armPivot.getArmAngle() > -3 && (SystemClock.uptimeMillis() - taskStartTime) > 1500 ) { //gives time for twist before Pivot goes down
                         armPivot.setIntakeTiltAngle(Constants3Motor.TILT_SERVO_HOME_STATE_ANGLE);
@@ -650,7 +658,7 @@ public class Superstructure3Motor {
         if (currentState == SuperstructureStates.DELIVERY_SAMPLE_DROP.ordinal()) {
             if (stateFinished) {
                 armPivot.intakeJawServo.setPosition(Constants3Motor.JAW_SERVO_DROP_POSITION);
-                armPivot.vexIntake.setPower(.2);
+                armPivot.vexIntake.setPower(.15);
 
                 //armPivot.setIntakeTiltAngle(-64);
                 armPivot.intakeTilt.setPosition(Constants3Motor.TILT_SERVO_BASKET_DELIVERY);
@@ -700,6 +708,8 @@ public class Superstructure3Motor {
 
         if (currentState == SuperstructureStates.HANG_BAR_1.ordinal()) {
             if (stateFinished) {
+                armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
+                armPivot.setIntakeTiltAngle(90); //
                 initializeStateVariables();
             }
 
@@ -722,17 +732,17 @@ public class Superstructure3Motor {
                 nextState(SuperstructureStates.HANG_BAR_1_RESTING.ordinal());
 
             } else {
-                if (lift.getLiftExtension() > 2 && armPivot.getArmAngle() < 2) {
+                if (lift.getLiftExtension() > 2 && armPivot.getArmAngle() < 6) { // I think we can pull this arm anglre condition  out now that were back to two motor
                     lift.setLiftPower(-1);
                 }
                 else {
-                    lift.setLiftPower(-0.25);
+                    lift.setLiftPower(-0.5);
                 }
 
 //                lift.setSetPoint(liftWantedHeight);
 //                lift.updateLiftPosition();
-                armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
-                armPivot.setIntakeTiltAngle(90);
+//                armPivot.twist.setPosition(Constants3Motor.TWIST_SERVO_HORIZONTAL_POSITION);
+//                armPivot.setIntakeTiltAngle(90); // think this can go in the beginning
 
                 if (armPivot.getArmAngle() > -0) {
                     armPivot.setArmPivotPower(-1);

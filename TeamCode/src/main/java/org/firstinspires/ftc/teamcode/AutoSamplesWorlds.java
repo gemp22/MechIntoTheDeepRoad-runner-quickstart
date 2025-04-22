@@ -110,9 +110,9 @@ public class AutoSamplesWorlds extends Robot3Motor {
     private int pixelDropLocation = 0;
 
     private HashMap<Integer, Pair<PointDouble, Double>> pickupPoints = new HashMap<Integer, Pair<PointDouble, Double>>() {{
-        put(0, new Pair<>(new PointDouble(25.5, -9), 55.0)); // -31.3774
-        put(1, new Pair<>(new PointDouble(25.1792,2.5118), 56.5)); // 50.0452
-        put(2, new Pair<>(new PointDouble(24.9231, 10.9599), 57.5)); //55.3688
+        put(0, new Pair<>(new PointDouble(25.5, -8.9), 55.2)); // -31.3774
+        put(1, new Pair<>(new PointDouble(25.1792,2.8118), 57.7)); // 50.0452
+        put(2, new Pair<>(new PointDouble(24.9231, 11.8), 58.7)); //55.3688
         put(3, new Pair<>(new PointDouble(18, 18), 0.0));
     }};
 
@@ -141,7 +141,7 @@ public class AutoSamplesWorlds extends Robot3Motor {
             points.add(new CurvePoint(stateStartingX, stateStartingY,
                     0, 0, 0, 0, 0, 0));
 
-            points.add(new CurvePoint(13.3, 12.7,
+            points.add(new CurvePoint(12.2, 13.6,
                     0.7 * SCALE_FACTOR, 0.7 * SCALE_FACTOR, 15, 15,
                     Math.toRadians(61), 0.6));
 

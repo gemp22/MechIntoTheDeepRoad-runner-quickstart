@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 @Autonomous(name = "MeasureSlipDT", group = "auto1")
-public class MeasureSlipDT extends Robot {
+public class MeasureSlipDT extends Robot3Motor {
 
     //speed the robot will go before the slide
     private static double GOING_FORWARDS_SPEED = 1;
@@ -128,7 +128,7 @@ public class MeasureSlipDT extends Robot {
         //movement_x = gamepad1.left_stick_x;
         //movement_turn = -gamepad1.right_stick_x;
 
-        //drive.applyMovementDirectionBased();
+        drive.applyMovementDirectionBased();
 
         long currTimeMillis = SystemClock.uptimeMillis();
 
@@ -145,14 +145,14 @@ public class MeasureSlipDT extends Robot {
 //            System.out.println("Vel Y: " + SpeedOmeter.getSpeedY());
 //            System.out.println("Vel DEG: " + SpeedOmeter.getDegPerSecond());
 
-            //drive.applyMovementDirectionBased();
+            drive.applyMovementDirectionBased();
             Log.i("MOVEMENT SPEED Y BEFORE", String.valueOf(SpeedOmeter.getSpeedX()));
 
             if (currTimeMillis - stateStartTime > ACCELERATION_TIME) {
                 movement_speed_y = SpeedOmeter.getSpeedY();
                 Log.i("MOVEMENT SPEED Y", String.valueOf(movement_speed_y));
                 drive.stopAllMovementDirectionBased();
-                //nextStage();
+                nextStage();
             }
         }
         if (programStage == progStates.measuringForwardsSlip.ordinal()) {

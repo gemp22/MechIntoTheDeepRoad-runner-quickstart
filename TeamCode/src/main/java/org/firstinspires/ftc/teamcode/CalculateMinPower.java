@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 @Autonomous(name = "CalculateMinPower")
 //@Disabled
-public class CalculateMinPower extends Robot {
+public class CalculateMinPower extends Robot3Motor {
 
     public enum progStates{
         rampingForwards,
