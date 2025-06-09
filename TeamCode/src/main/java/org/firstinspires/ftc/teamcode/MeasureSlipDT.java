@@ -71,7 +71,7 @@ public class MeasureSlipDT extends Robot3Motor {
     public void start() {
         super.start();
 
-        GoBildaOdo.setRobotPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS,0));
+        GoBildaOdo.setRobotPosition(new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS,0)); // goBilda pinpoint driver is reporting in mm
     }
 
 

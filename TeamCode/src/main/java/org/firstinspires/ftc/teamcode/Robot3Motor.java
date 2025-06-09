@@ -212,7 +212,7 @@ public abstract class Robot3Motor extends OpMode {
 
         Pair<Pose2D,Pose2D> goBildaPose = GoBildaOdo.GoBildaGetPose2D();
 
-        worldXPosition = goBildaPose.first.getX(DistanceUnit.INCH);
+        worldXPosition = goBildaPose.first.getX(DistanceUnit.INCH); // the goBilda driver returns mm? does this change it?
         worldYPosition = goBildaPose.first.getY(DistanceUnit.INCH);
         worldAngle_rad = goBildaPose.first.getHeading(AngleUnit.RADIANS);
 
@@ -227,7 +227,7 @@ public abstract class Robot3Motor extends OpMode {
 
         tp2.markStart();
 
-        SpeedOmeter.update(
+        SpeedOmeter.update( // this puts go Bilda values into the speedometer class
                 goBildaPose.second.getY(DistanceUnit.INCH),
                 goBildaPose.second.getX(DistanceUnit.INCH),
                 goBildaPose.second.getHeading(AngleUnit.RADIANS));
